@@ -23,6 +23,8 @@ import { RowTaskEntity } from './row_task/entities/rowTask.entity';
 import { ObjectiveEntity } from './objective/entities/objective.entity';
 import { AnswerEntity } from './answer/entities/answer.entity';
 import { ValueEntity } from './value/entities/value.entity';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -54,7 +56,7 @@ import { ValueEntity } from './value/entities/value.entity';
     RowTaskModule, 
     ObjectiveModule, 
     AnswerModule, 
-    ValueModule,
+    ValueModule, AuthModule, UserModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],
