@@ -80,9 +80,10 @@ export class CronService {
     async fetchExercises() {
         try {
             
-        for(let i = 562; i < 563; i++) {
+        for(let i = 1; i < 700; i++) {
             const response: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${i}`);
             const data = response.data;
+            console.log('data',i,data)
             if(data){
                 if (Array.isArray(data)) {
      
@@ -179,14 +180,17 @@ export class CronService {
                     
                 }
             }
-      
-  
+            await this.delay(2000);
         }
-      
 
         } catch (error) {
             console.error('Error fetching data:', error.message);
             throw error;
         } 
     }
+
+    async delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
 }

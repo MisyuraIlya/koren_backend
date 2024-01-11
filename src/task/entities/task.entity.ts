@@ -11,6 +11,13 @@ export class TaskEntity {
   @Column({nullable: true})
   orden: number;
 
+  @Column({nullable: true, name:'special_module_type'})
+  specialModuleType: string;
+
+  //TODO CONVERT STRING TO MANY TO ONE?
+  @Column({nullable: true})
+  properties: string;
+
   @ManyToOne(() => TabEntity, tab => tab.tasks, {onDelete: "CASCADE"})
   tab: TabEntity;
 

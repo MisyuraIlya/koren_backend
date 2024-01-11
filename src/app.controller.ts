@@ -12,8 +12,8 @@ export class AppController {
   }
 
   @Get('/fetchExercises')
-  async fetchExercises() {
-    await this.cronService.fetchExercises();
+  fetchExercises() {
+    this.cronService.fetchExercises();
     return 'fetch exercises start';
   }
 }
