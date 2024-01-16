@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExerciseEntity } from './entities/exercise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateExerciseDto } from './dto/create-exercise.dto';
 
 @Injectable()
 export class ExerciseService {
@@ -11,6 +12,9 @@ export class ExerciseService {
         private readonly exerciseRepository: Repository<ExerciseEntity>,
     ){}
 
+    create(dto: CreateExerciseDto) {
+        return 'This action adds a new task';
+    }
 
     async findOne(id: number): Promise<ExerciseEntity> {
         const exercise = await this.exerciseRepository
@@ -31,5 +35,15 @@ export class ExerciseService {
         .addOrderBy('objectives.orden', 'ASC')
         .getOne();
         return exercise;
+    }
+
+    async remove(id: number): Promise<void> {
+        const exercise = await this.exerciseRepository.findOneBy({id})
+
+        if (!exercise) {
+            throw new BadRequestException('Exercise not found');
+          }
+
+        await this.exerciseRepository.remove(exercise)
     }
 }
