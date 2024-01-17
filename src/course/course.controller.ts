@@ -21,4 +21,9 @@ export class CourseController {
   remove(@Param('id') id: string) {
     return this.courseService.remove(+id);
   }
+
+  @Post('/sortable')
+  sortable(@Body() dto: CourseEntity[]) {
+    return this.courseService.sortable(dto);
+  }
 }

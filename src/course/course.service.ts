@@ -11,8 +11,18 @@ export class CourseService {
         private readonly courseRepository: Repository<CourseEntity>,
     ) {}
 
-    create(createTaskDto: CreateCourseDto) {
-        return 'This action adds a new task';
+    async create(dto: CreateCourseDto) {
+        const parent = await this.courseRepository.findOne({
+            where:{id:dto.parentId}
+        })
+        const newCourse = new CourseEntity();
+        newCourse.name = dto.name
+        newCourse.level = dto.level
+        if(parent && dto.parentId){
+            newCourse.parent = parent
+        }
+        const save = await this.courseRepository.save(newCourse);
+        return save
     }
 
     findAll(): Promise<CourseEntity[]> {
@@ -24,7 +34,12 @@ export class CourseService {
         .leftJoinAndSelect('childrenLvl3.children', 'childrenLvl4')
         .leftJoinAndSelect('childrenLvl4.children', 'childrenLvl5')
         .where('course.level = 1')
-        .orderBy('course.id', 'ASC')
+        .orderBy('course.orden', 'ASC')
+        .addOrderBy('childrenLvl1.orden', 'ASC')
+        .addOrderBy('childrenLvl2.orden', 'ASC')
+        .addOrderBy('childrenLvl3.orden', 'ASC')
+        .addOrderBy('childrenLvl4.orden', 'ASC')
+        .addOrderBy('childrenLvl5.orden', 'ASC')
         .getMany()
     }
 
@@ -36,5 +51,17 @@ export class CourseService {
           }
 
         await this.courseRepository.remove(course)
+    }
+
+    async sortable(dto: CourseEntity[]): Promise<void> {
+        for (const course of dto) {
+          const existingCourse = await this.courseRepository.findOne({
+            where:{id:course.id}
+          });
+          if (existingCourse) {
+            existingCourse.orden = course.orden;
+            await this.courseRepository.save(existingCourse);
+          }
+        }
     }
 }
