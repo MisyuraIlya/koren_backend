@@ -12,6 +12,8 @@ import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
 import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
+import { convertTypeToEnum } from 'src/engine/convertTypeToEnum';
+import { fetchPropertiesValue, fetchSpecialTypes } from 'src/engine/fetchSpecialTypes';
 
 @Injectable()
 export class CronService {
@@ -202,6 +204,8 @@ export class CronService {
                             const createTask = new TaskEntity();
                             createTask.tab = createTab;
                             createTask.orden = index
+                            createTask.specialModuleType = fetchSpecialTypes(item)
+                            createTask.properties = fetchPropertiesValue(item)
                             const createdTask = await this.taskRepository.save(createTask)    
                             if(createdTask){
                                 const exercise = item.exercise
@@ -211,7 +215,7 @@ export class CronService {
                                         const createColumnTask = new ColumnTaskEntity();
                                         createColumnTask.title = col.title
                                         createColumnTask.orden = col.orden
-                                        createColumnTask.type = col.type
+                                        createColumnTask.type = convertTypeToEnum(col.type)
                                         createColumnTask.task = createdTask
                                         await this.columnTaskRepository.save(createColumnTask)
                                     })
@@ -299,6 +303,8 @@ export class CronService {
                         const createTask = new TaskEntity();
                         createTask.tab = createTab;
                         createTask.orden = index
+                        createTask.specialModuleType = fetchSpecialTypes(item)
+                        createTask.properties = fetchPropertiesValue(item)
                         const createdTask = await this.taskRepository.save(createTask)    
                         if(createdTask){
                             const exercise = item.exercise
@@ -308,7 +314,7 @@ export class CronService {
                                     const createColumnTask = new ColumnTaskEntity();
                                     createColumnTask.title = col.title
                                     createColumnTask.orden = col.orden
-                                    createColumnTask.type = col.type
+                                    createColumnTask.type = convertTypeToEnum(col.type)
                                     createColumnTask.task = createdTask
                                     await this.columnTaskRepository.save(createColumnTask)
                                 })
