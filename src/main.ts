@@ -13,6 +13,7 @@ async function bootstrap() {
   app.use('/files', express.static(join(__dirname, '..', 'files')))
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')))
   app.use('/images', express.static(join(__dirname, '..', 'images')))
+  app.use('/media', express.static(join(__dirname, '..', 'media')))
   app.use(express.json({limit: '50mb'}));
   app.use(express.urlencoded({limit: '50mb'}));
   

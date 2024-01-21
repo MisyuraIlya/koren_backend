@@ -3,6 +3,7 @@ import { CourseEntity } from './entities/course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Injectable()
 export class CourseService {
@@ -64,4 +65,32 @@ export class CourseService {
           }
         }
     }
+
+    async update(id: number, updateDto: UpdateCourseDto): Promise<CourseEntity> {
+        const course = await this.courseRepository.findOne({
+            where:{id:id}
+        });
+    
+        if (!course) {
+          throw new BadRequestException('Course not found');
+        }
+    
+        if (updateDto.name !== undefined) {
+          course.name = updateDto.name;
+        }
+    
+        if (updateDto.level !== undefined) {
+          course.level = updateDto.level;
+        }
+    
+        if (updateDto.orden !== undefined) {
+          course.orden = updateDto.orden;
+        }
+
+        if (updateDto.pdf !== undefined) {
+            course.pdf = updateDto.pdf;
+          }
+    
+        return this.courseRepository.save(course);
+      }
 }

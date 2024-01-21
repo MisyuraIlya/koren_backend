@@ -12,6 +12,7 @@ services:
       - ../uploads:/app/uploads 
       - ../files:/app/files
       - ../images:/app/images
+      - ../media:/app/media
     depends_on: 
       - db
       

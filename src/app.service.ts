@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  saveMedia(file: Express.Multer.File): {path: string} {
+    const obj = {
+      path: file.path,
+    }
+    return obj
   }
 }

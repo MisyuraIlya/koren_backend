@@ -1,14 +1,18 @@
-import { Controller, Get, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, Param, ParseFilePipe, MaxFileSizeValidator, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
 import { CronService } from './cron/cron.service';
 import Engine from './engine/module';
 import { Multer,diskStorage } from 'multer';
 import { extname } from 'path';
+import { fileStorage } from './storage';
 
 @Controller()
 export class AppController {
-  constructor(private readonly cronService: CronService) {}
+  constructor(
+    private readonly cronService: CronService,
+    private readonly appService: AppService
+    ) {}
 
   @Get('/fetchCourses')
   manualExecution() {
@@ -38,4 +42,18 @@ export class AppController {
   ParseXl(@UploadedFile() file: Express.Multer.File) {
     return new Engine(file).process();
   }
+
+  @Post('media')
+  @UseInterceptors(FileInterceptor('file', {storage: fileStorage}))
+  async mediaHandler(
+    @UploadedFile(new ParseFilePipe({validators: [new MaxFileSizeValidator({maxSize: 1024 * 1024 * 5})],})
+    ) file: Express.Multer.File,
+  ){
+    return this.appService.saveMedia(file)
+  }
+
+
+
+
+
 }
