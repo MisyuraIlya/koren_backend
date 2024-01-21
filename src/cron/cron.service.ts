@@ -150,113 +150,215 @@ export class CronService {
     async fetchExercises() {
         try {
             
-        for(let i = 1; i < 700; i++) {
-            const response: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${i}`);
+            const response: AxiosResponse<any> = await axios.get('http://3.74.228.194:4000/courses/arr');
             const data = response.data;
-            console.log('data',i,data)
             if(data){
-                if (Array.isArray(data)) {
-     
-                } else {
-                    const findCourse = await this.courseRepository.findOne({
-                        where:{name: data.course.name}
-                    })
-                    if(findCourse){
-                        const newExercise = new ExerciseEntity();
-                        newExercise.course = findCourse;
-                        newExercise.title = data.title
-                        newExercise.module = data.module
-                        newExercise.pdf = data.pdf
-                        newExercise.youtubeLink = data.youtube_link
-                        newExercise.description1 = data.description
-                        newExercise.description2 = data.description2
-                        const createdExercise = await this.exerciseRepository.save(newExercise);
-    
-                        if(createdExercise){
-                            const createTab = new TabEntity();
-                            createTab.exercise = createdExercise;
-                            createTab.orden = 0;
-                            createTab.title = null;
-                            const createdTab = await this.tabRepository.save(createTab);
-    
-                            if(createdTab) {
-                                data.exercises.map(async (item,index) => {
-                                    const createTask = new TaskEntity();
-                                    createTask.tab = createTab;
-                                    createTask.orden = index
-                                    const createdTask = await this.taskRepository.save(createTask)    
-                                    if(createdTask){
-                                        const exercise = item.exercise
-                                        const propertyName = `exercise${exercise}`;
-                                        item[propertyName].data.map(async (subItem) => {
-                                            subItem.collectionsCols.map(async (col) => {
-                                                const createColumnTask = new ColumnTaskEntity();
-                                                createColumnTask.title = col.title
-                                                createColumnTask.orden = col.orden
-                                                createColumnTask.type = col.type
-                                                createColumnTask.task = createdTask
-                                                await this.columnTaskRepository.save(createColumnTask)
-                                            })
-    
-                                            subItem.collectionsRows.map(async (row) => {
-                                                const createRowTask = new RowTaskEntity();
-                                                createRowTask.pdf = row.pdf
-                                                createRowTask.youtubeLink = row.youtube_link
-                                                createRowTask.orden = row.orden
-                                                createRowTask.task = createdTask
-                                                const createdRow = await this.rowTaskRepository.save(createRowTask)
-    
-                                                if(createdRow){
-                                                    row.collectionRow.map(async (objc) => {
-                                                        if(objc.module_type) {
-                                                            const createObjective = new ObjectiveEntity();
-                                                            createObjective.moduleType = objc.module_type
-                                                            createObjective.orden = objc.orden
-                                                            createObjective.isFullText = objc.isFullText
-                                                            createObjective.placeholder = objc.placeholder
-                                                            createObjective.rowTask = createdRow
-                                                            const createdObjective = await this.objectiveRepository.save(createObjective)
-                                                            if(createdObjective){
-                                                                objc.collectionAnswers.map(async (ans) => {
-                                                                    const createAnswer = new AnswerEntity();
-                                                                    createAnswer.value = ans.value
-                                                                    createAnswer.objective = createdObjective
-                                                                    await this.answerRepository.save(createAnswer)
-                                                                })
-                                                                objc.collectionValues.map(async (val) => {
-                                                                    const createValue = new ValueEntity();
-                                                                    createValue.value = val.value
-                                                                    createValue.objective = createdObjective
-                                                                    await this.valueRepository.save(createValue)
-                                                                })
-    
-                                                            }
-                                                        }
-                                                    })
-                                                }
-    
-                                            })
-                                            
-         
-    
-    
-                                        })
-                    
-                                    }  
-                                })
-                            }
+                data.map(async (course) => {
+                    try {
+                        const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.id}`);
+                        const exerciseData = exercise.data;
+                        console.log('exerciseData',course.id)
+                        if (Array.isArray(exerciseData)) {
+                            this.syncArrayOfObjects(exerciseData,course.id)
+                        } else {
+                            this.syncObjectExercise(exerciseData, course.id)
                         }
+                    } catch(e) {
+                        console.log('[ERROR EXERCISE]', e , course.id)
                     }
-                    
-                }
+                })
             }
-            await this.delay(2000);
-        }
-
         } catch (error) {
             console.error('Error fetching data:', error.message);
             throw error;
         } 
+    }
+
+    private async syncObjectExercise(exerciseData, courseId) {
+        if(exerciseData?.course?.name && exerciseData.module > 1) {
+            const findCourse = await this.courseRepository.findOne({
+                where:{name: exerciseData.course.name, level:5}
+            })
+            if(findCourse){
+                const newExercise = new ExerciseEntity();
+                newExercise.course = findCourse;
+                newExercise.title = exerciseData.title
+                newExercise.module = exerciseData.module
+                newExercise.pdf = exerciseData.pdf
+                newExercise.youtubeLink = exerciseData.youtube_link
+                newExercise.description1 = exerciseData.description
+                newExercise.description2 = exerciseData.description2
+                const createdExercise = await this.exerciseRepository.save(newExercise);
+
+                if(createdExercise){
+                    const createTab = new TabEntity();
+                    createTab.exercise = createdExercise;
+                    createTab.orden = 0;
+                    createTab.title = null;
+                    const createdTab = await this.tabRepository.save(createTab);
+
+                    if(createdTab) {
+                        exerciseData.exercises.map(async (item,index) => {
+                            const createTask = new TaskEntity();
+                            createTask.tab = createTab;
+                            createTask.orden = index
+                            const createdTask = await this.taskRepository.save(createTask)    
+                            if(createdTask){
+                                const exercise = item.exercise
+                                const propertyName = `exercise${exercise}`;
+                                item[propertyName].data.map(async (subItem) => {
+                                    subItem.collectionsCols.map(async (col) => {
+                                        const createColumnTask = new ColumnTaskEntity();
+                                        createColumnTask.title = col.title
+                                        createColumnTask.orden = col.orden
+                                        createColumnTask.type = col.type
+                                        createColumnTask.task = createdTask
+                                        await this.columnTaskRepository.save(createColumnTask)
+                                    })
+
+                                    subItem.collectionsRows.map(async (row) => {
+                                        const createRowTask = new RowTaskEntity();
+                                        createRowTask.pdf = row.pdf
+                                        createRowTask.youtubeLink = row.youtube_link
+                                        createRowTask.orden = row.orden
+                                        createRowTask.task = createdTask
+                                        const createdRow = await this.rowTaskRepository.save(createRowTask)
+
+                                        if(createdRow){
+                                            row.collectionRow.map(async (objc) => {
+                                                if(objc.module_type) {
+                                                    const createObjective = new ObjectiveEntity();
+                                                    createObjective.moduleType = objc.module_type
+                                                    createObjective.orden = objc.orden
+                                                    createObjective.isFullText = objc.isFullText
+                                                    createObjective.placeholder = objc.placeholder
+                                                    createObjective.rowTask = createdRow
+                                                    const createdObjective = await this.objectiveRepository.save(createObjective)
+                                                    if(createdObjective){
+                                                        objc.collectionAnswers.map(async (ans) => {
+                                                            const createAnswer = new AnswerEntity();
+                                                            createAnswer.value = ans.value
+                                                            createAnswer.objective = createdObjective
+                                                            await this.answerRepository.save(createAnswer)
+                                                        })
+                                                        objc.collectionValues.map(async (val) => {
+                                                            const createValue = new ValueEntity();
+                                                            createValue.value = val.value
+                                                            createValue.objective = createdObjective
+                                                            await this.valueRepository.save(createValue)
+                                                        })
+
+                                                    }
+                                                }
+                                            })
+                                        }
+
+                                    })
+                                    
+    
+
+
+                                })
+            
+                            }  
+                        })
+                    }
+                }
+            }
+        } else {
+            console.log('no exercises in',courseId)
+        }
+    }
+
+    private async syncArrayOfObjects(exerciseData, courseId) {
+
+        const findCourse = await this.courseRepository.findOne({
+            where:{name: exerciseData[0].course.name, level:5}
+        })
+
+        const newExercise = new ExerciseEntity();
+        newExercise.course = findCourse;
+        newExercise.title = exerciseData[0].title
+        newExercise.module = exerciseData[0].module
+        newExercise.pdf = exerciseData[0].pdf
+        newExercise.youtubeLink = exerciseData[0].youtube_link
+        newExercise.description1 = exerciseData[0].description
+        newExercise.description2 = exerciseData[0].description2
+        const createdExercise = await this.exerciseRepository.save(newExercise);
+
+        if(createdExercise){
+            exerciseData?.map(async (tab,index) => {
+                const createTab = new TabEntity();
+                createTab.exercise = createdExercise;
+                createTab.orden = tab.tabOrden;
+                createTab.title = tab.tab;
+                const createdTab = await this.tabRepository.save(createTab);
+
+                if(createdTab) {
+                    tab.exercises.map(async (item,index) => {
+                        const createTask = new TaskEntity();
+                        createTask.tab = createTab;
+                        createTask.orden = index
+                        const createdTask = await this.taskRepository.save(createTask)    
+                        if(createdTask){
+                            const exercise = item.exercise
+                            const propertyName = `exercise${exercise}`;
+                            item[propertyName].data.map(async (subItem) => {
+                                subItem.collectionsCols.map(async (col) => {
+                                    const createColumnTask = new ColumnTaskEntity();
+                                    createColumnTask.title = col.title
+                                    createColumnTask.orden = col.orden
+                                    createColumnTask.type = col.type
+                                    createColumnTask.task = createdTask
+                                    await this.columnTaskRepository.save(createColumnTask)
+                                })
+
+                                subItem.collectionsRows.map(async (row) => {
+                                    const createRowTask = new RowTaskEntity();
+                                    createRowTask.pdf = row.pdf
+                                    createRowTask.youtubeLink = row.youtube_link
+                                    createRowTask.orden = row.orden
+                                    createRowTask.task = createdTask
+                                    const createdRow = await this.rowTaskRepository.save(createRowTask)
+
+                                    if(createdRow){
+                                        row.collectionRow.map(async (objc) => {
+                                            if(objc.module_type) {
+                                                const createObjective = new ObjectiveEntity();
+                                                createObjective.moduleType = objc.module_type
+                                                createObjective.orden = objc.orden
+                                                createObjective.isFullText = objc.isFullText
+                                                createObjective.placeholder = objc.placeholder
+                                                createObjective.rowTask = createdRow
+                                                const createdObjective = await this.objectiveRepository.save(createObjective)
+                                                if(createdObjective){
+                                                    objc.collectionAnswers.map(async (ans) => {
+                                                        const createAnswer = new AnswerEntity();
+                                                        createAnswer.value = ans.value
+                                                        createAnswer.objective = createdObjective
+                                                        await this.answerRepository.save(createAnswer)
+                                                    })
+                                                    objc.collectionValues.map(async (val) => {
+                                                        const createValue = new ValueEntity();
+                                                        createValue.value = val.value
+                                                        createValue.objective = createdObjective
+                                                        await this.valueRepository.save(createValue)
+                                                    })
+
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            })
+        
+                        }  
+                    })
+                }
+            })
+        }
+
+
     }
 
     async delay(ms: number) {
