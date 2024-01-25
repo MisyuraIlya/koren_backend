@@ -3,6 +3,14 @@ import { Repository } from 'typeorm';
 import { ExerciseEntity } from './entities/exercise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
+import { CourseEntity } from 'src/course/entities/course.entity';
+import { TaskEntity } from 'src/task/entities/task.entity';
+import { TabEntity } from 'src/tab/entities/tab.entity';
+import { ColumnTaskEntity } from 'src/column_task/entities/columnTask.entity';
+import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
+import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
+import { AnswerEntity } from 'src/answer/entities/answer.entity';
+import { ValueEntity } from 'src/value/entities/value.entity';
 
 @Injectable()
 export class ExerciseService {
@@ -10,10 +18,110 @@ export class ExerciseService {
     constructor(
         @InjectRepository(ExerciseEntity)
         private readonly exerciseRepository: Repository<ExerciseEntity>,
+        @InjectRepository(CourseEntity)
+        private readonly courseRepository: Repository<CourseEntity>,
+        @InjectRepository(TabEntity)
+        private readonly tabRepository: Repository<TabEntity>,
+        @InjectRepository(TaskEntity)
+        private readonly taskRepository: Repository<TaskEntity>,
+        @InjectRepository(ColumnTaskEntity)
+        private readonly columnsTaskRepository: Repository<ColumnTaskEntity>,
+        @InjectRepository(RowTaskEntity)
+        private readonly rowsTaskRepository: Repository<RowTaskEntity>,
+        @InjectRepository(ObjectiveEntity)
+        private readonly objectiveRepository: Repository<ObjectiveEntity>,
+        @InjectRepository(AnswerEntity)
+        private readonly answerRepository: Repository<AnswerEntity>,
+        @InjectRepository(ValueEntity)
+        private readonly valueRepository: Repository<ValueEntity>,
     ){}
 
-    create(dto: CreateExerciseDto) {
-        return 'This action adds a new task';
+    async create(dto: CreateExerciseDto): Promise<ExerciseEntity>  {
+        const findCourse = await this.courseRepository.findOne({
+            where:{id:dto.courseId}
+        })
+
+        if(!findCourse) throw new BadRequestException('Course not found');
+        
+        const newExercise = new ExerciseEntity();
+        newExercise.course = findCourse;
+        newExercise.title = dto.title;
+        newExercise.description1 = dto.description1;
+        newExercise.description2 = dto.description2;
+        newExercise.module = dto.module;
+        newExercise.youtubeLink = dto.youtube_link;
+        newExercise.pdf = dto.pdf;
+        const createdExercise = await this.exerciseRepository.save(newExercise);
+        if(createdExercise){
+            dto.tabs.forEach(async (tab) => {
+                const newTab = new TabEntity();
+                newTab.title = tab.title;
+                newTab.orden = tab.orden;
+                newTab.exercise = createdExercise;
+                const createdTab = await this.tabRepository.save(newTab);
+                if(createdTab){
+                    tab.tasks.forEach(async (task) => {
+                        const newTask = new TaskEntity();
+                        newTask.orden = task.orden;
+                        newTask.specialModuleType = task.specialModuleType;
+                        newTask.properties = task.properties;
+                        newTask.tab = createdTab
+                        const createdTask = await this.taskRepository.save(newTask);
+                        if(createdTask){
+                            task.columns.forEach(async (column) => {
+                                const newColumn = new ColumnTaskEntity();
+                                newColumn.orden = column.orden;
+                                newColumn.title = column.title;
+                                newColumn.type = column.type;
+                                newColumn.task = createdTask;
+                                await this.columnsTaskRepository.save(newColumn);
+                            })
+
+                            task.rows.forEach(async (row) => {
+                                const newRow = new RowTaskEntity();
+                                newRow.orden = row.orden;
+                                newRow.youtubeLink = row.youtubeLink;
+                                newRow.pdf = row.pdf;
+                                newRow.task = createdTask;
+                                const createdRow = await this.rowsTaskRepository.save(newRow);
+
+                                if(createdRow) {
+                                    row.objectives.forEach(async (objective) => {
+                                        const newObjective = new ObjectiveEntity();
+                                        newObjective.orden = objective.orden;
+                                        newObjective.placeholder = objective.placeholder;
+                                        newObjective.moduleType = objective.moduleType;
+                                        newObjective.isFullText = objective.isFullText;
+                                        newObjective.rowTask = createdRow
+                                        const createdObjective = await this.objectiveRepository.save(newObjective);
+
+                                        if(createdObjective){
+                                            objective.answers.forEach(async (answer) => {
+                                                const newAnswer = new AnswerEntity();
+                                                newAnswer.objective = createdObjective
+                                                newAnswer.value = answer.value
+                                                await this.answerRepository.save(newAnswer)
+                                            })
+
+                                            objective.values.forEach(async (value) => {
+                                                const newValue = new ValueEntity();
+                                                newValue.objective = createdObjective
+                                                newValue.value = value.value
+                                                await this.valueRepository.save(newValue)
+                                            })
+
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+            return createdExercise;
+        } else {
+            throw new BadRequestException('cannot create exercise');
+        }
     }
 
     async findOne(id: number): Promise<ExerciseEntity> {

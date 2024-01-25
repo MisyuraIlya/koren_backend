@@ -9,6 +9,7 @@ class Engine {
     private description2: string 
     private workbook: any
     private currentWorksheet: any
+
     constructor(file: Express.Multer.File){
         this.workbook = xlsx.readFile(file.path);
         this.sheetNames = this.workbook.SheetNames
@@ -48,12 +49,6 @@ class Engine {
         const parseTaskWithObjectives = await this.parseTaskWithObjectives(GruopedOne);
         const replaceAnswersType = await this.replaceAnswersTypes(parseTaskWithObjectives)
         const deleteUneededObjective = await this.deleteLessObjective(replaceAnswersType)
-        // const parse = this.parseLogic(grouped)
-        // const fixedParser = this.fixParser(parse)
-        // const parseWithCollectionRows = this.parseWithCollectionRowsFunc(parse,worksheet)
-        // const collectionsRows = this.parseTheCollectionsRows(parseWithCollectionRows, worksheet)
-        // const deleteKeys = this.deleteUneededKeysFunc(parseWithCollectionRows)
-
         return deleteUneededObjective
     }
 
@@ -208,7 +203,6 @@ class Engine {
         return data
     }
 
-    
     /**
      * 
      * @param data array
@@ -315,24 +309,52 @@ class Engine {
         return result 
     }
 
- 
     private findProperties(task) {
-        let result = null;
+        let result = '';
+        let isFirst = true;
+
         task?.map((item) => {
             item?.objectives.map((item2) => {
                 if(item2.moduleType == EngineTypes.PROPERTIES) {
-                    result = item2.values[0].value
+                    result += item2.values[0].value
+                }
+                if(item2.moduleType == EngineTypes.PROPERTIES){
+                    if (!isFirst) {
+                        result += ';';
+                    }
+
+                    result += item2.values[0].value
+                }
+                if(item2.moduleType == EngineTypes.SPLITED_SCREEN_LEFT){
+                    if (!isFirst) {
+                        result += ';';
+                    }
+                    result += EngineTypes.SPLITED_SCREEN_LEFT + ':' + item2.values[0].value
+                }
+
+                if(item2.moduleType == EngineTypes.SPLITED_SCREEN_RIGHT){
+                    if (!isFirst) {
+                        result += ';';
+                    }
+        
+                    result += EngineTypes.SPLITED_SCREEN_RIGHT + ':' + item2.values[0].value
+                }
+
+                if(item2.moduleType == EngineTypes.IMAGE_RIGHT){
+                    if (!isFirst) {
+                        result += ';';
+                    }
+                    result += EngineTypes.IMAGE_RIGHT + ':' + item2.values[0].value
                 }
             })
         })
         return result 
     }
 
-
-
-
     private PrePareObjective(moduleType, data, orden){
-        
+        if (data && typeof data === 'string') {
+            data = data.trim();
+        }
         switch (moduleType) {
             case EngineTypes.TYPED_INPUT:
             case EngineTypes.INPUT:
@@ -448,12 +470,13 @@ class Engine {
             case EngineTypes.SUB_INSTRUCTION:
             case EngineTypes.TEXT:
             case EngineTypes.TEXT_CENTERED:
+                const sheetedData = this.findByTitleAndConvertToStyleSheet(data)
                 return {
                     moduleType: moduleType,
                     placeholder: null,
                     orden: orden,
                     isFullText: false,
-                    values: [{value: this.findByTitleAndConvertToStyleSheet(data)}],
+                    values: [{value: sheetedData}],
                     answers: [],
                 };
 
@@ -498,20 +521,18 @@ class Engine {
         
     } 
 
-    private async findByTitleAndConvertToStyleSheet(value) {
-        try { 
-          for (const key in this.currentWorksheet) {
+    private findByTitleAndConvertToStyleSheet(value) {
+
+        for (const key in this.currentWorksheet) {
             if (this.currentWorksheet.hasOwnProperty(key) && value) {
               const vValue = this.currentWorksheet[key]?.w;
               if (typeof vValue === 'string' && vValue.trim() == value.trim()) {
-        
-                return this.currentWorksheet[key].h;
-              }
+                return this.currentWorksheet[key].h
+              } 
             }
-          }
-        } catch {
-          return value
         }
+
+        return value
     }
 
     public async process(): Promise<any> {

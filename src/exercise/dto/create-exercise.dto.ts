@@ -1,30 +1,38 @@
-import { IsArray, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { CreateTabDto } from 'src/tab/dto/create-tab.dto';
 
 export class CreateExerciseDto {
-    id: number;
   
     @IsString()
-    title: string;
+    @IsOptional()
+    title: string | null;
   
     @IsString()
-    description: string;
+    @IsOptional()
+    description1: string | null;
   
     @IsString()
-    description2: string;
-  
+    @IsOptional()
+    description2: string | null;
   
     @IsNumber()
-    module: number;
+    @IsOptional()
+    module: number | null;
   
+    @IsString()
+    @IsOptional()
     youtube_link: string | null;
   
+    @IsString()
+    @IsOptional()
     pdf: string | null;
-  
-    xl: string;
   
     @IsNumber()
     courseId: number;
-    // collectionsCols: ExerciseColDTO[];
-    // collectionsRows: ExerciseRowDTO[];
+
+    @ValidateNested()
+    @Type(() => CreateTabDto)
+    tabs: CreateTabDto[];
   }
   
