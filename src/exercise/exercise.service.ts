@@ -147,7 +147,6 @@ export class ExerciseService {
 
     async remove(id: number): Promise<void> {
         const exercise = await this.exerciseRepository.findOneBy({id})
-
         if (!exercise) {
             throw new BadRequestException('Exercise not found');
           }
