@@ -11,6 +11,7 @@ import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
 import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
+import { UpdateExerciseDto } from './dto/update-exercise.dto';
 
 @Injectable()
 export class ExerciseService {
@@ -122,6 +123,24 @@ export class ExerciseService {
         } else {
             throw new BadRequestException('cannot create exercise');
         }
+    }
+
+    async update(id:number, dto: UpdateExerciseDto): Promise<ExerciseEntity> {
+        const findExercise = await this.exerciseRepository.findOne({
+            where:{id:id}
+        })
+
+        if(!findExercise) throw new BadRequestException('Course not found');
+
+        if (dto.pdf !== undefined) {
+            findExercise.pdf = dto.pdf;
+        }
+      
+        if (dto.youtubeLink !== undefined) {
+            findExercise.youtubeLink = dto.youtubeLink;
+        }
+
+        return this.exerciseRepository.save(findExercise);
     }
 
     async findOne(id: number): Promise<ExerciseEntity> {

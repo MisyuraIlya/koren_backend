@@ -1,7 +1,8 @@
 import { CreateExerciseDto } from './dto/create-exercise.dto';
+import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ExerciseEntity } from './entities/exercise.entity';
 import { ExerciseService } from './exercise.service';
-import { Controller, Get, Param,Post,Put,Delete,Body,UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param,Post,Put,Delete,Body,UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, UseGuards, Patch } from '@nestjs/common';
 
 @Controller('exercise')
 export class ExerciseController {
@@ -10,6 +11,11 @@ export class ExerciseController {
   @Post()
   create(@Body() createTaskDto: CreateExerciseDto) {
     return this.exerciseService.create(createTaskDto);
+  }
+  
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() updateExerciseDto: UpdateExerciseDto) {
+    return this.exerciseService.update(+id, updateExerciseDto);
   }
 
   @Get(':id')
