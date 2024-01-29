@@ -1,6 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { CreateTabDto } from 'src/tab/dto/create-tab.dto';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateExerciseDto {
   
