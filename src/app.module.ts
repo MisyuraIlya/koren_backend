@@ -25,6 +25,7 @@ import { AnswerEntity } from './answer/entities/answer.entity';
 import { ValueEntity } from './value/entities/value.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { PdfUtilitiesModule } from './pdf-utilities/pdf-utilities.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -56,7 +57,7 @@ import { UserModule } from './user/user.module';
     RowTaskModule, 
     ObjectiveModule, 
     AnswerModule, 
-    ValueModule, AuthModule, UserModule,
+    ValueModule, AuthModule, UserModule, PdfUtilitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],

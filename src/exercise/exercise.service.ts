@@ -147,6 +147,7 @@ export class ExerciseService {
         const exercise = await this.exerciseRepository
         .createQueryBuilder('exercise')
         .leftJoinAndSelect('exercise.course', 'course')
+        .leftJoinAndSelect('course.pdfUtilities', 'pdfUtilities')
         .leftJoinAndSelect('exercise.tabs', 'tabs')
         .leftJoinAndSelect('tabs.tasks', 'tasks')
         .leftJoinAndSelect('tasks.columns', 'columns')
@@ -156,6 +157,7 @@ export class ExerciseService {
         .leftJoinAndSelect('objectives.values', 'values')
         .where('course.id = :id', {id})
         .orderBy('tabs.orden', 'ASC')
+        .addOrderBy('pdfUtilities.orden', 'ASC')
         .addOrderBy('tasks.orden', 'ASC')
         .addOrderBy('columns.orden', 'ASC')
         .addOrderBy('rows.orden', 'ASC')
