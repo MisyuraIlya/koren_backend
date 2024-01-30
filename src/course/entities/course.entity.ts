@@ -41,6 +41,9 @@ export class CourseEntity {
   @Column({ nullable: true, name:'youtube_link' })
   youtubeLink: string;
 
+  @Column({ default: false, name:'is_not_in_the_book' })
+  isNotInTheBook: boolean;
+
   @OneToMany(() => ExerciseEntity, exercise => exercise.course, { cascade: ["remove"] })
   exercises: ExerciseEntity[];
 

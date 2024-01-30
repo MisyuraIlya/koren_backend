@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class UpdateCourseDto {
 
@@ -17,4 +17,8 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsNotEmpty()
   pdf?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isNotInTheBook?: boolean;
 }

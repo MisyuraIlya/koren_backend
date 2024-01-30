@@ -70,11 +70,11 @@ export class CourseService {
         const course = await this.courseRepository.findOne({
             where:{id:id}
         });
-    
+        console.log('id',id,updateDto.isNotInTheBook)
         if (!course) {
           throw new BadRequestException('Course not found');
         }
-    
+
         if (updateDto.name !== undefined) {
           course.name = updateDto.name;
         }
@@ -89,7 +89,11 @@ export class CourseService {
 
         if (updateDto.pdf !== undefined) {
             course.pdf = updateDto.pdf;
-          }
+        }
+
+        if (updateDto.isNotInTheBook !== undefined) {
+          course.isNotInTheBook = updateDto.isNotInTheBook;
+        }
     
         return this.courseRepository.save(course);
       }
