@@ -1,7 +1,7 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-
-@Entity({ name: 'users' })
-export class UsersEntity {
+import { Role } from "src/enums/role.enum";
+@Entity({ name: 'auth' })
+export class AuthEntity {
     @PrimaryGeneratedColumn()
     id: number; 
     
@@ -17,10 +17,16 @@ export class UsersEntity {
     @Column()
     lastName: string;
 
-    @Column()
-    role: string;
-
     @Column({default: true})
     isActive: boolean;
 
+    @Column({default: false})
+    isAdmin: boolean;
+    
+    @Column({
+        type: 'enum',
+        enum: Role,
+        default: Role.Student, 
+    })
+    role: Role;
 }
