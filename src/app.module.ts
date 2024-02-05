@@ -25,6 +25,8 @@ import { AnswerEntity } from './answer/entities/answer.entity';
 import { ValueEntity } from './value/entities/value.entity';
 import { AuthModule } from './auth/auth.module';
 import { PdfUtilitiesModule } from './pdf-utilities/pdf-utilities.module';
+import { StudentHistoryModule } from './student-history/student-history.module';
+import { StudentAnswerModule } from './student-answer/student-answer.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -58,7 +60,7 @@ import { PdfUtilitiesModule } from './pdf-utilities/pdf-utilities.module';
     AnswerModule, 
     ValueModule, 
     AuthModule, 
-    PdfUtilitiesModule,
+    PdfUtilitiesModule, StudentHistoryModule, StudentAnswerModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],
