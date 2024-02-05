@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { PdfUtilitiesEntity } from 'src/pdf-utilities/entities/pdf-utility.entity';
+import { StudentHistory } from 'src/student-history/entities/student-history.entity';
+
 @Entity({name: 'course'})
 export class CourseEntity {
   @PrimaryGeneratedColumn()
@@ -50,5 +52,8 @@ export class CourseEntity {
   
   @OneToMany(() => PdfUtilitiesEntity, pdfUtility => pdfUtility.course, { cascade: ["remove"] })
   pdfUtilities: PdfUtilitiesEntity[];
+
+  @OneToMany(() => StudentHistory, history => history.course, { cascade: ["remove"] })
+  histories: StudentHistory[];
 
 }

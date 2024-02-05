@@ -166,6 +166,38 @@ export class ExerciseService {
         return exercise;
     }
 
+    async findOneByStudent(id: number, studentId: number): Promise<ExerciseEntity> {
+        const query = this.exerciseRepository
+        .createQueryBuilder('exercise')
+        .leftJoinAndSelect('exercise.course', 'course')
+        .leftJoinAndSelect('course.pdfUtilities', 'pdfUtilities')
+        .leftJoinAndSelect('exercise.tabs', 'tabs')
+        .leftJoinAndSelect('tabs.tasks', 'tasks')
+        .leftJoinAndSelect('tasks.columns', 'columns')
+        .leftJoinAndSelect('tasks.rows', 'rows')
+        .leftJoinAndSelect('rows.objectives', 'objectives')
+        .leftJoinAndSelect('objectives.answers', 'answers')
+        .leftJoinAndSelect('objectives.values', 'values')
+        .orderBy('tabs.orden', 'ASC')
+        .addOrderBy('pdfUtilities.orden', 'ASC')
+        .addOrderBy('tasks.orden', 'ASC')
+        .addOrderBy('columns.orden', 'ASC')
+        .addOrderBy('rows.orden', 'ASC')
+        .addOrderBy('objectives.orden', 'ASC');
+
+    // Conditionally add the where clause for student answers
+    if (studentId) {
+        query.leftJoinAndSelect('answers.answers', 'studentAnswers', 'studentAnswers.student.id = :studentId', { studentId });
+        query.leftJoinAndSelect('exercise.histories', 'history', 'history.student.id = :studentId', { studentId });
+    }
+
+    const exercise = await query
+        .where('course.id = :id', { id })
+        .getOne();
+
+    return exercise;
+    }
+
     async remove(id: number): Promise<void> {
         const exercise = await this.exerciseRepository.findOneBy({id})
         if (!exercise) {

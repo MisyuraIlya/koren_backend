@@ -23,6 +23,12 @@ export class ExerciseController {
     return await this.exerciseService.findOne(id)
   }
 
+  @Get(':id/:studentId')
+  async ReadStudent(@Param('id') id: number, @Param('studentId') studentId: number): Promise<ExerciseEntity> {
+    return await this.exerciseService.findOneByStudent(id,studentId)
+  }
+
+
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return this.exerciseService.remove(+id);

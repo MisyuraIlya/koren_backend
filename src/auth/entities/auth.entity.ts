@@ -1,5 +1,7 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Role } from "src/enums/role.enum";
+import { StudentHistory } from "src/student-history/entities/student-history.entity";
+import { StudentAnswer } from "src/student-answer/entities/student-answer.entity";
 @Entity({ name: 'auth' })
 export class AuthEntity {
     @PrimaryGeneratedColumn()
@@ -29,4 +31,10 @@ export class AuthEntity {
         default: Role.Student, 
     })
     role: Role;
+
+    @OneToMany(() => StudentHistory, history => history.student, { cascade: ["remove"] })
+    histories: StudentHistory[];
+
+    @OneToMany(() => StudentAnswer, answer => answer.student, { cascade: ["remove"] })
+    answers: StudentAnswer[];
 }
