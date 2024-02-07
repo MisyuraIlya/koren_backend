@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateStudentHistoryDto } from './create-student-history.dto';
+import { IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateStudentHistoryDto extends PartialType(CreateStudentHistoryDto) {}
+export class UpdateStudentHistoryDto {
+    @IsOptional()
+    @IsBoolean()
+    isDone: boolean;
+}

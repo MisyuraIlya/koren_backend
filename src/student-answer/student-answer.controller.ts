@@ -7,9 +7,14 @@ import { UpdateStudentAnswerDto } from './dto/update-student-answer.dto';
 export class StudentAnswerController {
   constructor(private readonly studentAnswerService: StudentAnswerService) {}
 
-  @Post()
-  create(@Body() createStudentAnswerDto: CreateStudentAnswerDto) {
-    return this.studentAnswerService.create(createStudentAnswerDto);
+  @Post(':id/:studentId/:historyId')
+  handleAnswer(
+      @Param('id') id: string, 
+      @Param('studentId') studentId: string , 
+      @Param('historyId') historyId: string ,  
+      @Body() createStudentAnswerDto: CreateStudentAnswerDto
+    ) {
+    return this.studentAnswerService.handleAnswer(+id, +studentId, +historyId, createStudentAnswerDto);
   }
 
   @Get()
