@@ -12,7 +12,7 @@ export class StudentAnswer {
     @ManyToOne(() => StudentHistory, history => history.answers, {onDelete: "CASCADE"})
     history: StudentHistory;
 
-    @ManyToOne(() => AuthEntity, answer => answer.answers, {onDelete: "CASCADE"})
+    @ManyToOne(() => AuthEntity, answer => answer.studentsGroup, {onDelete: "CASCADE"})
     student: AuthEntity;
 
     @ManyToOne(() => AnswerEntity, history => history.answers, {onDelete: "CASCADE"})

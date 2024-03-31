@@ -4,3 +4,4 @@
 4. npm i argon2
 5. npm install @nestjs/config @nestjs/jwt
 6. npm install --save @nestjs/schedule
+7. nest generate resource

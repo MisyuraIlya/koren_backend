@@ -28,6 +28,9 @@ import { PdfUtilitiesModule } from './pdf-utilities/pdf-utilities.module';
 import { StudentHistoryModule } from './student-history/student-history.module';
 import { StudentAnswerModule } from './student-answer/student-answer.module';
 import { GradeModule } from './grade/grade.module';
+import { SchoolModule } from './school/school.module';
+import { GroupModule } from './group/group.module';
+import { ClassModule } from './class/class.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -61,7 +64,13 @@ import { GradeModule } from './grade/grade.module';
     AnswerModule, 
     ValueModule, 
     AuthModule, 
-    PdfUtilitiesModule, StudentHistoryModule, StudentAnswerModule, GradeModule,
+    PdfUtilitiesModule, 
+    StudentHistoryModule, 
+    StudentAnswerModule, 
+    GradeModule, 
+    SchoolModule, 
+    GroupModule, 
+    ClassModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],
