@@ -14,5 +14,6 @@ FROM base AS prod
 RUN npm install --frozen-lockfile --production
 COPY . .
 RUN npm add global @nestjs/cli
-RUN npm build
+RUN npm install @types/express --save-dev   
+RUN npm run build
 CMD ["npm", "start:prod"]
