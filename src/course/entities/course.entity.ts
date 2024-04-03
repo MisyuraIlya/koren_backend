@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { PdfUtilitiesEntity } from 'src/pdf-utilities/entities/pdf-utility.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
+import { Confirmation } from 'src/confirmation/entities/confirmation.entity';
 
 @Entity({name: 'course'})
 export class CourseEntity {
@@ -55,5 +56,8 @@ export class CourseEntity {
 
   @OneToMany(() => StudentHistory, history => history.course, { cascade: ["remove"] })
   histories: StudentHistory[];
+
+  @OneToMany(() => Confirmation, student => student.course, { cascade: ["remove"] })
+  confirmations: Confirmation[];
 
 }

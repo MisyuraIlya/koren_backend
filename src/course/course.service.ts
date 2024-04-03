@@ -26,22 +26,25 @@ export class CourseService {
         return save
     }
 
-    findAll(): Promise<CourseEntity[]> {
-        return this.courseRepository
-        .createQueryBuilder('course')
-        .leftJoinAndSelect('course.children', 'childrenLvl1')
-        .leftJoinAndSelect('childrenLvl1.children', 'childrenLvl2')
-        .leftJoinAndSelect('childrenLvl2.children', 'childrenLvl3')
-        .leftJoinAndSelect('childrenLvl3.children', 'childrenLvl4')
-        .leftJoinAndSelect('childrenLvl4.children', 'childrenLvl5')
-        .where('course.level = 1')
-        .orderBy('course.orden', 'ASC')
-        .addOrderBy('childrenLvl1.orden', 'ASC')
-        .addOrderBy('childrenLvl2.orden', 'ASC')
-        .addOrderBy('childrenLvl3.orden', 'ASC')
-        .addOrderBy('childrenLvl4.orden', 'ASC')
-        .addOrderBy('childrenLvl5.orden', 'ASC')
-        .getMany()
+    findAll(userId: string): Promise<CourseEntity[]> {
+      return this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.children', 'childrenLvl1')
+      .leftJoinAndSelect('childrenLvl1.children', 'childrenLvl2')
+      .leftJoinAndSelect('childrenLvl2.children', 'childrenLvl3')
+      .leftJoinAndSelect('childrenLvl3.children', 'childrenLvl4')
+      .leftJoinAndSelect('childrenLvl4.children', 'childrenLvl5')
+      .leftJoinAndSelect('childrenLvl3.confirmations', 'confirmation', 'confirmation.user.id = :userId')
+      .where('course.level = 1')
+      .setParameter('userId', userId)
+      .orderBy('course.orden', 'ASC')
+      .addOrderBy('childrenLvl1.orden', 'ASC')
+      .addOrderBy('childrenLvl2.orden', 'ASC')
+      .addOrderBy('childrenLvl3.orden', 'ASC')
+      .addOrderBy('childrenLvl4.orden', 'ASC')
+      .addOrderBy('childrenLvl5.orden', 'ASC')
+      .getMany();
+      
     }
 
     async remove(id: number) {

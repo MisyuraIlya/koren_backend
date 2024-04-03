@@ -13,9 +13,9 @@ export class CourseController {
     return this.courseService.create(createTaskDto);
   }
 
-  @Get()
-  findAll(): Promise<CourseEntity[]> {
-    return this.courseService.findAll();
+  @Get(':userId')
+  findAll(@Param('userId') userId: string): Promise<CourseEntity[]> {
+    return this.courseService.findAll(userId);
   }
 
   @Delete(':id')

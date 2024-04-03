@@ -31,6 +31,7 @@ import { GradeModule } from './grade/grade.module';
 import { SchoolModule } from './school/school.module';
 import { GroupModule } from './group/group.module';
 import { ClassModule } from './class/class.module';
+import { ConfirmationModule } from './confirmation/confirmation.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -70,7 +71,7 @@ import { ClassModule } from './class/class.module';
     GradeModule, 
     SchoolModule, 
     GroupModule, 
-    ClassModule,
+    ClassModule, ConfirmationModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],

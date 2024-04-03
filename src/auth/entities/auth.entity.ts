@@ -5,6 +5,8 @@ import { StudentAnswer } from "src/student-answer/entities/student-answer.entity
 import { Group } from "src/group/entities/group.entity";
 import { Class } from "src/class/entities/class.entity";
 import { School } from "src/school/entities/school.entity";
+import { Confirmation } from "src/confirmation/entities/confirmation.entity";
+
 @Entity({ name: 'auth' })
 export class AuthEntity {
     @PrimaryGeneratedColumn()
@@ -52,4 +54,8 @@ export class AuthEntity {
 
     @ManyToOne(() => School, school => school.users, {onDelete: "CASCADE"})
     school: School;
+
+    @OneToMany(() => Confirmation, student => student.user, { cascade: ["remove"] })
+    confirmations: Confirmation[];
+
 }
