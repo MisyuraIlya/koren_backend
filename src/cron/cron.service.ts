@@ -75,9 +75,9 @@ export class CronService {
                         courseLvl2.bgColor = lvl2.bgColor;
                         courseLvl2.parent = createdCourseLvl1
                         // course.image = element.image; // Fix this line
-                        if(courseLvl2.pdf){
+                        if(lvl2.pdf){
                             let replaced = lvl2.pdf.replace("images/", "media/pdf/");
-                            course.pdf = replaced;
+                            courseLvl2.pdf = replaced;
                         }
                         const createdCourseLvl2 = await this.courseRepository.save(courseLvl2);
                         
@@ -92,9 +92,9 @@ export class CronService {
                                 courseLvl3.bgColor = lvl3.bgColor;
                                 courseLvl3.parent = createdCourseLvl2
                                 // course.image = element.image; // Fix this line
-                                if(courseLvl3.pdf){
+                                if(lvl3.pdf){
                                     let replaced = lvl3.pdf.replace("images/", "media/pdf/");
-                                    course.pdf = replaced;
+                                    courseLvl3.pdf = replaced;
                                 }
                                 const createdCourseLvl3 = await this.courseRepository.save(courseLvl3);
                                 
@@ -109,9 +109,9 @@ export class CronService {
                                         courseLvl4.bgColor = lvl4.bgColor;
                                         courseLvl4.parent = createdCourseLvl3
                                         // course.image = element.image; // Fix this line
-                                        if(courseLvl4.pdf){
+                                        if(lvl4.pdf){
                                             let replaced = lvl4.pdf.replace("images/", "media/pdf/");
-                                            course.pdf = replaced;
+                                            courseLvl4.pdf = replaced;
                                         }
                                         const createdCourseLvl4 = await this.courseRepository.save(courseLvl4);
                                         
@@ -126,9 +126,9 @@ export class CronService {
                                                 courseLvl5.bgColor = lvl5.bgColor;
                                                 courseLvl5.parent = createdCourseLvl4
                                                 // course.image = element.image; // Fix this line
-                                                if(courseLvl5.pdf){
+                                                if(lvl5.pdf){
                                                     let replaced = lvl5.pdf.replace("images/", "media/pdf/");
-                                                    course.pdf = replaced;
+                                                    courseLvl5.pdf = replaced;
                                                 }
                                                 await this.courseRepository.save(courseLvl5);
                                             })
