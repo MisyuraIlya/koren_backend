@@ -16,4 +16,4 @@ COPY . .
 RUN npm add global @nestjs/cli
 RUN npm install @types/express --save-dev   
 RUN npm run build
-CMD ["npm", "start:prod"]
+CMD ["npm", "run", "start:prod"]

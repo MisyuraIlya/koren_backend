@@ -106,11 +106,15 @@ export class GroupService {
         where: { uuid: item.uuid },
         relations: ['student','teacher'],
       });
+  
+      const uniqueStudents = Array.from(new Set(students.map(student => student.student.id))).map(id => students.find(s => s.student.id === id));
+      const uniqueTeachers = Array.from(new Set(students.map(teacher => teacher.teacher.id))).map(id => students.find(t => t.teacher.id === id));
+  
       return {
         uuid: item.uuid,
         title: dataGroup.title ?? '',
-        students: students.map((student) => student.student),
-        teachers: students.map((teacher) => teacher.teacher)
+        students: uniqueStudents.map((student) => student.student),
+        teachers: uniqueTeachers.map((teacher) => teacher.teacher)
       };
     }));
   
