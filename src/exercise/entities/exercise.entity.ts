@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { CourseEntity } from 'src/course/entities/course.entity';
 import { TabEntity } from 'src/tab/entities/tab.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
+import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 
 @Entity({ name: 'exercise' })
 export class ExerciseEntity {
@@ -38,4 +39,6 @@ export class ExerciseEntity {
   @OneToMany(() => StudentHistory, history => history.exercise, { cascade: ["remove"] })
   histories: StudentHistory[];
 
+  @OneToMany(() => ExerciseGroupConnection, connection => connection.exercise, { cascade: ["remove"] })
+  connections: ExerciseGroupConnection[];
 }

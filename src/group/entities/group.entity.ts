@@ -1,6 +1,7 @@
 import { AuthEntity } from "src/auth/entities/auth.entity";
 import { Class } from "src/class/entities/class.entity";
 import { GroupPrivilageEnum, GroupTypeEnum } from "src/enums/gourpType.enum";
+import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,4 +39,5 @@ export class Group {
         default: GroupPrivilageEnum.Second, 
     })
     privilage: GroupPrivilageEnum;
+
 }

@@ -6,6 +6,9 @@ import { Group } from "src/group/entities/group.entity";
 import { Class } from "src/class/entities/class.entity";
 import { School } from "src/school/entities/school.entity";
 import { Confirmation } from "src/confirmation/entities/confirmation.entity";
+import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
+import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
+// import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
@@ -57,5 +60,11 @@ export class AuthEntity {
 
     @OneToMany(() => Confirmation, student => student.user, { cascade: ["remove"] })
     confirmations: Confirmation[];
+
+    @OneToMany(() => ExerciseGroupConnection, connection => connection.teacher, { cascade: ["remove"] })
+    teacherConnections: ExerciseGroupConnection[];
+
+    @OneToMany(() => ExerciseUserConnection, connection => connection.student, { cascade: ["remove"] })
+    studentConnections: ExerciseUserConnection[];
 
 }

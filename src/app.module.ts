@@ -32,6 +32,10 @@ import { SchoolModule } from './school/school.module';
 import { GroupModule } from './group/group.module';
 import { ClassModule } from './class/class.module';
 import { ConfirmationModule } from './confirmation/confirmation.module';
+import { SemesterModule } from './semester/semester.module';
+import { ExerciseTypeModule } from './exercise-type/exercise-type.module';
+import { ExerciseGroupConnectionModule } from './exercise-group-connection/exercise-group-connection.module';
+import { ExerciseUserConnectionModule } from './exercise-user-connection/exercise-user-connection.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -71,7 +75,12 @@ import { ConfirmationModule } from './confirmation/confirmation.module';
     GradeModule, 
     SchoolModule, 
     GroupModule, 
-    ClassModule, ConfirmationModule,
+    ClassModule, 
+    ConfirmationModule, 
+    SemesterModule, 
+    ExerciseTypeModule, 
+    ExerciseGroupConnectionModule, 
+    ExerciseUserConnectionModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],
