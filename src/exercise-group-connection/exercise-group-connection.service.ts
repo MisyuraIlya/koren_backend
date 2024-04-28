@@ -11,6 +11,7 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { Semester } from 'src/semester/entities/semester.entity';
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
+import { CreateExerciseGroupAnswerDto } from './dto/create-exercise-group-answer.dto';
 
 @Injectable()
 export class ExerciseGroupConnectionService {
@@ -53,9 +54,9 @@ export class ExerciseGroupConnectionService {
     const semester = await this.semesterRepository.findOne({
       where:{active:true}
     })
-
+    
     const exerciseGroupConnection = await this.exerciseGroupConnectionRepository.findOne({
-      where:{group: dto.groupUuid, exerciseType: exerciseType, teacher: teacher, fromDate: dto.fromDate, toDate:dto.toDate, semester: semester, exercise: exercise}
+      where:{group: dto.groupUuid, teacher: teacher, fromDate: dto.fromDate, toDate:dto.toDate, semester: semester, exercise: exercise}
     })
     if(!exerciseGroupConnection){
       const exerciseGroupConnection = new ExerciseGroupConnection();
@@ -69,6 +70,7 @@ export class ExerciseGroupConnectionService {
       exerciseGroupConnection.fromDate = new Date(dto.fromDate)
       exerciseGroupConnection.toDate = new Date(dto.toDate)
       exerciseGroupConnection.time = dto.time
+      exerciseGroupConnection.answerType = null
       const res = await this.exerciseGroupConnectionRepository.save(exerciseGroupConnection)
       dto?.students?.map(async (student) => {
         const findStudent = await this.authRepository.findOne({
@@ -82,6 +84,8 @@ export class ExerciseGroupConnectionService {
               const findUserConnection = new ExerciseUserConnection();
               findUserConnection.student = findStudent
               findUserConnection.connection = exerciseGroupConnection
+              findUserConnection.dueDate = null
+              findUserConnection.isOpenAnswer = false
               await this.exerciseUserConnectionRepository.save(findUserConnection)
           }
         }
@@ -89,6 +93,35 @@ export class ExerciseGroupConnectionService {
       return res
     }
     return exerciseGroupConnection
+  }
+
+  async createAnswer(answerConnectionId:string, dto:CreateExerciseGroupAnswerDto){
+    const findConnection = await this.exerciseGroupConnectionRepository.findOne({
+      where:{id:+answerConnectionId},
+    })
+    if(!findConnection) throw new BadRequestException('group connecion not found');
+    findConnection.answerType = dto.answerType
+    if(dto?.dueDate && dto?.time){
+      findConnection.answerDate = dto?.dueDate
+      findConnection.answerTime = dto?.time
+    }
+    this.exerciseGroupConnectionRepository.save(findConnection)
+    dto.students?.map(async (student) => {
+      const find = await this.exerciseUserConnectionRepository.findOne({
+        where:{student:student,connection:findConnection}
+      })
+      if(find){
+        if(dto?.dueDate && dto?.time){
+          find.dueDate = dto.dueDate
+          find.answerTime = dto?.time
+          find.isOpenAnswer = false
+        } else {
+          find.isOpenAnswer = true
+        }
+        await this.exerciseUserConnectionRepository.save(find)
+      }
+    })
+
   }
 
   findAll() {
@@ -134,4 +167,26 @@ export class ExerciseGroupConnectionService {
   async remove(id: number) {
     return await this.exerciseGroupConnectionRepository.delete(id);
   }
+
+  async removeAnswerGroup(id: number) {
+    const find = await this.exerciseGroupConnectionRepository.findOne({
+        where: { id: id },
+        relations: ['students']
+    });
+
+    if (find) {
+        find.answerDate = null;
+        find.answerTime = null;
+        find.answerType = null;
+        for (const student of find.students) {
+            student.dueDate = null;
+            student.answerTime = null;
+            student.isOpenAnswer = false;
+            await this.exerciseUserConnectionRepository.save(student);
+        }
+        await this.exerciseGroupConnectionRepository.save(find);
+    }
+}
+
+  
 }

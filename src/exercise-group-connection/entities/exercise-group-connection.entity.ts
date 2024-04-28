@@ -43,4 +43,13 @@ export class ExerciseGroupConnection {
 
     @OneToMany(() => ExerciseUserConnection, students => students.connection, { cascade: ["remove"] })
     students: ExerciseUserConnection[];
+
+    @Column({nullable:true})
+    answerType: string
+
+    @Column({ type: 'date', name:'answer_date', nullable:true })
+    answerDate: Date;
+
+    @Column({nullable: true})
+    answerTime: string;
 }

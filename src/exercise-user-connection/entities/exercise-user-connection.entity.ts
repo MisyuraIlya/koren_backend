@@ -1,6 +1,6 @@
 import { AuthEntity } from "src/auth/entities/auth.entity";
 import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
-import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'exercise_user_connection'})
 export class ExerciseUserConnection {
@@ -13,4 +13,13 @@ export class ExerciseUserConnection {
 
     @ManyToOne(() => AuthEntity, user => user.studentConnections, {onDelete: "CASCADE"})
     student: AuthEntity;
+
+    @Column({ type: 'date', name:'due_date', nullable:true })
+    dueDate: Date;
+
+    @Column({nullable: true})
+    answerTime: string;
+
+    @Column({name:'is_open_answer'})
+    isOpenAnswer: boolean
 }

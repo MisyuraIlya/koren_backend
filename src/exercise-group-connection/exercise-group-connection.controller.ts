@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ExerciseGroupConnectionService } from './exercise-group-connection.service';
 import { CreateExerciseGroupConnectionDto } from './dto/create-exercise-group-connection.dto';
 import { UpdateExerciseGroupConnectionDto } from './dto/update-exercise-group-connection.dto';
+import { CreateExerciseGroupAnswerDto } from './dto/create-exercise-group-answer.dto';
 
 @Controller('exercise-group-connection')
 export class ExerciseGroupConnectionController {
@@ -11,6 +12,12 @@ export class ExerciseGroupConnectionController {
   create(@Body() createExerciseGroupConnectionDto: CreateExerciseGroupConnectionDto) {
     return this.exerciseGroupConnectionService.create(createExerciseGroupConnectionDto);
   }
+
+  @Post('/answer/:id')
+  createAnswer(@Param('id') id: string, @Body() dto: CreateExerciseGroupAnswerDto) {
+    return this.exerciseGroupConnectionService.createAnswer(id,dto);
+  }
+
 
   @Get()
   findAll() {
@@ -40,5 +47,10 @@ export class ExerciseGroupConnectionController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.exerciseGroupConnectionService.remove(+id);
+  }
+
+  @Delete('/answer/:id')
+  removeAnswerGroup(@Param('id') id: string) {
+    return this.exerciseGroupConnectionService.removeAnswerGroup(+id);
   }
 }
