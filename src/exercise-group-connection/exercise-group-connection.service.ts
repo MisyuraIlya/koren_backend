@@ -32,68 +32,69 @@ export class ExerciseGroupConnectionService {
     private readonly exerciseUserConnectionRepository: Repository<ExerciseUserConnection>,
   ){}
   async create(dto: CreateExerciseGroupConnectionDto) {
-
     const teacher = await this.authRepository.findOne({
-      where:{id:+dto.teacherId}
-    })
+        where: { id: +dto.teacherId }
+    });
+    if (!teacher) throw new BadRequestException('Teacher not found');
 
-    if(!teacher) throw new BadRequestException('teacher not found');
-    
     const exercise = await this.exerciseRepository.findOne({
-      where:{id:+dto.exerciseId}
-    })
-
-    if(!exercise) throw new BadRequestException('teacher not found');
+        where: { id: +dto.exerciseId }
+    });
+    if (!exercise) throw new BadRequestException('Exercise not found');
 
     const exerciseType = await this.exerciseTypeRepository.findOne({
-      where:{title:dto.exerciseTypeId}
-    })
-
-    if(!exerciseType) throw new BadRequestException('exerciseType not found');
+        where: { title: dto.exerciseTypeId }
+    });
+    if (!exerciseType) throw new BadRequestException('ExerciseType not found');
 
     const semester = await this.semesterRepository.findOne({
-      where:{active:true}
-    })
-    
-    const exerciseGroupConnection = await this.exerciseGroupConnectionRepository.findOne({
-      where:{group: dto.groupUuid, teacher: teacher, fromDate: dto.fromDate, toDate:dto.toDate, semester: semester, exercise: exercise}
-    })
-    if(!exerciseGroupConnection){
-      const exerciseGroupConnection = new ExerciseGroupConnection();
-      exerciseGroupConnection.createdAt = new Date()
-      exerciseGroupConnection.updatedAt = new Date()
-      exerciseGroupConnection.exerciseType = exerciseType
-      exerciseGroupConnection.exercise = exercise
-      exerciseGroupConnection.group = dto.groupUuid
-      exerciseGroupConnection.teacher = teacher
-      exerciseGroupConnection.semester = semester
-      exerciseGroupConnection.fromDate = new Date(dto.fromDate)
-      exerciseGroupConnection.toDate = new Date(dto.toDate)
-      exerciseGroupConnection.time = dto.time
-      exerciseGroupConnection.answerType = null
-      const res = await this.exerciseGroupConnectionRepository.save(exerciseGroupConnection)
-      dto?.students?.map(async (student) => {
-        const findStudent = await this.authRepository.findOne({
-          where:{id:student.id}
-        })
-        if(findStudent){
-          const findUserConnection = await this.exerciseUserConnectionRepository.findOne({
-            where:{student: findStudent, connection:exerciseGroupConnection}
-          })
-          if(!findUserConnection){
-              const findUserConnection = new ExerciseUserConnection();
-              findUserConnection.student = findStudent
-              findUserConnection.connection = exerciseGroupConnection
-              findUserConnection.dueDate = null
-              findUserConnection.isOpenAnswer = false
-              await this.exerciseUserConnectionRepository.save(findUserConnection)
-          }
-        }
-      })
-      return res
+        where: { active: true }
+    });
+    if (!semester) throw new BadRequestException('Active semester not found');
+
+    let exerciseGroupConnection = await this.exerciseGroupConnectionRepository.findOne({
+        where: { group: dto.groupUuid, teacher: teacher, semester: semester, exercise: exercise }
+    });
+
+    if (!exerciseGroupConnection) {
+        exerciseGroupConnection = new ExerciseGroupConnection();
+        exerciseGroupConnection.group = dto.groupUuid;
+        exerciseGroupConnection.teacher = teacher;
+        exerciseGroupConnection.exercise = exercise;
+        exerciseGroupConnection.semester = semester;
+        exerciseGroupConnection.createdAt = new Date();
     }
-    return exerciseGroupConnection
-  }
+
+    exerciseGroupConnection.updatedAt = new Date();
+    exerciseGroupConnection.exerciseType = exerciseType;
+    exerciseGroupConnection.fromDate = new Date(dto.fromDate);
+    exerciseGroupConnection.toDate = new Date(dto.toDate);
+    exerciseGroupConnection.time = dto.time;
+    exerciseGroupConnection.answerType = null;
+
+    const res = await this.exerciseGroupConnectionRepository.save(exerciseGroupConnection);
+
+    await Promise.all(dto.students.map(async (student) => {
+        const findStudent = await this.authRepository.findOne({
+            where: { id: student.id }
+        });
+        if (findStudent) {
+            const findUserConnection = await this.exerciseUserConnectionRepository.findOne({
+                where: { student: findStudent, connection: exerciseGroupConnection }
+            });
+            if (!findUserConnection) {
+                const newUserConnection = new ExerciseUserConnection();
+                newUserConnection.student = findStudent;
+                newUserConnection.connection = exerciseGroupConnection;
+                newUserConnection.dueDate = null;
+                newUserConnection.isOpenAnswer = false;
+                await this.exerciseUserConnectionRepository.save(newUserConnection);
+            }
+        }
+    }));
+
+    return res;
+}
 
   async createAnswer(answerConnectionId:string, dto:CreateExerciseGroupAnswerDto){
     const findConnection = await this.exerciseGroupConnectionRepository.findOne({
@@ -105,11 +106,12 @@ export class ExerciseGroupConnectionService {
       findConnection.answerDate = dto?.dueDate
       findConnection.answerTime = dto?.time
     }
-    this.exerciseGroupConnectionRepository.save(findConnection)
+    await this.exerciseGroupConnectionRepository.save(findConnection)
     dto.students?.map(async (student) => {
       const find = await this.exerciseUserConnectionRepository.findOne({
         where:{student:student,connection:findConnection}
       })
+      console.log('find',find)
       if(find){
         if(dto?.dueDate && dto?.time){
           find.dueDate = dto.dueDate
@@ -121,7 +123,7 @@ export class ExerciseGroupConnectionService {
         await this.exerciseUserConnectionRepository.save(find)
       }
     })
-
+    return {status:"success",message:"data created"}
   }
 
   findAll() {
@@ -186,7 +188,8 @@ export class ExerciseGroupConnectionService {
         }
         await this.exerciseGroupConnectionRepository.save(find);
     }
-}
+    return {status:"success",message:"data deleted"}
+  }
 
   
 }
