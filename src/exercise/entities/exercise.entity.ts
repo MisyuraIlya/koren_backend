@@ -41,4 +41,6 @@ export class ExerciseEntity {
 
   @OneToMany(() => ExerciseGroupConnection, connection => connection.exercise, { cascade: ["remove"] })
   connections: ExerciseGroupConnection[];
+
+  fullPath: string
 }

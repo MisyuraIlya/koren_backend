@@ -52,4 +52,5 @@ export class ExerciseGroupConnection {
 
     @Column({nullable: true})
     answerTime: string;
+    
 }

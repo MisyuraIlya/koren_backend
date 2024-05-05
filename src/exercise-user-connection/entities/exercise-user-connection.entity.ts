@@ -22,4 +22,7 @@ export class ExerciseUserConnection {
 
     @Column({name:'is_open_answer'})
     isOpenAnswer: boolean
+
+    @Column({default: false, name:'is_done'})
+    isDone: boolean;
 }

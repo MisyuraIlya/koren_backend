@@ -206,4 +206,6 @@ export class ExerciseService {
 
         await this.exerciseRepository.remove(exercise)
     }
+
+
 }

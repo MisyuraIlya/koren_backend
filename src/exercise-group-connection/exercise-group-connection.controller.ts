@@ -39,6 +39,13 @@ export class ExerciseGroupConnectionController {
     );
   }
 
+  @Get('/teacher/:teacherId')
+  findTeacherGroups(
+    @Param('teacherId') teacherId: string,
+  ) {
+    return this.exerciseGroupConnectionService.findAllTeacherGroups(teacherId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateExerciseGroupConnectionDto: UpdateExerciseGroupConnectionDto) {
     return this.exerciseGroupConnectionService.update(+id, updateExerciseGroupConnectionDto);

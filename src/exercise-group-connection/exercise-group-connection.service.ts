@@ -12,6 +12,7 @@ import { Semester } from 'src/semester/entities/semester.entity';
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
 import { CreateExerciseGroupAnswerDto } from './dto/create-exercise-group-answer.dto';
+import { ExerciseService } from 'src/exercise/exercise.service';
 
 @Injectable()
 export class ExerciseGroupConnectionService {
@@ -162,6 +163,28 @@ export class ExerciseGroupConnectionService {
     return res;
   }
 
+  async findAllTeacherGroups(teacherId: string){
+    const teacher = await this.authRepository.findOne({
+      where:{id: +teacherId}
+    })
+
+    if(!teacher)  throw new BadRequestException('teacher not found');
+
+    const results = await this.exerciseGroupConnectionRepository.find({
+      where:{teacher: teacher},
+      relations:['students','exercise','exerciseType', 'students.student']
+    })
+    
+    const promises = results.map(async (item) => {
+      item.exercise.fullPath = await this.findFullPathExercise(item?.exercise?.id);
+      return item;
+    });
+
+    const updatedResults = await Promise.all(promises);
+
+    return updatedResults;
+  }
+
   update(id: number, updateExerciseGroupConnectionDto: UpdateExerciseGroupConnectionDto) {
     return `This action updates a #${id} exerciseGroupConnection`;
   }
@@ -191,5 +214,19 @@ export class ExerciseGroupConnectionService {
     return {status:"success",message:"data deleted"}
   }
 
+
+  private async findFullPathExercise(id: number) {
+    const exercise = await this.exerciseRepository
+    .createQueryBuilder('exercise')
+    .leftJoinAndSelect('exercise.course', 'course')
+    .leftJoinAndSelect('course.parent', 'parent')
+    .leftJoinAndSelect('parent.parent', 'grandparent')
+    .leftJoinAndSelect('grandparent.parent', 'gradgrandparent')
+    .leftJoinAndSelect('gradgrandparent.parent', 'grandgradgrandparent')
+    .where('exercise.id = :id', { id })
+    .getOne(); 
+    return `${exercise?.course?.parent?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.name} / ${exercise?.course?.parent?.name} / ${exercise?.course?.name} / ${exercise?.title}`
+    
+  }
   
 }

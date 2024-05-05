@@ -9,6 +9,7 @@ import { ExerciseType } from 'src/exercise-type/entities/exercise-type.entity';
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { Semester } from 'src/semester/entities/semester.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
+import { ExerciseService } from 'src/exercise/exercise.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ExerciseGroupConnection,AuthEntity,Group,ExerciseType, Semester ,ExerciseEntity,ExerciseUserConnection])],
