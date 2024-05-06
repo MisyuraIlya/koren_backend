@@ -176,7 +176,8 @@ export class ExerciseGroupConnectionService {
     })
     
     const promises = results.map(async (item) => {
-      item.exercise.fullPath = await this.findFullPathExercise(item?.exercise?.id);
+      item.exercise.fullPath = (await this.findFullPathExercise(item?.exercise?.id)).name;
+      item.exercise.fullLink = (await this.findFullPathExercise(item?.exercise?.id)).link;
       return item;
     });
 
@@ -225,7 +226,10 @@ export class ExerciseGroupConnectionService {
     .leftJoinAndSelect('gradgrandparent.parent', 'grandgradgrandparent')
     .where('exercise.id = :id', { id })
     .getOne(); 
-    return `${exercise?.course?.parent?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.name} / ${exercise?.course?.parent?.name} / ${exercise?.course?.name} / ${exercise?.title}`
+    return {
+      name:`${exercise?.course?.parent?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.name} / ${exercise?.course?.parent?.name} / ${exercise?.course?.name} / ${exercise?.title}`,
+      link:`/teacher/exercise/${exercise?.course?.parent?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.id}/${exercise?.course?.parent?.id}/${exercise?.course?.id}`
+    }
     
   }
   

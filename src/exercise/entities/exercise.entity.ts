@@ -43,4 +43,5 @@ export class ExerciseEntity {
   connections: ExerciseGroupConnection[];
 
   fullPath: string
+  fullLink: string
 }
