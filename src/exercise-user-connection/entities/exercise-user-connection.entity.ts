@@ -25,4 +25,8 @@ export class ExerciseUserConnection {
 
     @Column({default: false, name:'is_done'})
     isDone: boolean;
+
+    @Column({default: false, name:'is_resend'})
+    isResend: boolean;
+
 }
