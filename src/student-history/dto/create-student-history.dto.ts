@@ -1,1 +1,4 @@
-export class CreateStudentHistoryDto {}
+export class CreateStudentHistoryDto {
+    studentId: string
+    exerciseId: string
+}

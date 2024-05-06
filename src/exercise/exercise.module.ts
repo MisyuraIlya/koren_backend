@@ -11,9 +11,10 @@ import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
 import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
+import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExerciseEntity,CourseEntity, TabEntity, TaskEntity, ColumnTaskEntity, RowTaskEntity, ObjectiveEntity, AnswerEntity, ValueEntity])],
+  imports: [TypeOrmModule.forFeature([ExerciseEntity,CourseEntity, TabEntity, TaskEntity, ColumnTaskEntity, RowTaskEntity, ObjectiveEntity, AnswerEntity, ValueEntity,ExerciseGroupConnection])],
   controllers: [ExerciseController],
   providers: [ExerciseService],
 })

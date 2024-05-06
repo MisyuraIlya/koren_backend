@@ -12,6 +12,7 @@ import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
+import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 
 @Injectable()
 export class ExerciseService {
@@ -35,6 +36,8 @@ export class ExerciseService {
         private readonly answerRepository: Repository<AnswerEntity>,
         @InjectRepository(ValueEntity)
         private readonly valueRepository: Repository<ValueEntity>,
+        @InjectRepository(ExerciseGroupConnection)
+        private readonly exerciseGroupConnectionRepository: Repository<ExerciseGroupConnection>,
     ){}
 
     async create(dto: CreateExerciseDto): Promise<ExerciseEntity>  {
@@ -166,7 +169,7 @@ export class ExerciseService {
         return exercise;
     }
 
-    async findOneByStudent(id: number, studentId: number): Promise<ExerciseEntity> {
+    async findOneByStudent(id: number, studentId: number) {
         const query = this.exerciseRepository
         .createQueryBuilder('exercise')
         .leftJoinAndSelect('exercise.course', 'course')
@@ -185,7 +188,6 @@ export class ExerciseService {
         .addOrderBy('rows.orden', 'ASC')
         .addOrderBy('objectives.orden', 'ASC');
 
-    // Conditionally add the where clause for student answers
     if (studentId) {
         query.leftJoinAndSelect('answers.answers', 'studentAnswers', 'studentAnswers.student.id = :studentId', { studentId });
         query.leftJoinAndSelect('exercise.histories', 'history', 'history.student.id = :studentId', { studentId });
@@ -194,8 +196,17 @@ export class ExerciseService {
     const exercise = await query
         .where('course.id = :id', { id })
         .getOne();
+    
+    const exerciseId = exercise.id
 
-    return exercise;
+    const connection = await this.exerciseGroupConnectionRepository
+    .createQueryBuilder("egc")
+    .leftJoinAndSelect("egc.students", "euc")
+    .where("egc.exercise.id = :exerciseId", { exerciseId })
+    .andWhere("euc.student.id = :studentId", { studentId })
+    .getOne();
+
+    return {...exercise, group: connection, userGroup: connection?.students?.[0]};
     }
 
     async remove(id: number): Promise<void> {
