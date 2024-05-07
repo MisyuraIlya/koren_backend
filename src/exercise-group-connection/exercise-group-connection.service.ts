@@ -157,7 +157,7 @@ export class ExerciseGroupConnectionService {
 
 
     const res = await this.exerciseGroupConnectionRepository.findOne({
-      where:{exercise: exercise, exerciseType: findExerciseType, teacher: teacher, group: groupUuid }
+      where:{exercise: exercise, exerciseType: findExerciseType, teacher: teacher, group: groupUuid },
     });
 
     return res;

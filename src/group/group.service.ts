@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { Group } from './entities/group.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 
 @Injectable()
 export class GroupService {
@@ -21,6 +22,8 @@ export class GroupService {
     private readonly classRepository: Repository<Class>,
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
+    @InjectRepository(ExerciseGroupConnection)
+    private readonly exerciseGroupConnectionRepository: Repository<ExerciseGroupConnection>,
   ){}
 
 
@@ -106,6 +109,10 @@ export class GroupService {
         where: { uuid: item.uuid },
         relations: ['student','teacher'],
       });
+      const findConnectionGroup = await this.exerciseGroupConnectionRepository.findOne({
+        where:{group: item.uuid},
+        relations:['exerciseType']
+      })
   
       const uniqueStudents = Array.from(new Set(students.map(student => student.student.id))).map(id => students.find(s => s.student.id === id));
       const uniqueTeachers = Array.from(new Set(students.map(teacher => teacher.teacher.id))).map(id => students.find(t => t.teacher.id === id));
@@ -114,7 +121,8 @@ export class GroupService {
         uuid: item.uuid,
         title: dataGroup.title ?? '',
         students: uniqueStudents.map((student) => student.student),
-        teachers: uniqueTeachers.map((teacher) => teacher.teacher)
+        teachers: uniqueTeachers.map((teacher) => teacher.teacher),
+        connection:findConnectionGroup ?? {}
       };
     }));
   
