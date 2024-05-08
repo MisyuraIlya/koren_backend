@@ -202,6 +202,7 @@ export class ExerciseService {
     const connection = await this.exerciseGroupConnectionRepository
     .createQueryBuilder("egc")
     .leftJoinAndSelect("egc.students", "euc")
+    .leftJoinAndSelect('egc.exerciseType',"exerciseType")
     .where("egc.exercise.id = :exerciseId", { exerciseId })
     .andWhere("euc.student.id = :studentId", { studentId })
     .getOne();
