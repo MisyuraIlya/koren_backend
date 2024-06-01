@@ -1,6 +1,7 @@
 import { AuthEntity } from "src/auth/entities/auth.entity";
 import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { FeedBackUser } from "src/feed-back-user/entities/feed-back-user.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'exercise_user_connection'})
 export class ExerciseUserConnection {
@@ -28,5 +29,8 @@ export class ExerciseUserConnection {
 
     @Column({default: false, name:'is_resend'})
     isResend: boolean;
+
+    @OneToMany(() => FeedBackUser, students => students.group, { cascade: ["remove"] })
+    feedBack: FeedBackUser[];
 
 }

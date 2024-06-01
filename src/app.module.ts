@@ -36,6 +36,9 @@ import { SemesterModule } from './semester/semester.module';
 import { ExerciseTypeModule } from './exercise-type/exercise-type.module';
 import { ExerciseGroupConnectionModule } from './exercise-group-connection/exercise-group-connection.module';
 import { ExerciseUserConnectionModule } from './exercise-user-connection/exercise-user-connection.module';
+import { FeedBackMainModule } from './feed-back-main/feed-back-main.module';
+import { FeedBackItemModule } from './feed-back-item/feed-back-item.module';
+import { FeedBackUserModule } from './feed-back-user/feed-back-user.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -80,7 +83,7 @@ import { ExerciseUserConnectionModule } from './exercise-user-connection/exercis
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, FeedBackUserModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],
