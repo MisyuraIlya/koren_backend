@@ -49,98 +49,100 @@ export class CronService {
         try {
             const response: AxiosResponse<any> = await axios.get('http://3.74.228.194:4000/courses/all');
             const data = response.data;
+            console.log('data',data)
             for (const element of data) {
-                const course = new CourseEntity();
-                course.name = element.name;
-                course.grade = element.grade;
-                course.level = element.level;
-                course.published = element.published;
-                course.color = element.color;
-                course.bgColor = element.bgColor;
-                // course.image = element.image; // Fix this line
-                if(element.pdf){
-                    let replaced = element.pdf.replace("images/", "media/pdf/");
-                    course.pdf = replaced;
+                if(data.id == 592){
+                    console.log('dataaa',data)
+                    const course = new CourseEntity();
+                    course.name = element.name;
+                    course.grade = element.grade;
+                    course.level = element.level;
+                    course.published = element.published;
+                    course.color = element.color;
+                    course.bgColor = element.bgColor;
+                    // course.image = element.image; // Fix this line
+                    if(element.pdf){
+                        let replaced = element.pdf.replace("images/", "media/pdf/");
+                        course.pdf = replaced;
+                    }
+                    const createdCourseLvl1 = await this.courseRepository.save(course);
+    
+                    if(element.children.length > 0){
+                        element.children?.map(async (lvl2) => {
+                            const courseLvl2 = new CourseEntity();
+                            courseLvl2.name = lvl2.name;
+                            courseLvl2.grade = lvl2.grade;
+                            courseLvl2.level = lvl2.level;
+                            courseLvl2.published = lvl2.published;
+                            courseLvl2.color = lvl2.color;
+                            courseLvl2.bgColor = lvl2.bgColor;
+                            courseLvl2.parent = createdCourseLvl1
+                            // course.image = element.image; // Fix this line
+                            if(lvl2.pdf){
+                                let replaced = lvl2.pdf.replace("images/", "media/pdf/");
+                                courseLvl2.pdf = replaced;
+                            }
+                            const createdCourseLvl2 = await this.courseRepository.save(courseLvl2);
+                            
+                            if(lvl2.children.length > 0) {
+                                lvl2.children.map(async (lvl3) => {
+                                    const courseLvl3 = new CourseEntity();
+                                    courseLvl3.name = lvl3.name;
+                                    courseLvl3.grade = lvl3.grade;
+                                    courseLvl3.level = lvl3.level;
+                                    courseLvl3.published = lvl3.published;
+                                    courseLvl3.color = lvl3.color;
+                                    courseLvl3.bgColor = lvl3.bgColor;
+                                    courseLvl3.parent = createdCourseLvl2
+                                    // course.image = element.image; // Fix this line
+                                    if(lvl3.pdf){
+                                        let replaced = lvl3.pdf.replace("images/", "media/pdf/");
+                                        courseLvl3.pdf = replaced;
+                                    }
+                                    const createdCourseLvl3 = await this.courseRepository.save(courseLvl3);
+                                    
+                                    if(lvl3.children.length > 0) {
+                                        lvl3.children.map(async (lvl4) => {
+                                            const courseLvl4 = new CourseEntity();
+                                            courseLvl4.name = lvl4.name;
+                                            courseLvl4.grade = lvl4.grade;
+                                            courseLvl4.level = lvl4.level;
+                                            courseLvl4.published = lvl4.published;
+                                            courseLvl4.color = lvl4.color;
+                                            courseLvl4.bgColor = lvl4.bgColor;
+                                            courseLvl4.parent = createdCourseLvl3
+                                            // course.image = element.image; // Fix this line
+                                            if(lvl4.pdf){
+                                                let replaced = lvl4.pdf.replace("images/", "media/pdf/");
+                                                courseLvl4.pdf = replaced;
+                                            }
+                                            const createdCourseLvl4 = await this.courseRepository.save(courseLvl4);
+                                            
+                                            if(lvl4.children.length > 0) {
+                                                lvl4.children.map(async (lvl5) => {
+                                                    const courseLvl5 = new CourseEntity();
+                                                    courseLvl5.name = lvl5.name;
+                                                    courseLvl5.grade = lvl5.grade;
+                                                    courseLvl5.level = lvl5.level;
+                                                    courseLvl5.published = lvl5.published;
+                                                    courseLvl5.color = lvl5.color;
+                                                    courseLvl5.bgColor = lvl5.bgColor;
+                                                    courseLvl5.parent = createdCourseLvl4
+                                                    // course.image = element.image; // Fix this line
+                                                    if(lvl5.pdf){
+                                                        let replaced = lvl5.pdf.replace("images/", "media/pdf/");
+                                                        courseLvl5.pdf = replaced;
+                                                    }
+                                                    await this.courseRepository.save(courseLvl5);
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }
                 }
-                const createdCourseLvl1 = await this.courseRepository.save(course);
-
-                if(element.children.length > 0){
-                    element.children?.map(async (lvl2) => {
-                        const courseLvl2 = new CourseEntity();
-                        courseLvl2.name = lvl2.name;
-                        courseLvl2.grade = lvl2.grade;
-                        courseLvl2.level = lvl2.level;
-                        courseLvl2.published = lvl2.published;
-                        courseLvl2.color = lvl2.color;
-                        courseLvl2.bgColor = lvl2.bgColor;
-                        courseLvl2.parent = createdCourseLvl1
-                        // course.image = element.image; // Fix this line
-                        if(lvl2.pdf){
-                            let replaced = lvl2.pdf.replace("images/", "media/pdf/");
-                            courseLvl2.pdf = replaced;
-                        }
-                        const createdCourseLvl2 = await this.courseRepository.save(courseLvl2);
-                        
-                        if(lvl2.children.length > 0) {
-                            lvl2.children.map(async (lvl3) => {
-                                const courseLvl3 = new CourseEntity();
-                                courseLvl3.name = lvl3.name;
-                                courseLvl3.grade = lvl3.grade;
-                                courseLvl3.level = lvl3.level;
-                                courseLvl3.published = lvl3.published;
-                                courseLvl3.color = lvl3.color;
-                                courseLvl3.bgColor = lvl3.bgColor;
-                                courseLvl3.parent = createdCourseLvl2
-                                // course.image = element.image; // Fix this line
-                                if(lvl3.pdf){
-                                    let replaced = lvl3.pdf.replace("images/", "media/pdf/");
-                                    courseLvl3.pdf = replaced;
-                                }
-                                const createdCourseLvl3 = await this.courseRepository.save(courseLvl3);
-                                
-                                if(lvl3.children.length > 0) {
-                                    lvl3.children.map(async (lvl4) => {
-                                        const courseLvl4 = new CourseEntity();
-                                        courseLvl4.name = lvl4.name;
-                                        courseLvl4.grade = lvl4.grade;
-                                        courseLvl4.level = lvl4.level;
-                                        courseLvl4.published = lvl4.published;
-                                        courseLvl4.color = lvl4.color;
-                                        courseLvl4.bgColor = lvl4.bgColor;
-                                        courseLvl4.parent = createdCourseLvl3
-                                        // course.image = element.image; // Fix this line
-                                        if(lvl4.pdf){
-                                            let replaced = lvl4.pdf.replace("images/", "media/pdf/");
-                                            courseLvl4.pdf = replaced;
-                                        }
-                                        const createdCourseLvl4 = await this.courseRepository.save(courseLvl4);
-                                        
-                                        if(lvl4.children.length > 0) {
-                                            lvl4.children.map(async (lvl5) => {
-                                                const courseLvl5 = new CourseEntity();
-                                                courseLvl5.name = lvl5.name;
-                                                courseLvl5.grade = lvl5.grade;
-                                                courseLvl5.level = lvl5.level;
-                                                courseLvl5.published = lvl5.published;
-                                                courseLvl5.color = lvl5.color;
-                                                courseLvl5.bgColor = lvl5.bgColor;
-                                                courseLvl5.parent = createdCourseLvl4
-                                                // course.image = element.image; // Fix this line
-                                                if(lvl5.pdf){
-                                                    let replaced = lvl5.pdf.replace("images/", "media/pdf/");
-                                                    courseLvl5.pdf = replaced;
-                                                }
-                                                await this.courseRepository.save(courseLvl5);
-                                            })
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
-                }
-
-
             }
 
         } catch (error) {
@@ -156,17 +158,19 @@ export class CronService {
             const data = response.data;
             if(data){
                 data.map(async (course) => {
-                    try {
-                        const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.id}`);
-                        const exerciseData = exercise.data;
-                        console.log('exerciseData',course.id)
-                        if (Array.isArray(exerciseData)) {
-                            this.syncArrayOfObjects(exerciseData,course.id)
-                        } else {
-                            this.syncObjectExercise(exerciseData, course.id)
+                    if(course.id == 595){
+                        try {
+                            const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.id}`);
+                            const exerciseData = exercise.data;
+                            console.log('exerciseData',course.id)
+                            if (Array.isArray(exerciseData)) {
+                                this.syncArrayOfObjects(exerciseData,course.id)
+                            } else {
+                                this.syncObjectExercise(exerciseData, course.id)
+                            }
+                        } catch(e) {
+                            console.log('[ERROR EXERCISE]', e , course.id)
                         }
-                    } catch(e) {
-                        console.log('[ERROR EXERCISE]', e , course.id)
                     }
                 })
             }

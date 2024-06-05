@@ -188,6 +188,7 @@ export class ExerciseService {
         .addOrderBy('rows.orden', 'ASC')
         .addOrderBy('objectives.orden', 'ASC');
 
+    
     if (studentId) {
         query.leftJoinAndSelect('answers.answers', 'studentAnswers', 'studentAnswers.student.id = :studentId', { studentId });
         query.leftJoinAndSelect('exercise.histories', 'history', 'history.student.id = :studentId', { studentId });
@@ -196,18 +197,22 @@ export class ExerciseService {
     const exercise = await query
         .where('course.id = :id', { id })
         .getOne();
-    
-    const exerciseId = exercise.id
 
-    const connection = await this.exerciseGroupConnectionRepository
-    .createQueryBuilder("egc")
-    .leftJoinAndSelect("egc.students", "euc")
-    .leftJoinAndSelect('egc.exerciseType',"exerciseType")
-    .where("egc.exercise.id = :exerciseId", { exerciseId })
-    .andWhere("euc.student.id = :studentId", { studentId })
-    .getOne();
+        if(exercise){
+            const exerciseId = exercise.id
+            const connection = await this.exerciseGroupConnectionRepository
+            .createQueryBuilder("egc")
+            .leftJoinAndSelect("egc.students", "euc")
+            .leftJoinAndSelect('egc.exerciseType',"exerciseType")
+            .where("egc.exercise.id = :exerciseId", { exerciseId })
+            .andWhere("euc.student.id = :studentId", { studentId })
+            .getOne();
+        
+            return {...exercise, group: connection, userGroup: connection?.students?.[0]};
+        } else {
+            throw new BadRequestException('not found exercise');
+        }
 
-    return {...exercise, group: connection, userGroup: connection?.students?.[0]};
     }
 
     async remove(id: number): Promise<void> {
