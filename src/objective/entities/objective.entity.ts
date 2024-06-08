@@ -14,7 +14,7 @@ export class ObjectiveEntity {
   @Column({name:'module_type',nullable: true })
   moduleType: string;
 
-  @Column({nullable: true})
+  @Column({type: 'float',nullable: true})
   orden: number;
 
   @Column({nullable: true, name:'is_full_text'})

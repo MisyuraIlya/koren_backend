@@ -68,7 +68,7 @@ enum EngineTypes {
     PDF = 'pdf',
     TEXT_AREA = 'textArea',
     COPY = 'copy',
-    UNKNOWN = 'UNKNOWN'
+    UNKNOWN = 'UNKNOWN',
     // Add other values as needed...
 }
 

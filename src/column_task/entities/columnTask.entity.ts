@@ -9,7 +9,7 @@ export class ColumnTaskEntity {
   @Column({nullable: true})
   title: string;
 
-  @Column({nullable: true})
+  @Column({type: 'float',nullable: true})
   orden: number;
 
   @Column({nullable: true})

@@ -49,11 +49,10 @@ export class CronService {
         try {
             const response: AxiosResponse<any> = await axios.get('http://3.74.228.194:4000/courses/all');
             const data = response.data;
-            console.log('data',data)
             for (const element of data) {
-                if(data.id == 592){
-                    console.log('dataaa',data)
+                // if(data.id == 592){
                     const course = new CourseEntity();
+                    course.uuid = element.id
                     course.name = element.name;
                     course.grade = element.grade;
                     course.level = element.level;
@@ -70,6 +69,7 @@ export class CronService {
                     if(element.children.length > 0){
                         element.children?.map(async (lvl2) => {
                             const courseLvl2 = new CourseEntity();
+                            courseLvl2.uuid = lvl2.id
                             courseLvl2.name = lvl2.name;
                             courseLvl2.grade = lvl2.grade;
                             courseLvl2.level = lvl2.level;
@@ -87,6 +87,7 @@ export class CronService {
                             if(lvl2.children.length > 0) {
                                 lvl2.children.map(async (lvl3) => {
                                     const courseLvl3 = new CourseEntity();
+                                    courseLvl3.uuid = lvl3.id
                                     courseLvl3.name = lvl3.name;
                                     courseLvl3.grade = lvl3.grade;
                                     courseLvl3.level = lvl3.level;
@@ -104,6 +105,7 @@ export class CronService {
                                     if(lvl3.children.length > 0) {
                                         lvl3.children.map(async (lvl4) => {
                                             const courseLvl4 = new CourseEntity();
+                                            courseLvl4.uuid = lvl4.id
                                             courseLvl4.name = lvl4.name;
                                             courseLvl4.grade = lvl4.grade;
                                             courseLvl4.level = lvl4.level;
@@ -121,6 +123,7 @@ export class CronService {
                                             if(lvl4.children.length > 0) {
                                                 lvl4.children.map(async (lvl5) => {
                                                     const courseLvl5 = new CourseEntity();
+                                                    courseLvl5.uuid = lvl5.id
                                                     courseLvl5.name = lvl5.name;
                                                     courseLvl5.grade = lvl5.grade;
                                                     courseLvl5.level = lvl5.level;
@@ -142,7 +145,7 @@ export class CronService {
                             }
                         })
                     }
-                }
+                // }
             }
 
         } catch (error) {
@@ -154,15 +157,16 @@ export class CronService {
     async fetchExercises() {
         try {
             
-            const response: AxiosResponse<any> = await axios.get('http://3.74.228.194:4000/courses/arr');
-            const data = response.data;
-            if(data){
-                data.map(async (course) => {
-                    if(course.id == 595){
+   
+            const categoriesLvl5 = await this.courseRepository.find({
+                where:{level:5}
+            })
+            if(categoriesLvl5){
+                categoriesLvl5.map(async (course) => {
+                    // if(course.uuid == '137'){
                         try {
-                            const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.id}`);
+                            const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.uuid}`);
                             const exerciseData = exercise.data;
-                            console.log('exerciseData',course.id)
                             if (Array.isArray(exerciseData)) {
                                 this.syncArrayOfObjects(exerciseData,course.id)
                             } else {
@@ -171,7 +175,7 @@ export class CronService {
                         } catch(e) {
                             console.log('[ERROR EXERCISE]', e , course.id)
                         }
-                    }
+                    // }
                 })
             }
         } catch (error) {
@@ -205,70 +209,69 @@ export class CronService {
 
                     if(createdTab) {
                         exerciseData.exercises.map(async (item,index) => {
-                            const createTask = new TaskEntity();
-                            createTask.tab = createTab;
-                            createTask.orden = index
-                            createTask.specialModuleType = fetchSpecialTypes(item)
-                            createTask.properties = fetchPropertiesValue(item)
-                            const createdTask = await this.taskRepository.save(createTask)    
-                            if(createdTask){
+
+                            // if(createdTask){
                                 const exercise = item.exercise
                                 const propertyName = `exercise${exercise}`;
                                 item[propertyName].data.map(async (subItem) => {
-                                    subItem.collectionsCols.map(async (col) => {
-                                        const createColumnTask = new ColumnTaskEntity();
-                                        createColumnTask.title = col.title
-                                        createColumnTask.orden = col.orden
-                                        createColumnTask.type = convertTypeToEnum(col.type)
-                                        createColumnTask.task = createdTask
-                                        await this.columnTaskRepository.save(createColumnTask)
-                                    })
-
-                                    subItem.collectionsRows.map(async (row) => {
-                                        const createRowTask = new RowTaskEntity();
-                                        createRowTask.pdf = row.pdf
-                                        createRowTask.youtubeLink = row.youtube_link
-                                        createRowTask.orden = row.orden
-                                        createRowTask.task = createdTask
-                                        const createdRow = await this.rowTaskRepository.save(createRowTask)
-
-                                        if(createdRow){
-                                            row.collectionRow.map(async (objc) => {
-                                                if(objc.module_type) {
-                                                    const createObjective = new ObjectiveEntity();
-                                                    createObjective.moduleType = objc.module_type
-                                                    createObjective.orden = objc.orden
-                                                    createObjective.isFullText = objc.isFullText
-                                                    createObjective.placeholder = objc.placeholder
-                                                    createObjective.rowTask = createdRow
-                                                    const createdObjective = await this.objectiveRepository.save(createObjective)
-                                                    if(createdObjective){
-                                                        objc.collectionAnswers.map(async (ans) => {
-                                                            const createAnswer = new AnswerEntity();
-                                                            createAnswer.value = ans.value
-                                                            createAnswer.objective = createdObjective
-                                                            await this.answerRepository.save(createAnswer)
-                                                        })
-                                                        objc.collectionValues.map(async (val) => {
-                                                            const createValue = new ValueEntity();
-                                                            createValue.value = val.value
-                                                            createValue.objective = createdObjective
-                                                            await this.valueRepository.save(createValue)
-                                                        })
-
-                                                    }
-                                                }
-                                            })
-                                        }
-
-                                    })
-                                    
+                                    const createTask = new TaskEntity();
+                                    createTask.tab = createTab;
+                                    createTask.orden = index
+                                    createTask.specialModuleType = fetchSpecialTypes(item)
+                                    createTask.properties = fetchPropertiesValue(item)
+                                    const createdTask = await this.taskRepository.save(createTask)    
+                                    if(createdTask){
+                                        subItem.collectionsCols.map(async (col,index2) => {
+                                            const createColumnTask = new ColumnTaskEntity();
+                                            createColumnTask.title = col.title
+                                            createColumnTask.orden = index2
+                                            createColumnTask.type = convertTypeToEnum(col.type)
+                                            createColumnTask.task = createdTask
+                                            await this.columnTaskRepository.save(createColumnTask)
+                                        })
     
-
-
+                                        subItem.collectionsRows.map(async (row) => {
+                                            const createRowTask = new RowTaskEntity();
+                                            createRowTask.pdf = row.pdf
+                                            createRowTask.youtubeLink = row.youtube_link
+                                            createRowTask.orden = row.orden
+                                            createRowTask.task = createdTask
+                                            const createdRow = await this.rowTaskRepository.save(createRowTask)
+    
+                                            if(createdRow){
+                                                row.collectionRow.map(async (objc) => {
+                                                    if(objc.module_type) {
+                                                        const createObjective = new ObjectiveEntity();
+                                                        createObjective.moduleType = objc.module_type
+                                                        createObjective.orden = objc.orden
+                                                        createObjective.isFullText = objc.isFullText
+                                                        createObjective.placeholder = objc.placeholder
+                                                        createObjective.rowTask = createdRow
+                                                        const createdObjective = await this.objectiveRepository.save(createObjective)
+                                                        if(createdObjective){
+                                                            objc.collectionAnswers.map(async (ans) => {
+                                                                const createAnswer = new AnswerEntity();
+                                                                createAnswer.value = ans.value
+                                                                createAnswer.objective = createdObjective
+                                                                await this.answerRepository.save(createAnswer)
+                                                            })
+                                                            objc.collectionValues.map(async (val) => {
+                                                                const createValue = new ValueEntity();
+                                                                createValue.value = val.value
+                                                                createValue.objective = createdObjective
+                                                                await this.valueRepository.save(createValue)
+                                                            })
+    
+                                                        }
+                                                    }
+                                                })
+                                            }
+    
+                                        })
+                                    }
                                 })
             
-                            }  
+                            // }  
                         })
                     }
                 }
@@ -301,74 +304,85 @@ export class CronService {
                 createTab.orden = tab.tabOrden;
                 createTab.title = tab.tab;
                 const createdTab = await this.tabRepository.save(createTab);
-
+                let orden = 1 
                 if(createdTab) {
-                    tab.exercises.map(async (item,index) => {
-                        const createTask = new TaskEntity();
-                        createTask.tab = createTab;
-                        createTask.orden = index
-                        createTask.specialModuleType = fetchSpecialTypes(item)
-                        createTask.properties = fetchPropertiesValue(item)
-                        const createdTask = await this.taskRepository.save(createTask)    
-                        if(createdTask){
+                    tab.exercises.map(async (item,index1) => {
+                        // if(createdTask){
                             const exercise = item.exercise
                             const propertyName = `exercise${exercise}`;
-                            item[propertyName].data.map(async (subItem) => {
-                                subItem.collectionsCols.map(async (col) => {
-                                    const createColumnTask = new ColumnTaskEntity();
-                                    createColumnTask.title = col.title
-                                    createColumnTask.orden = col.orden
-                                    createColumnTask.type = convertTypeToEnum(col.type)
-                                    createColumnTask.task = createdTask
-                                    await this.columnTaskRepository.save(createColumnTask)
-                                })
+                            let orden = 1
+                            item[propertyName].data.map(async (subItem,index2) => {
+                                const createTask = new TaskEntity();
+                                createTask.tab = createTab;
+                                createTask.orden =  parseFloat(`${orden}.${subItem.orden}`);
+                                orden++
+                                createTask.specialModuleType = fetchSpecialTypes(item)
+                                createTask.properties = fetchPropertiesValue(item)
+                                const createdTask = await this.taskRepository.save(createTask)  
 
-                                subItem.collectionsRows.map(async (row) => {
-                                    const createRowTask = new RowTaskEntity();
-                                    createRowTask.pdf = row.pdf
-                                    createRowTask.youtubeLink = row.youtube_link
-                                    createRowTask.orden = row.orden
-                                    createRowTask.task = createdTask
-                                    const createdRow = await this.rowTaskRepository.save(createRowTask)
-
-                                    if(createdRow){
-                                        row.collectionRow.map(async (objc) => {
-                                            if(objc.module_type) {
-                                                const createObjective = new ObjectiveEntity();
-                                                createObjective.moduleType = objc.module_type
-                                                createObjective.orden = objc.orden
-                                                createObjective.isFullText = objc.isFullText
-                                                createObjective.placeholder = objc.placeholder
-                                                createObjective.rowTask = createdRow
-                                                const createdObjective = await this.objectiveRepository.save(createObjective)
-                                                if(createdObjective){
-                                                    objc.collectionAnswers.map(async (ans) => {
-                                                        const createAnswer = new AnswerEntity();
-                                                        createAnswer.value = ans.value
-                                                        createAnswer.objective = createdObjective
-                                                        await this.answerRepository.save(createAnswer)
-                                                    })
-                                                    objc.collectionValues.map(async (val) => {
-                                                        const createValue = new ValueEntity();
-                                                        createValue.value = val.value
-                                                        createValue.objective = createdObjective
-                                                        await this.valueRepository.save(createValue)
-                                                    })
-
+                                if(createdTask){
+                                    subItem.collectionsCols.map(async (col) => {
+                                        const createColumnTask = new ColumnTaskEntity();
+                                        createColumnTask.title = col.title
+                                        createColumnTask.orden = col.orden
+                                        createColumnTask.type = convertTypeToEnum(col.type)
+                                        createColumnTask.task = createdTask
+                                        await this.columnTaskRepository.save(createColumnTask)
+                                    })
+    
+                                    subItem.collectionsRows.map(async (row) => {
+                                        const createRowTask = new RowTaskEntity();
+                                        createRowTask.pdf = row.pdf
+                                        createRowTask.youtubeLink = row.youtube_link
+                                        createRowTask.orden = row.orden
+                                        createRowTask.task = createdTask
+                                        const createdRow = await this.rowTaskRepository.save(createRowTask)
+    
+                                        if(createdRow){
+                                            row.collectionRow.map(async (objc) => {
+                                                if(objc.module_type) {
+                                                    const createObjective = new ObjectiveEntity();
+                                                    createObjective.moduleType = objc.module_type
+                                                    createObjective.orden = objc.orden
+                                                    createObjective.isFullText = objc.isFullText
+                                                    createObjective.placeholder = objc.placeholder
+                                                    createObjective.rowTask = createdRow
+                                                    const createdObjective = await this.objectiveRepository.save(createObjective)
+                                                    if(createdObjective){
+                                                        objc.collectionAnswers.map(async (ans) => {
+                                                            const createAnswer = new AnswerEntity();
+                                                            createAnswer.value = ans.value
+                                                            createAnswer.objective = createdObjective
+                                                            await this.answerRepository.save(createAnswer)
+                                                        })
+                                                        objc.collectionValues.map(async (val) => {
+                                                            const createValue = new ValueEntity();
+                                                            createValue.value = val.value
+                                                            createValue.objective = createdObjective
+                                                            await this.valueRepository.save(createValue)
+                                                        })
+    
+                                                    }
                                                 }
-                                            }
-                                        })
-                                    }
-                                })
+                                            })
+                                        }
+    
+                                    })
+                                }
                             })
         
-                        }  
+                        // }  
                     })
                 }
             })
         }
 
 
+    }
+
+
+    private async MainFetcher() {
+        
     }
 
     async delay(ms: number) {

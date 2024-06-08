@@ -14,6 +14,8 @@ const specialTypes = [
     EngineTypes.CHART,
     EngineTypes.PDF,
     EngineTypes.EXPLANATION,
+    EngineTypes.OVERFLOW,
+    EngineTypes.BANK,
 ]
 
 export const fetchSpecialTypes = (item):string => {
@@ -83,6 +85,15 @@ export const fetchPropertiesValue = (item):string => {
                     }
                     objc.collectionValues.map(async (val) => {
                         result += EngineTypes.IMAGE_RIGHT + ':' + val.value
+                    })
+                }
+
+                if(objc.module_type == EngineTypes.OVERFLOW){
+                    if (!isFirst) {
+                        result += ';';
+                    }
+                    objc.collectionValues.map(async (val) => {
+                        result += EngineTypes.OVERFLOW + ':' + val.value
                     })
                 }
             })

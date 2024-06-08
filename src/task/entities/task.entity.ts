@@ -8,7 +8,7 @@ export class TaskEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: true})
+  @Column({type: 'float', nullable: true})
   orden: number;
 
   @Column({nullable: true, name:'special_module_type'})

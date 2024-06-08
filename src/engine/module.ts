@@ -191,7 +191,7 @@ class Engine {
                     if (item3?.moduleType === EngineTypes.PLACEHOLDER_TYPE) {
                         const previousItem = array[index - 1];
                         if (previousItem) {
-                            previousItem.placeholder = item3?.values[0].value
+                            previousItem.placeholder = item3?.values[0]?.value
                         }
                         array.splice(index, 1);
                     }

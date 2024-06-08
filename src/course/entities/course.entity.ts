@@ -9,6 +9,9 @@ export class CourseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  uuid: string;
+
   @Column()
   name: string;
 

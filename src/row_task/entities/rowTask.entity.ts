@@ -6,7 +6,7 @@ export class RowTaskEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: true})
+  @Column({type: 'float',nullable: true})
   orden: number;
 
   @Column({nullable: true, name:'youtube_link'})
