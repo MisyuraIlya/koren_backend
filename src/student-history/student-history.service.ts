@@ -8,6 +8,7 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
+import EngineTypes from 'src/engine/enums';
 
 @Injectable()
 export class StudentHistoryService {
@@ -73,12 +74,13 @@ export class StudentHistoryService {
     console.log('id',id)
     const find = await this.studentHistoryRepository.findOne({
       where:{id:id},
-      relations:['student']
+      relations:['answers','student','exercise','exercise.tabs','exercise.tabs.tasks','exercise.tabs.tasks.rows','exercise.tabs.tasks.rows.objectives']
     })
 
     if(find) {
       const exerciseId = dto.exerciseId
       const student = find.student.id
+      find.grade = await this.handleGrade(find)
       
       const connection = await this.exerciseGroupConnectionRepository
       .createQueryBuilder("egc")
@@ -105,5 +107,40 @@ export class StudentHistoryService {
 
   remove(id: number) {
     return `This action removes a #${id} studentHistory`;
+  }
+
+  private async handleGrade(history: StudentHistory){
+
+      const specialTypes = [
+        EngineTypes.INPUT,
+        EngineTypes.INPUT_CENTERED,
+        EngineTypes.SELECT_BOX,
+        EngineTypes.ROOT_INPUT,
+        EngineTypes.MIX_DRAG,
+        EngineTypes.CHECK_BOX,
+        EngineTypes.TYPED_WORD    
+      ]
+      let countExercises = 0
+      let numberCorrects = 0
+      history.exercise?.tabs?.map((item) => {
+        item.tasks?.map((item2) => {
+          item2?.rows?.map((item3) => {
+            item3?.objectives?.map((item4) => {
+              if(specialTypes.includes(item4.moduleType as EngineTypes)){
+                console.log(item4.moduleType)
+                countExercises++
+              }
+            })
+          })
+        })
+      })
+      history.answers?.map((item) => {
+        if(item.isCorrect){
+          numberCorrects++
+        }
+      })
+      const exerciseByOne = 100 / countExercises
+      const gradeTotal = exerciseByOne * numberCorrects
+      return gradeTotal
   }
 }

@@ -31,4 +31,6 @@ export class StudentHistoryController {
   remove(@Param('id') id: string) {
     return this.studentHistoryService.remove(+id);
   }
+
+
 }

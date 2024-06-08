@@ -35,7 +35,8 @@ export class StudentAnswerService {
     if (!answerExercise) throw new BadRequestException('answerExercise not found');
 
     const history = await this.studentHistoryRepository.findOne({
-      where: {id: historyId}
+      where: {id: historyId},
+      relations:['exercise']
     })
 
     if (!history) throw new BadRequestException('history not found');
@@ -73,4 +74,6 @@ export class StudentAnswerService {
   remove(id: number) {
     return `This action removes a #${id} studentAnswer`;
   }
+
+
 }

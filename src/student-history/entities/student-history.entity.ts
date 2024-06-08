@@ -19,7 +19,7 @@ export class StudentHistory {
     @ManyToOne(() => ExerciseEntity, history => history.histories, {onDelete: "CASCADE"})
     exercise: ExerciseEntity;
 
-    @Column()
+    @Column({type: 'float', nullable:true})
     grade: number;
 
     @Column({default:0, name:'total_questions'})
