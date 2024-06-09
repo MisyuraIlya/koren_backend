@@ -167,6 +167,7 @@ export class StudentHistoryService {
       history.totalQuestions = countExercises;
       history.openQuestions = openQuestion;
       history.errorIds = errorIds
+      history.openQuestionIds = openQuestionIds
       return gradeTotal
   }
 }
