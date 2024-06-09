@@ -74,7 +74,17 @@ export class StudentHistoryService {
     console.log('id',id)
     const find = await this.studentHistoryRepository.findOne({
       where:{id:id},
-      relations:['answers','student','exercise','exercise.tabs','exercise.tabs.tasks','exercise.tabs.tasks.rows','exercise.tabs.tasks.rows.objectives']
+      relations:[
+        'answers',
+        'answers.answer',
+        'answers.answer.objective',
+        'student',
+        'exercise',
+        'exercise.tabs',
+        'exercise.tabs.tasks',
+        'exercise.tabs.tasks.rows',
+        'exercise.tabs.tasks.rows.objectives'
+      ]
     })
 
     if(find) {
@@ -122,6 +132,9 @@ export class StudentHistoryService {
       ]
       let countExercises = 0
       let numberCorrects = 0
+      let openQuestion = 0 
+      const errorIds:string[] = []
+      const openQuestionIds:string[] = []
       history.exercise?.tabs?.map((item) => {
         item.tasks?.map((item2) => {
           item2?.rows?.map((item3) => {
@@ -129,6 +142,10 @@ export class StudentHistoryService {
               if(specialTypes.includes(item4.moduleType as EngineTypes)){
                 console.log(item4.moduleType)
                 countExercises++
+              }
+              if(item4.moduleType == EngineTypes.OPEN_QUESTION || item4.moduleType == EngineTypes.OPEN_QUESTION_HAMAROT){
+                openQuestion++
+                openQuestionIds.push(`${item4.id}`)
               }
             })
           })
@@ -141,6 +158,15 @@ export class StudentHistoryService {
       })
       const exerciseByOne = 100 / countExercises
       const gradeTotal = exerciseByOne * numberCorrects
+      
+      history.answers?.map((item) => {
+        errorIds.push(`${item.answer.objective.id}`)
+      })
+      history.totalCorrect = numberCorrects;
+      history.totalUncorrect = countExercises - numberCorrects;
+      history.totalQuestions = countExercises;
+      history.openQuestions = openQuestion;
+      history.errorIds = errorIds
       return gradeTotal
   }
 }

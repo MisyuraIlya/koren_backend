@@ -15,12 +15,11 @@ export class AuthService {
     ){}
 
     async login(dto: AuthDto) {
-        console.log('dto')
+        console.log('dto',dto)
         const user = await this.authRepository.findOne({
             where:{email:dto.email, password: dto.password},
             relations: ['school']
         })
-        console.log('user',user)
         if (!user) throw new UnauthorizedException('שם משתמש/סיסמה לא נכונים.')
 
         return user;

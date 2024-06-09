@@ -31,6 +31,15 @@ export class StudentHistory {
     @Column({default:0, name:'total_uncorrect'})
     totalUncorrect: number;
 
+    @Column({default:0, name:'open_questions'})
+    openQuestions: number;
+
+    @Column('varchar', { array: true, name:'error_ids', default: '{}' })
+    errorIds: string[];
+
+    @Column('varchar', { array: true, name:'open_question_ids', default: '{}' })
+    openQuestionIds: string[];
+
     @Column({default:false, name:'is_done'})
     isDone: boolean;
 
