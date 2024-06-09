@@ -315,7 +315,6 @@ export class CronService {
                         // if(createdTask){
                             const exercise = item.exercise
                             const propertyName = `exercise${exercise}`;
-                            let orden = 1
                             item[propertyName].data.map(async (subItem,index2) => {
                                 const createTask = new TaskEntity();
                                 createTask.tab = createTab;
