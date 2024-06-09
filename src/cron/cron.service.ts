@@ -59,6 +59,7 @@ export class CronService {
                     course.published = element.published;
                     course.color = element.color;
                     course.bgColor = element.bgColor;
+                    course.orden =  element.orden;
                     // course.image = element.image; // Fix this line
                     if(element.pdf){
                         let replaced = element.pdf.replace("images/", "media/pdf/");
@@ -77,6 +78,7 @@ export class CronService {
                             courseLvl2.color = lvl2.color;
                             courseLvl2.bgColor = lvl2.bgColor;
                             courseLvl2.parent = createdCourseLvl1
+                            courseLvl2.orden =  lvl2.orden;
                             // course.image = element.image; // Fix this line
                             if(lvl2.pdf){
                                 let replaced = lvl2.pdf.replace("images/", "media/pdf/");
@@ -95,6 +97,7 @@ export class CronService {
                                     courseLvl3.color = lvl3.color;
                                     courseLvl3.bgColor = lvl3.bgColor;
                                     courseLvl3.parent = createdCourseLvl2
+                                    courseLvl3.orden =  lvl3.orden;
                                     // course.image = element.image; // Fix this line
                                     if(lvl3.pdf){
                                         let replaced = lvl3.pdf.replace("images/", "media/pdf/");
@@ -113,6 +116,7 @@ export class CronService {
                                             courseLvl4.color = lvl4.color;
                                             courseLvl4.bgColor = lvl4.bgColor;
                                             courseLvl4.parent = createdCourseLvl3
+                                            courseLvl4.orden =  lvl4.orden;
                                             // course.image = element.image; // Fix this line
                                             if(lvl4.pdf){
                                                 let replaced = lvl4.pdf.replace("images/", "media/pdf/");
@@ -130,6 +134,7 @@ export class CronService {
                                                     courseLvl5.published = lvl5.published;
                                                     courseLvl5.color = lvl5.color;
                                                     courseLvl5.bgColor = lvl5.bgColor;
+                                                    courseLvl5.orden =  lvl5.orden;
                                                     courseLvl5.parent = createdCourseLvl4
                                                     // course.image = element.image; // Fix this line
                                                     if(lvl5.pdf){
