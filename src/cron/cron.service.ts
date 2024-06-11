@@ -168,7 +168,7 @@ export class CronService {
             })
             if(categoriesLvl5){
                 categoriesLvl5.map(async (course) => {
-                    // if(course.uuid == '137'){
+                    if(course.uuid == '916'){
                         try {
                             const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.uuid}`);
                             const exerciseData = exercise.data;
@@ -180,7 +180,7 @@ export class CronService {
                         } catch(e) {
                             console.log('[ERROR EXERCISE]', e , course.id)
                         }
-                    // }
+                    }
                 })
             }
         } catch (error) {
@@ -245,7 +245,7 @@ export class CronService {
     
                                             if(createdRow){
                                                 row.collectionRow.map(async (objc) => {
-                                                    if(objc.module_type) {
+                                                    if(objc.module_type !== 'explanation') {
                                                         const createObjective = new ObjectiveEntity();
                                                         createObjective.moduleType = objc.module_type
                                                         createObjective.orden = objc.orden
@@ -266,8 +266,10 @@ export class CronService {
                                                                 createValue.objective = createdObjective
                                                                 await this.valueRepository.save(createValue)
                                                             })
-    
+        
                                                         }
+                                                    } else {
+                                                        this.HandleExplanation(objc, createdTask,row.orden)
                                                     }
                                                 })
                                             }
@@ -344,7 +346,7 @@ export class CronService {
     
                                         if(createdRow){
                                             row.collectionRow.map(async (objc) => {
-                                                if(objc.module_type) {
+                                                if(objc.module_type !== 'explanation') {
                                                     const createObjective = new ObjectiveEntity();
                                                     createObjective.moduleType = objc.module_type
                                                     createObjective.orden = objc.orden
@@ -367,6 +369,8 @@ export class CronService {
                                                         })
     
                                                     }
+                                                } else {
+                                                    this.HandleExplanation(objc, createdTask,row.orden)
                                                 }
                                             })
                                         }
@@ -385,8 +389,32 @@ export class CronService {
     }
 
 
-    private async MainFetcher() {
-        
+    private async HandleExplanation(objc,createdTask,orden) {
+        const createRowTask = new RowTaskEntity();
+        createRowTask.pdf = ''
+        createRowTask.youtubeLink = ''
+        createRowTask.orden = orden
+        createRowTask.task = createdTask
+        const createdRow = await this.rowTaskRepository.save(createRowTask)
+        if(createdRow) {
+            const createObjective = new ObjectiveEntity();
+            createObjective.moduleType = objc.module_type
+            createObjective.orden = objc.orden
+            createObjective.isFullText = objc.isFullText
+            createObjective.placeholder = objc.placeholder
+            createObjective.rowTask = createdRow
+            const createdObjective = await this.objectiveRepository.save(createObjective)
+            if(createdObjective){
+                objc.collectionValues.map(async (val) => {
+                    const createValue = new ValueEntity();
+                    createValue.value = val.value
+                    createValue.objective = createdObjective
+                    await this.valueRepository.save(createValue)
+                })
+
+            }
+        }
+
     }
 
     async delay(ms: number) {

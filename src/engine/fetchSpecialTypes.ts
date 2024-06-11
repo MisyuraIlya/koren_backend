@@ -13,7 +13,6 @@ const specialTypes = [
     EngineTypes.VIDEO,
     EngineTypes.CHART,
     EngineTypes.PDF,
-    EngineTypes.EXPLANATION,
     EngineTypes.OVERFLOW,
     EngineTypes.BANK,
 ]
