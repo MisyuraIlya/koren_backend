@@ -168,7 +168,7 @@ export class CronService {
             })
             if(categoriesLvl5){
                 categoriesLvl5.map(async (course) => {
-                    if(course.uuid == '916'){
+                    // if(course.uuid == '916'){
                         try {
                             const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.uuid}`);
                             const exerciseData = exercise.data;
@@ -180,7 +180,7 @@ export class CronService {
                         } catch(e) {
                             console.log('[ERROR EXERCISE]', e , course.id)
                         }
-                    }
+                    // }
                 })
             }
         } catch (error) {
