@@ -6,9 +6,10 @@ import { StudentAnswer } from './entities/student-answer.entity';
 import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
+import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StudentAnswer,AuthEntity, AnswerEntity, StudentHistory])],
+  imports: [TypeOrmModule.forFeature([StudentAnswer,AuthEntity, AnswerEntity, StudentHistory,ObjectiveEntity])],
   controllers: [StudentAnswerController],
   providers: [StudentAnswerService],
 })
