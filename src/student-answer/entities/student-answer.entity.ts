@@ -20,6 +20,12 @@ export class StudentAnswer {
 
     @Column({default:false, name:'is_correct'})
     isCorrect: boolean;
+    
+    @Column({type: 'float', default:0})
+    grade: number;
+
+    @Column({type: 'float', default:0})
+    gradeToShow: number;
 
     @Column({nullable:true})
     value: string;

@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { StudentHistoryService } from './student-history.service';
 import { CreateStudentHistoryDto } from './dto/create-student-history.dto';
-import { UpdateStudentHistoryDto } from './dto/update-student-history.dto';
+
+import { UpdateManualGradeDto } from './dto/update-manual-grade';
+import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
 
 @Controller('student-history')
 export class StudentHistoryController {
@@ -25,6 +27,11 @@ export class StudentHistoryController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStudentHistoryDto: UpdateStudentHistoryDto) {
     return this.studentHistoryService.update(+id, updateStudentHistoryDto);
+  }
+
+  @Patch('manualGrade/:id')
+  updateManualGrade(@Param('id') id: string, @Body() UpdateManualGradeDto: UpdateManualGradeDto) {
+    return this.studentHistoryService.updateManualGrade(+id, UpdateManualGradeDto);
   }
 
   @Delete(':id')

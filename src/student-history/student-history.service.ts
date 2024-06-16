@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateStudentHistoryDto } from './dto/create-student-history.dto';
-import { UpdateStudentHistoryDto } from './dto/update-student-history.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentHistory } from './entities/student-history.entity';
 import { Repository } from 'typeorm';
@@ -9,6 +8,9 @@ import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
 import EngineTypes from 'src/engine/enums';
+import { UpdateManualGradeDto } from './dto/update-manual-grade';
+import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
+import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
 
 @Injectable()
 export class StudentHistoryService {
@@ -23,7 +25,8 @@ export class StudentHistoryService {
     private readonly exerciseGroupConnectionRepository: Repository<ExerciseGroupConnection>,
     @InjectRepository(ExerciseUserConnection)
     private readonly exerciseUserConnectionRepository: Repository<ExerciseUserConnection>,
-    
+    @InjectRepository(StudentAnswer)
+    private readonly studentAnswerRepository: Repository<StudentAnswer>,
   ){}
 
   async create(createStudentHistoryDto: CreateStudentHistoryDto) {
@@ -71,7 +74,6 @@ export class StudentHistoryService {
   }
 
   async update(id: number, dto: UpdateStudentHistoryDto) {
-    console.log('id',id)
     const find = await this.studentHistoryRepository.findOne({
       where:{id:id},
       relations:[
@@ -133,6 +135,7 @@ export class StudentHistoryService {
       let countExercises = 0
       let numberCorrects = 0
       let openQuestion = 0 
+
       const errorIds:string[] = []
       const openQuestionIds:string[] = []
       history.exercise?.tabs?.map((item) => {
@@ -156,12 +159,14 @@ export class StudentHistoryService {
           numberCorrects++
         }
       })
-      const exerciseByOne = 100 / countExercises
-      const gradeTotal = exerciseByOne * numberCorrects
-      
+      const exerciseByOne = 100 / ( countExercises + openQuestion)
+      let totalForOpenQuestion = 0
+
       history.answers?.map((item) => {
         errorIds.push(`${item.answer.objective.id}`)
+        totalForOpenQuestion += item.grade
       })
+      const gradeTotal = exerciseByOne * numberCorrects + totalForOpenQuestion
       history.totalCorrect = numberCorrects;
       history.totalUncorrect = countExercises - numberCorrects;
       history.totalQuestions = countExercises;
@@ -170,4 +175,81 @@ export class StudentHistoryService {
       history.openQuestionIds = openQuestionIds
       return gradeTotal
   }
+
+  async updateManualGrade(historyId: number, dto: UpdateManualGradeDto) {
+    const find = await this.studentHistoryRepository.findOne({
+      where:{id:historyId},
+      relations:[
+        'answers',
+        'answers.answer',
+        'answers.answer.objective',
+        'student',
+        'exercise',
+        'exercise.tabs',
+        'exercise.tabs.tasks',
+        'exercise.tabs.tasks.rows',
+        'exercise.tabs.tasks.rows.objectives'
+      ]
+    })
+    if(find) {
+      const specialTypes = [
+        EngineTypes.INPUT,
+        EngineTypes.INPUT_CENTERED,
+        EngineTypes.SELECT_BOX,
+        EngineTypes.ROOT_INPUT,
+        EngineTypes.MIX_DRAG,
+        EngineTypes.CHECK_BOX,
+        EngineTypes.TYPED_WORD,
+        EngineTypes.OPEN_QUESTION,
+        EngineTypes.OPEN_QUESTION_HAMAROT
+      ]
+      let countExercises = 0
+      let openQuestion = 0 
+      find.exercise?.tabs?.map((item) => {
+        item.tasks?.map((item2) => {
+          item2?.rows?.map((item3) => {
+            item3?.objectives?.map((item4) => {
+              if(specialTypes.includes(item4.moduleType as EngineTypes)){
+                countExercises++
+              }
+              if(item4.moduleType == EngineTypes.OPEN_QUESTION || item4.moduleType == EngineTypes.OPEN_QUESTION_HAMAROT){
+                openQuestion++
+              }
+            })
+          })
+        })
+      })
+
+      let openQuestionGradeForOne = 100 / countExercises
+      const result = (dto.grade / 100) * openQuestionGradeForOne;
+
+      const findStudentAnswer = await this.studentAnswerRepository.findOne({
+        where:{id:dto.studentAnswerId}
+      })
+      console.log('result',result)
+      findStudentAnswer.gradeToShow = dto.grade
+      findStudentAnswer.grade = result
+      await this.studentAnswerRepository.save(findStudentAnswer)
+      
+      const updatedHistory = await this.studentHistoryRepository.findOne({
+        where:{id:historyId},
+        relations:[
+          'answers',
+          'answers.answer',
+          'answers.answer.objective',
+          'student',
+          'exercise',
+          'exercise.tabs',
+          'exercise.tabs.tasks',
+          'exercise.tabs.tasks.rows',
+          'exercise.tabs.tasks.rows.objectives'
+        ]
+      })
+      const newGrade = await this.handleGrade(updatedHistory)
+      find.grade = newGrade
+      return this.studentHistoryRepository.save(find)
+      
+    }
+  }
+
 }

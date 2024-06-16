@@ -31,7 +31,7 @@ export class StudentAnswerService {
 
     if (!user) throw new BadRequestException('user not found');
     
-    if(createStudentAnswerDto.moduleType !== 'bank'){
+    if(createStudentAnswerDto.moduleType == 'bank'){
       const answerExercise = await this.answerRepository.findOne({
         where:{id:id},
         relations:['objective']
@@ -62,6 +62,9 @@ export class StudentAnswerService {
       answer.isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
       return this.studentAnswerRepository.save(answer);
   
+    } else if(createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestion') {
+      this.handleOpenQuestion(user,id,studentId,historyId,createStudentAnswerDto)
+
     } else {
       this.handleDragAndDrop(user,id,studentId,historyId,createStudentAnswerDto)
     }
@@ -163,6 +166,72 @@ export class StudentAnswerService {
 
     }
 
+  }
+
+  private async handleOpenQuestion(user: AuthEntity,id:number,studentId:number,historyId:number,createStudentAnswerDto:CreateStudentAnswerDto){
+    let objective = await this.ObjectiveRepository.findOne({
+      where: {id:id},
+      relations:['answers']
+    })
+    if(objective?.answers.length === 0){
+      const newAnswer = new AnswerEntity()
+      newAnswer.objective = objective
+      newAnswer.value = ''
+      await this.answerRepository.save(newAnswer)
+
+      const history = await this.studentHistoryRepository.findOne({
+        where: {id: historyId},
+        relations:['exercise']
+      })
+  
+      if (!history) throw new BadRequestException('history not found');
+
+
+      let answer = await this.studentAnswerRepository.findOne({
+        where:{student: user, answer: newAnswer}
+      })
+      if(!answer){
+        answer = new StudentAnswer();
+        answer.createdAt = new Date();
+        answer.student = user,
+        answer.answer = newAnswer
+        answer.history = history
+      }
+      answer.value = createStudentAnswerDto.value
+      answer.updatedAt = new Date();
+      answer.isCorrect = createStudentAnswerDto.isCorrect
+      return this.studentAnswerRepository.save(answer);
+
+    } else {
+      const newAnswer = await this.answerRepository.findOne({
+        where:{id:objective?.answers[0]?.id}
+      })
+
+
+      const history = await this.studentHistoryRepository.findOne({
+        where: {id: historyId},
+        relations:['exercise']
+      })
+  
+      if (!history) throw new BadRequestException('history not found');
+
+
+      let answer = await this.studentAnswerRepository.findOne({
+        where:{student: user, answer: newAnswer}
+      })
+      if(!answer){
+        answer = new StudentAnswer();
+        answer.createdAt = new Date();
+        answer.student = user,
+        answer.answer = newAnswer
+        answer.history = history
+      }
+      answer.value = createStudentAnswerDto.value
+      answer.updatedAt = new Date();
+      answer.isCorrect = createStudentAnswerDto.isCorrect
+      return this.studentAnswerRepository.save(answer);
+
+    }
   }
 
 }
