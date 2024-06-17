@@ -226,7 +226,6 @@ export class StudentHistoryService {
       const findStudentAnswer = await this.studentAnswerRepository.findOne({
         where:{id:dto.studentAnswerId}
       })
-      console.log('result',result)
       findStudentAnswer.gradeToShow = dto.grade
       findStudentAnswer.grade = result
       await this.studentAnswerRepository.save(findStudentAnswer)

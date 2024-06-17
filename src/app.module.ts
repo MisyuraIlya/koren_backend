@@ -39,6 +39,7 @@ import { ExerciseUserConnectionModule } from './exercise-user-connection/exercis
 import { FeedBackMainModule } from './feed-back-main/feed-back-main.module';
 import { FeedBackItemModule } from './feed-back-item/feed-back-item.module';
 import { FeedBackUserModule } from './feed-back-user/feed-back-user.module';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -83,7 +84,7 @@ import { FeedBackUserModule } from './feed-back-user/feed-back-user.module';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, FeedBackUserModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, FeedBackUserModule, MailModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],

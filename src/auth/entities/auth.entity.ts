@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from "typeorm";
 import { Role } from "src/enums/role.enum";
 import { StudentHistory } from "src/student-history/entities/student-history.entity";
 import { StudentAnswer } from "src/student-answer/entities/student-answer.entity";
@@ -9,6 +9,7 @@ import { Confirmation } from "src/confirmation/entities/confirmation.entity";
 import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
 import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
 import { FeedBackUser } from "src/feed-back-user/entities/feed-back-user.entity";
+import { Mail } from "src/mail/entities/mail.entity";
 // import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
 
 @Entity({ name: 'auth' })
@@ -70,5 +71,11 @@ export class AuthEntity {
 
     @OneToMany(() => FeedBackUser, feedBack => feedBack.user, { cascade: ["remove"] })
     feedBacks: FeedBackUser[];
+
+    @OneToMany(() => Mail, mail => mail.userRecive, {onDelete: "CASCADE"})
+    mailRecive: Mail;
+
+    @OneToMany(() => Mail, mail => mail.userSend, {onDelete: "CASCADE"})
+    mailSend: Mail;
 
 }
