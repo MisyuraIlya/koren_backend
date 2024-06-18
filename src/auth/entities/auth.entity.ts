@@ -8,9 +8,8 @@ import { School } from "src/school/entities/school.entity";
 import { Confirmation } from "src/confirmation/entities/confirmation.entity";
 import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/exercise-group-connection.entity";
 import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
-import { FeedBackUser } from "src/feed-back-user/entities/feed-back-user.entity";
 import { Mail } from "src/mail/entities/mail.entity";
-// import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
+import { MailChat } from "src/mail-chat/entities/mail-chat.entity";
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
@@ -69,13 +68,13 @@ export class AuthEntity {
     @OneToMany(() => ExerciseUserConnection, connection => connection.student, { cascade: ["remove"] })
     studentConnections: ExerciseUserConnection[];
 
-    @OneToMany(() => FeedBackUser, feedBack => feedBack.user, { cascade: ["remove"] })
-    feedBacks: FeedBackUser[];
-
     @OneToMany(() => Mail, mail => mail.userRecive, {onDelete: "CASCADE"})
-    mailRecive: Mail;
+    mailRecive: Mail[];
 
     @OneToMany(() => Mail, mail => mail.userSend, {onDelete: "CASCADE"})
-    mailSend: Mail;
+    mailSend: Mail[];
+
+    @OneToMany(() => MailChat, chat => chat.user, {onDelete: "CASCADE"})
+    chats: MailChat[];
 
 }

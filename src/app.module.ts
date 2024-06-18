@@ -38,8 +38,8 @@ import { ExerciseGroupConnectionModule } from './exercise-group-connection/exerc
 import { ExerciseUserConnectionModule } from './exercise-user-connection/exercise-user-connection.module';
 import { FeedBackMainModule } from './feed-back-main/feed-back-main.module';
 import { FeedBackItemModule } from './feed-back-item/feed-back-item.module';
-import { FeedBackUserModule } from './feed-back-user/feed-back-user.module';
 import { MailModule } from './mail/mail.module';
+import { MailChatModule } from './mail-chat/mail-chat.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -84,7 +84,7 @@ import { MailModule } from './mail/mail.module';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, FeedBackUserModule, MailModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],

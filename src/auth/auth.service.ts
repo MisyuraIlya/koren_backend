@@ -40,4 +40,8 @@ export class AuthService {
         })
         return users
     }
+
+    async getUsers(){
+        return this.authRepository.find()
+    }
 }

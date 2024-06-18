@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { CreateMailDto } from './dto/create-mail.dto';
 import { UpdateMailDto } from './dto/update-mail.dto';
@@ -7,9 +7,9 @@ import { UpdateMailDto } from './dto/update-mail.dto';
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
-  @Post()
-  create(@Body() createMailDto: CreateMailDto) {
-    return this.mailService.create(createMailDto);
+  @Post(':id')
+  create(@Param('id') id: string,@Body() createMailDto: CreateMailDto) {
+    return this.mailService.create(createMailDto,+id);
   }
 
   @Get('/user/:id')
@@ -18,8 +18,8 @@ export class MailController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mailService.findOne(+id);
+  findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '') {
+    return this.mailService.findOne(+id, page, search);
   }
 
   @Patch(':id')

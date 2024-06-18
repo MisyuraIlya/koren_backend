@@ -22,4 +22,9 @@ export class AuthController {
 	async getUserByTypeAndSchool(@Param('type') type: Role, @Param('school') schoolId: string){
 		return this.authService.getUserByTypeAndSchool(type,schoolId);
 	}
+
+	@Get('/mail')
+	async getUsers(){
+		return this.authService.getUsers()
+	}
 }

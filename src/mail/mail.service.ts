@@ -3,8 +3,11 @@ import { CreateMailDto } from './dto/create-mail.dto';
 import { UpdateMailDto } from './dto/update-mail.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Mail } from './entities/mail.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository,FindManyOptions } from 'typeorm';
 import { AuthEntity } from 'src/auth/entities/auth.entity';
+import { v4 as uuidv4 } from 'uuid';
+import { MailChatService } from 'src/mail-chat/mail-chat.service';
+import { MailTypeEnum } from 'src/enums/mail.enum';
 
 @Injectable()
 export class MailService {
@@ -14,27 +17,79 @@ export class MailService {
     private readonly mailRepository: Repository<Mail>,
     @InjectRepository(AuthEntity)
     private readonly authRepository: Repository<AuthEntity>,
+
+    private readonly MailChatService: MailChatService
 ){}
 
-  create(createMailDto: CreateMailDto) {
-    return 'This action adds a new mail';
+  async create(createMailDto: CreateMailDto, senderId: number) {
+    const { sendTo, title, description } = createMailDto;
+
+    const sender = await this.authRepository.findOne({ where: { id: senderId } });
+    if (!sender) {
+      throw new Error('Sender not found');
+    }
+
+    const recipients = await this.authRepository.find({
+      where: sendTo.map(id => ({ id })),
+    });
+    if (recipients.length === 0) {
+      throw new Error('No valid recipients found');
+    }
+    
+    let uuid = uuidv4();
+    const mails = recipients.map(recipient => {
+      const mail = new Mail();
+      mail.title = title
+      mail.uuid = uuid
+      mail.type = createMailDto?.type ? createMailDto.type : MailTypeEnum.Original
+      mail.description = description
+      mail.userRecive = recipient
+      mail.userSend = sender
+      return mail;
+    });
+
+    const res = await this.mailRepository.save(mails);
+
+    this.MailChatService.create({description:createMailDto.description},senderId,uuid);
+
+    return res
   }
 
   findAll() {
     return `This action returns all mail`;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, page = 1, search = '') {
     const findUser = await this.authRepository.findOne({
-      where:{id:id},
-    })
+      where: { id: id },
+    });
 
-    const response = await this.mailRepository.find({
-      where:{userRecive:findUser},
-      relations:['userSend']
-    })
+    if (!findUser) {
+      throw new Error('User not found');
+    }
 
-    return response
+    const take = 10;
+    const skip = (page - 1) * take; 
+    let options: FindManyOptions<Mail> = {
+      where: { userRecive: findUser },
+      relations: ['userSend'],
+      take: take,
+      skip: skip,
+      order: { createdAt: 'DESC' }, 
+    };
+
+    if (search) {
+      options.where = {
+        ...options.where,
+        description: Like(`%${search}%`), 
+      };
+    }
+
+    const [mails, total] = await this.mailRepository.findAndCount(options);
+
+    const totalPages = Math.ceil(total / take); 
+
+    return { mails, total, totalPages };
   }
 
   update(id: number, updateMailDto: UpdateMailDto) {
