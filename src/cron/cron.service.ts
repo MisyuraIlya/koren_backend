@@ -14,6 +14,7 @@ import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
 import { convertTypeToEnum } from 'src/engine/convertTypeToEnum';
 import { fetchPropertiesValue, fetchSpecialTypes } from 'src/engine/fetchSpecialTypes';
+import { PdfUtilitiesEntity } from 'src/pdf-utilities/entities/pdf-utility.entity';
 
 @Injectable()
 export class CronService {
@@ -35,7 +36,9 @@ export class CronService {
         @InjectRepository(AnswerEntity)
         private readonly answerRepository: Repository<AnswerEntity> ,
         @InjectRepository(ValueEntity)
-        private readonly valueRepository: Repository<ValueEntity>
+        private readonly valueRepository: Repository<ValueEntity>,
+        @InjectRepository(PdfUtilitiesEntity)
+        private readonly pdfUtilitiesEntityRepository: Repository<PdfUtilitiesEntity>
     ) {}
 
     // Use the @Cron decorator to schedule a task
@@ -204,7 +207,7 @@ export class CronService {
                 newExercise.description1 = exerciseData.description
                 newExercise.description2 = exerciseData.description2
                 const createdExercise = await this.exerciseRepository.save(newExercise);
-
+                this.handlePdfUtitilies(exerciseData.pdfUtilities,createdExercise)
                 if(createdExercise){
                     const createTab = new TabEntity();
                     createTab.exercise = createdExercise;
@@ -303,7 +306,7 @@ export class CronService {
         newExercise.description1 = exerciseData[0].description
         newExercise.description2 = exerciseData[0].description2
         const createdExercise = await this.exerciseRepository.save(newExercise);
-
+        this.handlePdfUtitilies(exerciseData[0].pdfUtilities,createdExercise)
         if(createdExercise){
             exerciseData?.map(async (tab,index) => {
                 const createTab = new TabEntity();
@@ -388,7 +391,6 @@ export class CronService {
 
     }
 
-
     private async HandleExplanation(objc,createdTask,orden) {
         const createRowTask = new RowTaskEntity();
         createRowTask.pdf = ''
@@ -419,6 +421,17 @@ export class CronService {
 
     async delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async handlePdfUtitilies(data, exercise: ExerciseEntity){
+        data?.map((item) => {
+            const newPdf = new PdfUtilitiesEntity();
+            newPdf.exercise = exercise
+            newPdf.name = item.name;
+            newPdf.orden = item.ordern
+            newPdf.pdf = item.pdf.replace(/^images\//, 'media/pdf/'); 
+            this.pdfUtilitiesEntityRepository.save(newPdf)
+        })
     }
     
 }

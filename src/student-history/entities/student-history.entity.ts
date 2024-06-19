@@ -22,6 +22,9 @@ export class StudentHistory {
     @Column({type: 'float', nullable:true})
     grade: number;
 
+    @Column({type: 'float', nullable:true})
+    teacherGrade: number;
+
     @Column({default:0, name:'total_questions'})
     totalQuestions: number;
 

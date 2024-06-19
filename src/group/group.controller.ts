@@ -17,6 +17,11 @@ export class GroupController {
     return this.groupService.findAll();
   }
 
+  @Get('/groupStatistic/:groupId/:exerciseId')
+  getStatistic(@Param('groupId') groupId: string,@Param('exerciseId') exerciseId: string) {
+    return this.groupService.getGroupStatistic(groupId,+exerciseId)
+  }
+
   @Get('/teacher/:teacherId')
   findGroupsByTeacher(@Param('teacherId') id: string) {
     return this.groupService.findGroupsByTeacher(+id);

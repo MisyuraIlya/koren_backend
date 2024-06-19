@@ -40,6 +40,7 @@ import { FeedBackMainModule } from './feed-back-main/feed-back-main.module';
 import { FeedBackItemModule } from './feed-back-item/feed-back-item.module';
 import { MailModule } from './mail/mail.module';
 import { MailChatModule } from './mail-chat/mail-chat.module';
+import { PdfUtilitiesEntity } from './pdf-utilities/entities/pdf-utility.entity';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -62,7 +63,7 @@ import { MailChatModule } from './mail-chat/mail-chat.module';
         }
       }
     }),
-    TypeOrmModule.forFeature([CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity]),
+    TypeOrmModule.forFeature([CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity,PdfUtilitiesEntity]),
     CourseModule, 
     ExerciseModule, 
     TabModule, 

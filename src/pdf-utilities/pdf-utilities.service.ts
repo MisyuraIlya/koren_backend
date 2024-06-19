@@ -5,6 +5,7 @@ import { PdfUtilitiesEntity } from './entities/pdf-utility.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseEntity } from 'src/course/entities/course.entity';
 import { Repository } from 'typeorm';
+import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 
 @Injectable()
 export class PdfUtilitiesService {
@@ -12,21 +13,21 @@ export class PdfUtilitiesService {
     @InjectRepository(PdfUtilitiesEntity)
     private readonly pdfUtilitiesRepository: Repository<PdfUtilitiesEntity>,
 
-    @InjectRepository(CourseEntity)
-    private readonly coursesRepository: Repository<CourseEntity>,
+    @InjectRepository(ExerciseEntity)
+    private readonly exerciseEntity: Repository<ExerciseEntity>,
   ){}
 
   async create(id: number, dto: CreatePdfUtilityDto) {
       try {
-          const course = await this.coursesRepository.findOne({
+          const exercise = await this.exerciseEntity.findOne({
               where: {id:id}
           })
-          if (!course) {
-              throw new BadRequestException(`Course with id ${id} not found.`);
+          if (!exercise) {
+              throw new BadRequestException(`exercise with id ${id} not found.`);
           }
           const pdfUtility = new PdfUtilitiesEntity();
           pdfUtility.name = dto.title; 
-          pdfUtility.course = course;
+          pdfUtility.exercise = exercise;
           pdfUtility.pdf = dto.pdf
           const savedPdfUtility = await this.pdfUtilitiesRepository.save(pdfUtility);
           return savedPdfUtility;

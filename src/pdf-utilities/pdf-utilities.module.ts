@@ -4,9 +4,10 @@ import { PdfUtilitiesController } from './pdf-utilities.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PdfUtilitiesEntity } from './entities/pdf-utility.entity';
 import { CourseEntity } from 'src/course/entities/course.entity';
+import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PdfUtilitiesEntity, CourseEntity])],
+  imports: [TypeOrmModule.forFeature([PdfUtilitiesEntity, ExerciseEntity])],
   controllers: [PdfUtilitiesController],
   providers: [PdfUtilitiesService],
 })

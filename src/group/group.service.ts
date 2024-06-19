@@ -9,6 +9,9 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { Group } from './entities/group.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
+import { StudentHistory } from 'src/student-history/entities/student-history.entity';
+import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
+import { CourseEntity } from 'src/course/entities/course.entity';
 
 @Injectable()
 export class GroupService {
@@ -24,6 +27,12 @@ export class GroupService {
     private readonly groupRepository: Repository<Group>,
     @InjectRepository(ExerciseGroupConnection)
     private readonly exerciseGroupConnectionRepository: Repository<ExerciseGroupConnection>,
+    @InjectRepository(StudentHistory)
+    private readonly studentHistoryRepository: Repository<StudentHistory>,
+    @InjectRepository(ExerciseEntity)
+    private readonly exerciseEntity: Repository<ExerciseEntity>,
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>
   ){}
 
 
@@ -163,4 +172,74 @@ export class GroupService {
 
     return groups
   }
+
+  async getGroupStatistic(groupId: string, courseId: number) {
+
+    const findCourse = await this.courseRepository.findOne({
+      where:{id:courseId}
+    })
+
+    if (!findCourse) {
+      throw new BadRequestException(`course with this id ${courseId} not found.`);
+    }
+
+    const findExercise = await this.exerciseEntity.findOne({
+      where: { course: findCourse }
+    });
+  
+    if (!findExercise) {
+      throw new BadRequestException(`Exercise not found.`);
+    }
+  
+    const findGroup = await this.groupRepository.find({
+      where: { uuid: groupId },
+      relations: ['student']
+    });
+  
+    let totalStudent = 0;
+    let totalStartWorking = 0;
+    let totalCompleted = 0;
+    let totalGrade = 0;
+    let totalWaitingCheck = 0
+    let averageGrade = 0;
+  
+    if (findGroup) {
+      const promises = findGroup.map(async (item) => {
+        totalStudent++;
+        const exercise = await this.studentHistoryRepository.findOne({
+          where: { student: item.student, exercise: findExercise }
+        });
+  
+        if (exercise) {
+          totalStartWorking++;
+          if (exercise.grade > 0) {
+            totalCompleted++;
+            totalGrade += exercise.grade;
+          }
+
+          if(exercise.isDone && !exercise?.teacherGrade){
+            totalWaitingCheck++
+          }
+
+        }
+      });
+  
+      // Wait for all promises to resolve using Promise.all
+      await Promise.all(promises);
+    }
+  
+    if (totalStudent > 0) {
+      averageGrade = totalGrade / totalStudent;
+    }
+  
+    return {
+      totalStudent,
+      totalStartWorking,
+      totalWaitingCheck,
+      totalCompleted,
+      totalGrade,
+      averageGrade: averageGrade.toFixed(2)
+    };
+  }
+  
 }

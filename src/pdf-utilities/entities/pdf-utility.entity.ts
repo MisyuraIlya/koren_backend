@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CourseEntity } from 'src/course/entities/course.entity';
+import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 @Entity({name: 'pdf_utilities'})
 export class PdfUtilitiesEntity {
   @PrimaryGeneratedColumn()
@@ -14,7 +15,7 @@ export class PdfUtilitiesEntity {
   @Column({ nullable: true })
   orden: number;
 
-  @ManyToOne(() => CourseEntity, course => course.pdfUtilities, {onDelete: "CASCADE"})
-  course: CourseEntity;
+  @ManyToOne(() => ExerciseEntity, course => course.pdfs, {onDelete: "CASCADE"})
+  exercise: ExerciseEntity;
   
 }

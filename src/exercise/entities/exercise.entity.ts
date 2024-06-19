@@ -3,6 +3,7 @@ import { CourseEntity } from 'src/course/entities/course.entity';
 import { TabEntity } from 'src/tab/entities/tab.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
+import { PdfUtilitiesEntity } from 'src/pdf-utilities/entities/pdf-utility.entity';
 
 @Entity({ name: 'exercise' })
 export class ExerciseEntity {
@@ -41,6 +42,9 @@ export class ExerciseEntity {
 
   @OneToMany(() => ExerciseGroupConnection, connection => connection.exercise, { cascade: ["remove"] })
   connections: ExerciseGroupConnection[];
+
+  @OneToMany(() => PdfUtilitiesEntity, pdf => pdf.exercise, { cascade: ["remove"] })
+  pdfs: PdfUtilitiesEntity[];
 
   fullPath: string
   fullLink: string
