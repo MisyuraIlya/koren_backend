@@ -16,6 +16,9 @@ export class Mail {
 
     @Column({ nullable: true })
     description: string;
+
+    @Column({default: false})
+    isRead: boolean;
   
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

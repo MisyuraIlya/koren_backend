@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { CreateMailDto } from './dto/create-mail.dto';
-import { UpdateMailDto } from './dto/update-mail.dto';
 
 @Controller('mail')
 export class MailController {
@@ -17,14 +16,19 @@ export class MailController {
     return this.mailService.findAll();
   }
 
+  @Get('undreaded/:id')
+  getUnreaded(@Param('id') id: string){
+    return this.mailService.getUnreaded(+id)
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '') {
     return this.mailService.findOne(+id, page, search);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMailDto: UpdateMailDto) {
-    return this.mailService.update(+id, updateMailDto);
+  @Patch(':uuid/:userId')
+  update(@Param('uuid') uuid: string, @Param('userId') userId: string) {
+    return this.mailService.update(uuid, +userId);
   }
 
   @Delete(':id')

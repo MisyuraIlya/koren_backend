@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMailDto } from './dto/create-mail.dto';
-import { UpdateMailDto } from './dto/update-mail.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Mail } from './entities/mail.entity';
 import { Like, Repository,FindManyOptions } from 'typeorm';
@@ -55,6 +54,22 @@ export class MailService {
     return res
   }
 
+  async getUnreaded(userId: number){
+    const findUser = await this.authRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!findUser) {
+      throw new BadRequestException('User not found');
+    }
+
+    return this.mailRepository.find({
+      where:{userRecive: findUser, isRead: false},
+      relations:['userSend']
+    })
+
+  }
+
   findAll() {
     return `This action returns all mail`;
   }
@@ -65,7 +80,7 @@ export class MailService {
     });
 
     if (!findUser) {
-      throw new Error('User not found');
+      throw new BadRequestException('User not found');
     }
 
     const take = 10;
@@ -92,8 +107,27 @@ export class MailService {
     return { mails, total, totalPages };
   }
 
-  update(id: number, updateMailDto: UpdateMailDto) {
-    return `This action updates a #${id} mail`;
+  async update(uuid: string, userId: number) {
+    const findUser = await this.authRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!findUser) {
+      throw new BadRequestException('User not found');
+    }
+
+    const findMail = await this.mailRepository.findOne({
+      where: {uuid: uuid, userRecive: findUser}
+    })
+
+    if (!findMail) {
+      throw new BadRequestException('mail not found');
+    }
+
+    findMail.isRead = true
+    await this.mailRepository.save(findMail)
+
+    return findMail;
   }
 
   remove(id: number) {
