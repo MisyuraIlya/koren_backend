@@ -1,5 +1,6 @@
 import { AuthEntity } from "src/auth/entities/auth.entity";
 import { MailTypeEnum } from "src/enums/mail.enum";
+import { ExerciseEntity } from "src/exercise/entities/exercise.entity";
 import { MailChat } from "src/mail-chat/entities/mail-chat.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -8,7 +9,7 @@ export class Mail {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable: true})
     uuid: string;
   
     @Column({ nullable: true })
@@ -35,5 +36,8 @@ export class Mail {
 
     @ManyToOne(() => AuthEntity, user => user.mailSend , {onDelete: "CASCADE"})
     userSend: AuthEntity;
+
+    @ManyToOne(() => ExerciseEntity, exercise => exercise.mail , {onDelete: "CASCADE"})
+    exercise: ExerciseEntity;
 
 }

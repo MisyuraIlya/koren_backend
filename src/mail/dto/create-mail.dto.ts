@@ -6,4 +6,5 @@ export class CreateMailDto {
     title: string
     description: string
     type?: MailTypeEnum
+    exerciseId?: number
 }

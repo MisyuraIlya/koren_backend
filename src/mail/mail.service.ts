@@ -7,6 +7,7 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { MailChatService } from 'src/mail-chat/mail-chat.service';
 import { MailTypeEnum } from 'src/enums/mail.enum';
+import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 
 @Injectable()
 export class MailService {
@@ -16,7 +17,10 @@ export class MailService {
     private readonly mailRepository: Repository<Mail>,
     @InjectRepository(AuthEntity)
     private readonly authRepository: Repository<AuthEntity>,
+    @InjectRepository(ExerciseEntity)
+    private readonly exerciseRepository: Repository<ExerciseEntity>,
 
+    
     private readonly MailChatService: MailChatService
 ){}
 
@@ -36,22 +40,28 @@ export class MailService {
     }
     
     let uuid = uuidv4();
-    const mails = recipients.map(recipient => {
+    const mails = await Promise.all(recipients.map(async recipient => {
       const mail = new Mail();
-      mail.title = title
-      mail.uuid = uuid
-      mail.type = createMailDto?.type ? createMailDto.type : MailTypeEnum.Original
-      mail.description = description
-      mail.userRecive = recipient
-      mail.userSend = sender
+      mail.title = title;
+      mail.uuid = uuid;
+      mail.type = createMailDto?.type ? createMailDto.type : MailTypeEnum.Original;
+      if (createMailDto?.exerciseId) {
+        const find = await this.exerciseRepository.findOne({
+          where: { id: createMailDto.exerciseId }
+        });
+        mail.exercise = find;
+      }
+      mail.description = description;
+      mail.userRecive = recipient;
+      mail.userSend = sender;
       return mail;
-    });
+    }));
 
     const res = await this.mailRepository.save(mails);
 
-    this.MailChatService.create({description:createMailDto.description},senderId,uuid);
+    this.MailChatService.create({ description: createMailDto.description }, senderId, uuid);
 
-    return res
+    return res;
   }
 
   async getUnreaded(userId: number){
@@ -128,6 +138,29 @@ export class MailService {
     await this.mailRepository.save(findMail)
 
     return findMail;
+  }
+
+  async getFeedBack(userId:number, exerciseId: number){
+    const findUser = await this.authRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!findUser) {
+      throw new BadRequestException('User not found');
+    }
+
+    const find = await this.exerciseRepository.findOne({
+      where: { id: exerciseId }
+    });
+
+    if (!find) {
+      throw new BadRequestException('exercise not found');
+    }
+
+    return this.mailRepository.findOne({
+      where:{userRecive:findUser, exercise: find}
+    })
+
   }
 
   remove(id: number) {

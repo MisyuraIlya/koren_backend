@@ -16,6 +16,11 @@ export class MailController {
     return this.mailService.findAll();
   }
 
+  @Get('/feedBack/:userId/:exerciseId')
+  getFeedBack(@Param('userId') userId: string,@Param('exerciseId') exerciseId: string){
+    return this.mailService.getFeedBack(+userId,+exerciseId)
+  }
+
   @Get('undreaded/:id')
   getUnreaded(@Param('id') id: string){
     return this.mailService.getUnreaded(+id)
