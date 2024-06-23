@@ -120,7 +120,7 @@ export class StudentHistoryService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} studentHistory`;
+    return this.studentHistoryRepository.delete(id)
   }
 
   private async handleGrade(history: StudentHistory){
