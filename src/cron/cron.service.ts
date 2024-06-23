@@ -195,7 +195,7 @@ export class CronService {
     private async syncObjectExercise(exerciseData, courseId) {
         if(exerciseData?.course?.name && exerciseData.module > 1) {
             const findCourse = await this.courseRepository.findOne({
-                where:{name: exerciseData.course.name, level:5}
+                where:{uuid: exerciseData.course.id, level:5}
             })
             if(findCourse){
                 const newExercise = new ExerciseEntity();

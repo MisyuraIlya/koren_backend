@@ -32,6 +32,13 @@ export class StudentAnswerService {
     if (!user) throw new BadRequestException('user not found');
     
     if(createStudentAnswerDto.moduleType == 'bank'){
+      this.handleDragAndDrop(user,id,studentId,historyId,createStudentAnswerDto)
+      
+  
+    } else if(createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestion') {
+      this.handleOpenQuestion(user,id,studentId,historyId,createStudentAnswerDto)
+      
+    } else {
       const answerExercise = await this.answerRepository.findOne({
         where:{id:id},
         relations:['objective']
@@ -61,12 +68,6 @@ export class StudentAnswerService {
       answer.updatedAt = new Date();
       answer.isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
       return this.studentAnswerRepository.save(answer);
-  
-    } else if(createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestion') {
-      this.handleOpenQuestion(user,id,studentId,historyId,createStudentAnswerDto)
-
-    } else {
-      this.handleDragAndDrop(user,id,studentId,historyId,createStudentAnswerDto)
     }
 
     

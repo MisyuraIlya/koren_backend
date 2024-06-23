@@ -11,6 +11,7 @@ import EngineTypes from 'src/engine/enums';
 import { UpdateManualGradeDto } from './dto/update-manual-grade';
 import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
 import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
+import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
 
 @Injectable()
 export class StudentHistoryService {
@@ -85,7 +86,8 @@ export class StudentHistoryService {
         'exercise.tabs',
         'exercise.tabs.tasks',
         'exercise.tabs.tasks.rows',
-        'exercise.tabs.tasks.rows.objectives'
+        'exercise.tabs.tasks.rows.objectives',
+        'exercise.tabs.tasks.rows.objectives.answers'
       ]
     })
 
@@ -143,12 +145,16 @@ export class StudentHistoryService {
           item2?.rows?.map((item3) => {
             item3?.objectives?.map((item4) => {
               if(specialTypes.includes(item4.moduleType as EngineTypes)){
-                console.log(item4.moduleType)
                 countExercises++
               }
               if(item4.moduleType == EngineTypes.OPEN_QUESTION || item4.moduleType == EngineTypes.OPEN_QUESTION_HAMAROT){
                 openQuestion++
                 openQuestionIds.push(`${item4.id}`)
+              }
+              if(item4.moduleType == EngineTypes.INPUT_CENTERED || item4?.moduleType == EngineTypes.INPUT){
+                if(item4.answers?.[0]?.value === 'E'){
+                  numberCorrects++
+                }
               }
             })
           })
@@ -166,6 +172,7 @@ export class StudentHistoryService {
         errorIds.push(`${item.answer.objective.id}`)
         totalForOpenQuestion += item.grade
       })
+      
       const gradeTotal = exerciseByOne * numberCorrects + totalForOpenQuestion
       history.totalCorrect = numberCorrects;
       history.totalUncorrect = countExercises - numberCorrects;
@@ -250,5 +257,20 @@ export class StudentHistoryService {
       
     }
   }
+
+  async teacherGradeUpdate(historyId: number, dto: UpdateTeacherGrade) {
+    const find = await this.studentHistoryRepository.findOne({
+      where:{id:historyId}
+    })
+
+    if(!find) throw new BadRequestException('not found history')
+
+    find.teacherGrade = dto.teacherGrade
+    if(dto?.isFinalGrade){
+      find.isFinalGrade = dto?.isFinalGrade
+    }
+    return this.studentHistoryRepository.save(find)
+  }
+
 
 }

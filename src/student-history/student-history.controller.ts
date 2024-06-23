@@ -4,6 +4,7 @@ import { CreateStudentHistoryDto } from './dto/create-student-history.dto';
 
 import { UpdateManualGradeDto } from './dto/update-manual-grade';
 import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
+import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
 
 @Controller('student-history')
 export class StudentHistoryController {
@@ -32,6 +33,11 @@ export class StudentHistoryController {
   @Patch('manualGrade/:id')
   updateManualGrade(@Param('id') id: string, @Body() UpdateManualGradeDto: UpdateManualGradeDto) {
     return this.studentHistoryService.updateManualGrade(+id, UpdateManualGradeDto);
+  }
+
+  @Patch('teacherGrade/:id')
+  teacherGradeUpdate(@Param('id') id: string, @Body() UpdateTeacherGrade: UpdateTeacherGrade) {
+    return this.studentHistoryService.teacherGradeUpdate(+id, UpdateTeacherGrade);
   }
 
   @Delete(':id')
