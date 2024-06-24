@@ -344,7 +344,7 @@ class Engine {
                     if (!isFirst) {
                         result += ';';
                     }
-                    result += EngineTypes.IMAGE_RIGHT + ':' + item2.values[0].value
+                    result += EngineTypes.IMAGE_RIGHT + ':' + item2.values?.[0]?.value
                 }
             })
         })
@@ -358,6 +358,7 @@ class Engine {
         switch (moduleType) {
             case EngineTypes.TYPED_INPUT:
             case EngineTypes.INPUT:
+            case EngineTypes.ROOT_INPUT:
             case EngineTypes.INPUT_CENTERED:
                 const checkIfThereAnotherAnswer = data?.trim().includes(';')
                 let answer = data?.trim()
@@ -409,7 +410,17 @@ class Engine {
                     values: result,
                     answers: [],
                 };  
-
+            case EngineTypes.IMAGE_LEFT:
+            case EngineTypes.IMAGE_RIGHT:
+            case EngineTypes.VIDEO:
+                return {
+                    moduleType: moduleType,
+                    placeholder: null,
+                    orden: orden,
+                    isFullText: false,
+                    values: [],
+                    answers: [{value: data}],
+                };
             case EngineTypes.COPY:
             case EngineTypes.CIRCLE:
             case EngineTypes.WORD_REGULAR:
@@ -434,12 +445,9 @@ class Engine {
             case EngineTypes.PLACEHOLDER_TYPE:
             case EngineTypes.TABLE:
             case EngineTypes.MERGED:
-            case EngineTypes.IMAGE_LEFT:
-            case EngineTypes.IMAGE_RIGHT:
             case EngineTypes.MIX_DRAG:
             case EngineTypes.MIX:
             case EngineTypes.ANSWER:
-            case EngineTypes.ROOT_INPUT:
             case EngineTypes.WORD:
             case EngineTypes.ORDEN:
             case '*':
@@ -485,7 +493,6 @@ class Engine {
             case EngineTypes.BORDER:
             case EngineTypes.DIVIDER:
             case EngineTypes.CHART:
-            case EngineTypes.VIDEO:
             case EngineTypes.TABLE_CLEAR:
             case EngineTypes.MERGED_EXERCISE:
             case EngineTypes.OPEN_QUESTION:

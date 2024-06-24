@@ -27,6 +27,7 @@ export class ExerciseController {
   async ReadStudent(@Param('id') id: number, @Param('studentId') studentId: number): Promise<ExerciseEntity> {
     return await this.exerciseService.findOneByStudent(id,studentId)
   }
+  
 
 
   @Delete(':id')
