@@ -15,6 +15,12 @@ export class ExerciseType {
     @Column({ type: 'boolean', default: false })
     isTimeable: boolean
 
+    @Column({ type: 'boolean', default: false })
+    isAvailableMultipleCheck: boolean
+
+    @Column({ type: 'boolean', default: false })
+    isAvailableReset: boolean
+
     @Column()
     orden: number
 
