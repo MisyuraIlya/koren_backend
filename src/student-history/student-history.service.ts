@@ -180,7 +180,7 @@ export class StudentHistoryService {
       history.openQuestions = openQuestion;
       history.errorIds = errorIds
       history.openQuestionIds = openQuestionIds
-      return gradeTotal
+      return parseFloat(gradeTotal.toFixed(2))
   }
 
   async updateManualGrade(historyId: number, dto: UpdateManualGradeDto) {
@@ -265,7 +265,7 @@ export class StudentHistoryService {
 
     if(!find) throw new BadRequestException('not found history')
 
-    find.teacherGrade = dto.teacherGrade
+    find.teacherGrade = parseFloat(dto.teacherGrade.toFixed(2))
     if(dto?.isFinalGrade){
       find.isFinalGrade = dto?.isFinalGrade
     }
