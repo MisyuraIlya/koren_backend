@@ -45,5 +45,25 @@ export class StudentHistoryController {
     return this.studentHistoryService.remove(+id);
   }
 
+  @Get('/statistic/:uuidGroup/:lvl1/:lvl2/:lvl3/:lvl4/:lvl5')
+  getStasitic(
+    @Param('uuidGroup') uuidGroup: string,
+    @Param('lvl1') lvl1: string,
+    @Param('lvl2') lvl2: string,
+    @Param('lvl3') lvl3: string,
+    @Param('lvl4') lvl4: string,
+    @Param('lvl5') lvl5: string,
+    
+  ){
+    return this.studentHistoryService.getStatistic(
+      uuidGroup,
+      +lvl1,
+      +lvl2,
+      +lvl3,
+      +lvl4,
+      +lvl5
+    );
+  }
+
 
 }

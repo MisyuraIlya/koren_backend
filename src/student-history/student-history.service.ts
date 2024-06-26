@@ -12,6 +12,7 @@ import { UpdateManualGradeDto } from './dto/update-manual-grade';
 import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
 import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
 import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
+import { CourseEntity } from 'src/course/entities/course.entity';
 
 @Injectable()
 export class StudentHistoryService {
@@ -28,6 +29,8 @@ export class StudentHistoryService {
     private readonly exerciseUserConnectionRepository: Repository<ExerciseUserConnection>,
     @InjectRepository(StudentAnswer)
     private readonly studentAnswerRepository: Repository<StudentAnswer>,
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>,
   ){}
 
   async create(createStudentHistoryDto: CreateStudentHistoryDto) {
@@ -270,6 +273,52 @@ export class StudentHistoryService {
       find.isFinalGrade = dto?.isFinalGrade
     }
     return this.studentHistoryRepository.save(find)
+  }
+
+  async getStatistic(
+    uuid: string,
+    lvl1: number,
+    lvl2: number,
+    lvl3: number,
+    lvl4: number,
+    lvl5: number
+  ){
+    const group = await this.exerciseGroupConnectionRepository.findOne({
+      where:{group: uuid},
+      relations:['students','students.student']
+    })
+
+    const result = {
+      column:['שם התלמיד'],
+      rows: []
+    }
+    await this.handleCourse(lvl1,result)
+    await this.handleCourse(lvl2,result)
+    await this.handleCourse(lvl3,result)
+    await this.handleCourse(lvl4,result)
+    await this.handleCourse(lvl5,result)
+
+    if(group){
+      group?.students?.map((item) => {
+        let obj = {
+          name: `${item?.student?.firstName} ${item?.student?.lastName}`
+        }
+        result.rows.push(obj)
+      })
+    }
+
+    return result
+  }
+
+  private async handleCourse(id,result){
+    const response = await this.courseRepository.findOne({
+      where:{id:id}
+    })
+
+    if(response){
+      result.column.push(response?.name)
+    }
+    console.log('result',result)
   }
 
 

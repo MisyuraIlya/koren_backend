@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ExerciseUserConnectionService } from './exercise-user-connection.service';
 import { CreateExerciseUserConnectionDto } from './dto/create-exercise-user-connection.dto';
-import { UpdateExerciseUserConnectionDto } from './dto/update-exercise-user-connection.dto';
 
 @Controller('exercise-user-connection')
 export class ExerciseUserConnectionController {
@@ -23,8 +22,8 @@ export class ExerciseUserConnectionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExerciseUserConnectionDto: UpdateExerciseUserConnectionDto) {
-    return this.exerciseUserConnectionService.update(+id, updateExerciseUserConnectionDto);
+  update(@Param('id') id: string) {
+    return this.exerciseUserConnectionService.resendExercise(+id);
   }
 
   @Delete(':id')

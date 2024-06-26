@@ -8,9 +8,10 @@ import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
 import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
+import { CourseEntity } from 'src/course/entities/course.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StudentHistory,AuthEntity,ExerciseEntity,ExerciseGroupConnection,ExerciseUserConnection, StudentAnswer])],
+  imports: [TypeOrmModule.forFeature([StudentHistory,AuthEntity,ExerciseEntity,ExerciseGroupConnection,ExerciseUserConnection, StudentAnswer, CourseEntity])],
   controllers: [StudentHistoryController],
   providers: [StudentHistoryService],
 })

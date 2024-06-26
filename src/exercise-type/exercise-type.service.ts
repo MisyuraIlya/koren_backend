@@ -11,8 +11,7 @@ export class ExerciseTypeService {
   constructor(
     @InjectRepository(ExerciseType)
     private readonly exerciseTypeRepository: Repository<ExerciseType>,
-
-){}
+  ){}
   create(createExerciseTypeDto: CreateExerciseTypeDto) {
     return 'This action adds a new exerciseType';
   }
