@@ -281,34 +281,82 @@ export class StudentHistoryService {
     lvl2: number,
     lvl3: number,
     lvl4: number,
-    lvl5: number
   ){
     const group = await this.exerciseGroupConnectionRepository.findOne({
       where:{group: uuid},
       relations:['students','students.student']
     })
-
+  
     const result = {
-      column:['שם התלמיד'],
+      column:['שם התלמיד','ממוצע של הקורס'],
       rows: []
-    }
-    await this.handleCourse(lvl1,result)
+    };
+
     await this.handleCourse(lvl2,result)
     await this.handleCourse(lvl3,result)
     await this.handleCourse(lvl4,result)
-    await this.handleCourse(lvl5,result)
-
+    await this.handleExerciseColumn(lvl4,result)
+    console.log('here')
+    const countLvl1 = await this.getExerciseCountAndIdsByCourseId(lvl1);
+    const countLvl2 = await this.getExerciseCountAndIdsByCourseId(lvl2);
+    const countLvl3 = await this.getExerciseCountAndIdsByCourseId(lvl3);
+    const countLvl4 = await this.getExerciseCountAndIdsByCourseId(lvl4);
+    console.log('here2')
     if(group){
-      group?.students?.map((item) => {
-        let obj = {
-          name: `${item?.student?.firstName} ${item?.student?.lastName}`
+      await Promise.all(group.students.map(async (item) => {
+        let averageLvl1 = 0;
+        let averageLvl2 = 0;
+        let averageLvl3 = 0;
+        let averageLvl4 = 0;
+  
+        if(lvl1){
+          const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl1.exerciseIds);
+          averageLvl1 = await this.calculateGrade(countLvl1, exercises);
         }
-        result.rows.push(obj)
-      })
+  
+        if(lvl2){
+          const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl2.exerciseIds);
+          averageLvl2 = await this.calculateGrade(countLvl2, exercises);
+        }
+  
+        if(lvl3){
+          const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl3.exerciseIds);
+          averageLvl3 = await this.calculateGrade(countLvl3, exercises);
+        }
+  
+        if(lvl4){
+          const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl4.exerciseIds);
+          averageLvl4 = await this.calculateGrade(countLvl4, exercises);
+        }
+  
+        let data = []
+        
+        data.push({value:`${item?.student?.firstName} ${item?.student?.lastName}`,grade:0,teacherGrade:0,link:'', isExercise: false})
+  
+        if (lvl1) {
+          data.push({ value:averageLvl1, grade:0,teacherGrade:0,link:'', isExercise: false})
+        }
+        if (lvl2) {
+          data.push({ value:averageLvl2, grade:0,teacherGrade:0,link:'', isExercise: false});
+        }
+        if (lvl3) {
+          data.push({ value:averageLvl3, grade:0,teacherGrade:0,link:'', isExercise: false}); 
+        }
+        if (lvl4) {
+          data.push({ value:averageLvl4, grade:0,teacherGrade:0,link:'', isExercise: false}); 
+        }
+        const arrExercises = await this.handleExercisesRow(item,lvl4)
+        data.push(...arrExercises)
+        let resObj = {
+          result: data
+        }
+        result.rows.push(resObj);
+      }));
     }
-
-    return result
+    
+    return result;
   }
+  
 
   private async handleCourse(id,result){
     const response = await this.courseRepository.findOne({
@@ -318,8 +366,125 @@ export class StudentHistoryService {
     if(response){
       result.column.push(response?.name)
     }
-    console.log('result',result)
+  }
+  
+  private async handleExerciseColumn(courseLvl4Id,result)
+  {
+    const response = await this.courseRepository.findOne({
+      where:{id:courseLvl4Id},
+      relations:['children','children.exercises']
+    })
+    if(response){
+      response?.children?.map((item) => {
+        item?.exercises?.map((item2) => {
+          result.column.push(item2?.title)
+        })
+      })
+    }
   }
 
+  private async getExercisesData(course: CourseEntity, exerciseIds: number[]): Promise<number> {
+    let count = 0;
+    if (course.level === 5) {
+      const exercises = await this.exerciseRepository.find({
+        where: { course },
+      });
+      count += exercises.length;
+      exerciseIds.push(...exercises.map(exercise => exercise.id));
+    }
 
+    if (course.children && course.children.length > 0) {
+      for (const child of course.children) {
+        count += await this.getExercisesData(child, exerciseIds);
+      }
+    }
+
+    return count;
+  }
+
+  async getExerciseCountAndIdsByCourseId(courseId: number): Promise<{ count: number, exerciseIds: number[] }> {
+    const course = await this.courseRepository.findOne({
+      where: { id: courseId },
+      relations: [
+        'children',
+        'children.children',
+        'children.children.children',
+        'children.children.children.children',
+        'children.children.children.children.children',
+      ],
+    });
+
+    if (!course) {
+      return {count:0,exerciseIds:[]}
+    }
+
+    const exerciseIds: number[] = [];
+    const count = await this.getExercisesData(course, exerciseIds);
+
+    return { count, exerciseIds };
+  }
+
+  private async getStudentCompletedExercisesByCourse(user: AuthEntity, exerciseIds: number[]){
+    const result =  await this.studentHistoryRepository.createQueryBuilder('student_history')
+    .where('student_history.studentId = :studentId', { studentId: user.id })
+    .andWhere('student_history.exerciseId IN (:...exerciseIds)', { exerciseIds })
+    .getMany();
+   
+    const result2 = result?.map((item) => { return {exerciseId: item.id, teacherGrade: item.teacherGrade, grade: item.grade}})
+    return result2
+  }
+
+  private async calculateGrade(count,exercises):Promise<number>{
+    const totalExercisesCompleted = exercises.length;
+    const totalPossibleExercises = count.count;
+    let totalGradesEarned = 0;
+    for (const exercise of exercises) {
+        totalGradesEarned += exercise.grade || 0; 
+    }
+    let averageGrade = 0;
+    if (totalExercisesCompleted > 0) {
+        averageGrade = totalGradesEarned / totalExercisesCompleted;
+    }
+    return parseFloat(averageGrade.toFixed(2))
+  }
+
+  private async handleExercisesRow(exer: ExerciseUserConnection, lvl4: number) {
+    const response = await this.courseRepository.findOne({
+      where: { id: lvl4 },
+      relations: ['children', 'children.exercises']
+    });
+  
+    const result = [];
+  
+    if (response) {
+      for (const item of response.children) {
+        for (const item2 of item.exercises) {
+          const findHistory = await this.studentHistoryRepository.findOne({
+            where: { exercise: item2, student: exer.student }
+          });
+  
+          if (findHistory) {
+            result.push({ value:findHistory.teacherGrade ? findHistory.teacherGrade : findHistory.grade, grade: findHistory.grade, teacherGrade: findHistory.teacherGrade, link: await this.findFullPathExercise(item2.id), isExercise: true});
+          } else {
+            result.push({ value:0, grade: 0, teacherGrade: 0, link:'', isExercise: true });
+          }
+        }
+      }
+    }
+    return result
+  }
+
+  private async findFullPathExercise(exerciseId: number) {
+    const exercise = await this.exerciseRepository
+    .createQueryBuilder('exercise')
+    .leftJoinAndSelect('exercise.course', 'course')
+    .leftJoinAndSelect('course.parent', 'parent')
+    .leftJoinAndSelect('parent.parent', 'grandparent')
+    .leftJoinAndSelect('grandparent.parent', 'gradgrandparent')
+    .leftJoinAndSelect('gradgrandparent.parent', 'grandgradgrandparent')
+    .where('exercise.id = :exerciseId', { exerciseId })  // Adjusted to use native parameter
+    .getOne();
+    return `/teacher/exercise/${exercise?.course?.parent?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.id}/${exercise?.course?.parent?.id}/${exercise?.course?.id}`
+    
+  }
 }

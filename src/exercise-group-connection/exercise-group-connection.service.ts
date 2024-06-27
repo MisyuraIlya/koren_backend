@@ -176,8 +176,9 @@ export class ExerciseGroupConnectionService {
     })
     
     const promises = results.map(async (item) => {
-      item.exercise.fullPath = (await this.findFullPathExercise(item?.exercise?.id)).name;
-      item.exercise.fullLink = (await this.findFullPathExercise(item?.exercise?.id)).link;
+      const data = await this.findFullPathExercise(item?.exercise?.id)
+      item.exercise.fullPath = data.name;
+      item.exercise.fullLink = data.link;
       return item;
     });
 
