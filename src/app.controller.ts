@@ -6,12 +6,28 @@ import Engine from './engine/module';
 import { Multer,diskStorage } from 'multer';
 import { extname } from 'path';
 import { fileStorage } from './storage';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthEntity } from './auth/entities/auth.entity';
+import { Repository } from 'typeorm';
+import { ExerciseType } from './exercise-type/entities/exercise-type.entity';
+import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
+import { Role } from './enums/role.enum';
+import { Semester } from './semester/entities/semester.entity';
+import { TypeFeedBack } from './enums/feedback.enum';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly cronService: CronService,
-    private readonly appService: AppService
+    private readonly appService: AppService,
+    @InjectRepository(AuthEntity)
+    private readonly authRepository: Repository<AuthEntity>,
+    @InjectRepository(ExerciseType)
+    private readonly exerciseTypeRepository: Repository<ExerciseType>,
+    @InjectRepository(FeedBackMain)
+    private readonly feedBackMainRepository: Repository<FeedBackMain>,
+    @InjectRepository(Semester)
+    private readonly confirmationRepository: Repository<Semester>,
     ) {}
 
   @Get('/fetchCourses')
@@ -52,200 +68,74 @@ export class AppController {
     return this.appService.saveMedia(file)
   }
 
-  @Get('test')
-  async test(){
-    return {
-      "@odata.context": "https://prt.shanishenhav.com/odata/Priority/tabula.ini/shni22/$metadata#AGENT_STATSV2",
-      "value": [
-          {
-              "AGENTCODE": "94",
-              "AGENTNAME": "אריק שטיין",
-              "ORD_SALES": 48.97,
-              "DOC_SALES": 12282.94,
-              "PROJ_SALES": 0.00,
-              "IV_SALES": 0.00,
-              "ACC_SALES": 5659.00,
-              "CHEQUE_SALES": 63064.00,
-              "CODE": "ש'ח",
-              "CREDIT": 17990.91,
-              "MAX_SALES": 800000.00,
-              "CREDIT_REST": 782009.09,
-              "OBLIGO": 81054.91,
-              "MAX_OBLIGO": 800000.00,
-              "OBLIGO_REST": 718945.09,
-              "MAX_CREDIT_ENV": 950000.00,
-              "MAX_OBLIGO_ENV": 950000.00,
-              "OBCODE": "ש'ח",
-              "CURDATE": "2024-02-13T00:00:00+02:00",
-              "ARG_MSGTYPE": null,
-              "CUST": 22,
-              "OBLIGO_FNCITEMS_SUBFORM": [
-                  {
-                      "BALDATE": "2024-01-11T00:00:00+02:00",
-                      "FNCNUM": "24000538",
-                      "IVNUM": "SI248000179",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 292.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-07-09T00:00:00+03:00",
-                      "FNCIREF1": "SI248000179",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 292.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 760320,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-01-25T00:00:00+02:00",
-                      "FNCNUM": "24001854",
-                      "IVNUM": "SI248000832",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. מרכזת ינו-24",
-                      "SUM1": 1.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-07-23T00:00:00+03:00",
-                      "FNCIREF1": "SI248000832",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 1.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 762253,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-01-28T00:00:00+02:00",
-                      "FNCNUM": "24002006",
-                      "IVNUM": "SI248000928",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. מרכזת ינו-24",
-                      "SUM1": 1.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-07-26T00:00:00+03:00",
-                      "FNCIREF1": "SI248000928",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 1.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 762433,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-01-28T00:00:00+02:00",
-                      "FNCNUM": "24002172",
-                      "IVNUM": "SI248001017",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 1525.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-07-26T00:00:00+03:00",
-                      "FNCIREF1": "SI248001017",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 1525.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 762610,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-01-31T00:00:00+02:00",
-                      "FNCNUM": "24002973",
-                      "IVNUM": "SI248001629",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 109.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-07-29T00:00:00+03:00",
-                      "FNCIREF1": "SI248001629",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 109.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 763429,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-02-08T00:00:00+02:00",
-                      "FNCNUM": "24003423",
-                      "IVNUM": "SI248001755",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 2600.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-08-06T00:00:00+03:00",
-                      "FNCIREF1": "SI248001755",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 2600.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 763882,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-02-08T00:00:00+02:00",
-                      "FNCNUM": "24003424",
-                      "IVNUM": "SI248001756",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 812.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-08-06T00:00:00+03:00",
-                      "FNCIREF1": "SI248001756",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 812.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 763883,
-                      "KLINE": 1
-                  },
-                  {
-                      "BALDATE": "2024-02-08T00:00:00+02:00",
-                      "FNCNUM": "24003425",
-                      "IVNUM": "SI248001757",
-                      "FNCPATNAME": "חלמ",
-                      "DETAILS": "חש. לקוח מרכזת",
-                      "SUM1": 319.00,
-                      "CODE": "ש'ח",
-                      "FNCREF2": null,
-                      "FNCDATE": "2024-08-06T00:00:00+03:00",
-                      "FNCIREF1": "SI248001757",
-                      "FNCIREF2": null,
-                      "ORDNAME": null,
-                      "FNCICODE": null,
-                      "ACCNAME": "41101010",
-                      "SUM5": 319.00,
-                      "CODE5": "ש'ח",
-                      "FNCTRANS": 763884,
-                      "KLINE": 1
-                  }
-              ]
-          }
-      ]
-  }
-  }
+  @Get('initial')
+  async initial(){
+    const admin = new AuthEntity;
+    admin.email = 'admin@gmail.com'
+    admin.password = '123456'
+    admin.isActive = true;
+    admin.role = Role.Admin,
+    admin.firstName = 'קורן'
+    admin.lastName = 'שרעבי'
+    this.authRepository.save(admin)
 
+    const teacher = new AuthEntity;
+    teacher.email = 'teacher@gmail.com'
+    teacher.password = '123456'
+    teacher.firstName = 'קורן'
+    teacher.lastName = 'שרעבי'
+    teacher.role = Role.Teacher
+    teacher.isActive = true
+    this.authRepository.save(teacher)
+
+    const exerciseType = [
+      {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
+      {title:'מבדק', isDatable:true,isTimable:false, orden:2},
+      {title:'מבחן', isDatable:true,isTimable:true, orden:3},
+      {title:'תלקיט ארוך טווח', isDatable:true,isTimable:false, orden:4},
+      {title:'תלקיט קצר טווח', isDatable:true,isTimable:false, orden:5},
+    ]
+    exerciseType?.map(async (item) => {
+      const exercise = new ExerciseType();
+      exercise.title = item.title;
+      exercise.isDateable = item.isDatable
+      exercise.isTimeable = item.isTimable
+      exercise.orden = item.orden
+      await this.exerciseTypeRepository.save(exercise)
+    })
+
+    const semeters = [
+      {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
+      {title:'2',yaer:'2024',fromDate:'2024-09-01',toDate:'2025-08-01',active:true},
+      {title:'3',yaer:'2025',fromDate:'2025-09-01',toDate:'2026-08-01',active:false},
+      {title:'4',yaer:'2026',fromDate:'2026-09-01',toDate:'2027-08-01',active:false},
+      {title:'5',yaer:'2027',fromDate:'2027-09-01',toDate:'2028-08-01',active:false},
+    ]
+
+    semeters?.map(async (item) => {
+      const sem = new Semester()
+      sem.title = item.title
+      sem.year = +item.yaer
+      sem.fromDate = new Date(item.fromDate)
+      sem.toDate = new Date(item.toDate)
+      sem.active = item.active
+      await this.confirmationRepository.save(sem)
+    })
+
+
+    const bankFeedBack =[
+      {title:'משובים שלי',type:TypeFeedBack.Positive},
+      {title:'משובים שלי',type:TypeFeedBack.Negative}
+    ]
+    bankFeedBack?.map(async (item) => {
+      const fed = new FeedBackMain()
+      fed.title = item.title,
+      fed.type = item.type
+      await this.feedBackMainRepository.save(fed)
+    })
+
+
+  }
 
 
 

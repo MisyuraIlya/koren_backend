@@ -41,6 +41,10 @@ import { FeedBackItemModule } from './feed-back-item/feed-back-item.module';
 import { MailModule } from './mail/mail.module';
 import { MailChatModule } from './mail-chat/mail-chat.module';
 import { PdfUtilitiesEntity } from './pdf-utilities/entities/pdf-utility.entity';
+import { AuthEntity } from './auth/entities/auth.entity';
+import { ExerciseType } from './exercise-type/entities/exercise-type.entity';
+import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
+import { Semester } from './semester/entities/semester.entity';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -63,7 +67,7 @@ import { PdfUtilitiesEntity } from './pdf-utilities/entities/pdf-utility.entity'
         }
       }
     }),
-    TypeOrmModule.forFeature([CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity,PdfUtilitiesEntity]),
+    TypeOrmModule.forFeature([Semester, FeedBackMain ,AuthEntity, ExerciseType, FeedBackMain ,CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity,PdfUtilitiesEntity]),
     CourseModule, 
     ExerciseModule, 
     TabModule, 

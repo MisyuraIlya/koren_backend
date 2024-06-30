@@ -10,6 +10,7 @@ import { ExerciseGroupConnection } from "src/exercise-group-connection/entities/
 import { ExerciseUserConnection } from "src/exercise-user-connection/entities/exercise-user-connection.entity";
 import { Mail } from "src/mail/entities/mail.entity";
 import { MailChat } from "src/mail-chat/entities/mail-chat.entity";
+import { FeedBackItem } from "src/feed-back-item/entities/feed-back-item.entity";
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
@@ -76,5 +77,8 @@ export class AuthEntity {
 
     @OneToMany(() => MailChat, chat => chat.user, {onDelete: "CASCADE"})
     chats: MailChat[];
+
+    @OneToMany(() => FeedBackItem, chat => chat.user, {onDelete: "CASCADE"})
+    feedbacks: FeedBackItem[];
 
 }

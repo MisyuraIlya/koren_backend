@@ -7,9 +7,9 @@ import { UpdateFeedBackItemDto } from './dto/update-feed-back-item.dto';
 export class FeedBackItemController {
   constructor(private readonly feedBackItemService: FeedBackItemService) {}
 
-  @Post()
-  create(@Body() createFeedBackItemDto: CreateFeedBackItemDto) {
-    return this.feedBackItemService.create(createFeedBackItemDto);
+  @Post(':id')
+  create(@Param('id') id: string, @Body() createFeedBackItemDto: CreateFeedBackItemDto) {
+    return this.feedBackItemService.create(+id, createFeedBackItemDto);
   }
 
   @Get()

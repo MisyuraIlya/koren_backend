@@ -1,1 +1,4 @@
-export class CreateFeedBackItemDto {}
+export class CreateFeedBackItemDto {
+    title: string
+    type: string
+}

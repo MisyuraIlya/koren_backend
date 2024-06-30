@@ -84,7 +84,7 @@ export class MailService {
     return `This action returns all mail`;
   }
 
-  async findOne(id: number, page = 1, search = '') {
+  async findOne(id: number, page = 1, search = '',type) {
     const findUser = await this.authRepository.findOne({
       where: { id: id },
     });
@@ -110,11 +110,45 @@ export class MailService {
       };
     }
 
+    if(type){
+      options.where = {
+        ...options.where,
+        type: type
+      }
+    }
+
     const [mails, total] = await this.mailRepository.findAndCount(options);
 
-    const totalPages = Math.ceil(total / take); 
+    const totalMessages = await this.mailRepository.count({
+      where: {
+        userRecive: findUser,
+      },
+    });
 
-    return { mails, total, totalPages };
+    const totalFeedBacks = await this.mailRepository.count({
+      where: {
+        userRecive: findUser,
+        type: MailTypeEnum.FeedBack,
+      },
+    });
+
+    const totalSystem = await this.mailRepository.count({
+      where: {
+        userRecive: findUser,
+        type: MailTypeEnum.System, 
+      },
+    });
+
+    const totalRegular = await this.mailRepository.count({
+      where: {
+        userRecive: findUser,
+        type: MailTypeEnum.Original, 
+      },
+    });
+
+    const totalPages = Math.ceil(total / take);
+
+  return { mails, total, totalMessages, totalPages, totalFeedBacks, totalSystem, totalRegular };
   }
 
   async update(uuid: string, userId: number) {

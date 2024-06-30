@@ -27,8 +27,8 @@ export class MailController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '') {
-    return this.mailService.findOne(+id, page, search);
+  findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '',  @Query('type') type: string = '') {
+    return this.mailService.findOne(+id, page, search,type);
   }
 
   @Patch(':uuid/:userId')

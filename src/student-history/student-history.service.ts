@@ -418,6 +418,8 @@ export class StudentHistoryService {
       return {count:0,exerciseIds:[]}
     }
 
+
+    
     const exerciseIds: number[] = [];
     const count = await this.getExercisesData(course, exerciseIds);
 

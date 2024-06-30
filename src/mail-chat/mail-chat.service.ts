@@ -38,13 +38,19 @@ export class MailChatService {
   }
 
   async findOne(id: string) {
+    const mainMail = await this.mailRepository.findOne({
+      where:{uuid: id}
+    })
     const chats = await this.mailChatRepository.find({
       where: { uuid: id },
       relations: ['user'],
       order: { createdAt: 'ASC' },
     });
-    console.log('chats',chats)
-    return chats;
+    const obj = {
+      mail:mainMail,
+      chat:chats
+    }
+    return obj;
   }
 
   update(id: number, updateMailChatDto: UpdateMailChatDto) {
