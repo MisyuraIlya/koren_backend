@@ -45,6 +45,7 @@ import { AuthEntity } from './auth/entities/auth.entity';
 import { ExerciseType } from './exercise-type/entities/exercise-type.entity';
 import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
 import { Semester } from './semester/entities/semester.entity';
+import { ShieldModule } from './shield/shield.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -89,7 +90,7 @@ import { Semester } from './semester/entities/semester.entity';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule,
   ],
   controllers: [AppController],
   providers: [AppService,CronService],

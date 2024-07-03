@@ -13,6 +13,8 @@ import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
 import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
 import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
 import { CourseEntity } from 'src/course/entities/course.entity';
+import { Shield } from 'src/shield/entities/shield.entity';
+import { ShieldEnum } from 'src/enums/shield.enum';
 
 @Injectable()
 export class StudentHistoryService {
@@ -31,6 +33,8 @@ export class StudentHistoryService {
     private readonly studentAnswerRepository: Repository<StudentAnswer>,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(Shield)
+    private readonly shieldRepository: Repository<Shield>,
   ){}
 
   async create(createStudentHistoryDto: CreateStudentHistoryDto) {
@@ -282,6 +286,9 @@ export class StudentHistoryService {
     lvl3: number,
     lvl4: number,
   ){
+    const courseLvl1 = await this.courseRepository.findOne({
+      where:{id:lvl1}
+    })
     const group = await this.exerciseGroupConnectionRepository.findOne({
       where:{group: uuid},
       relations:['students','students.student']
@@ -345,10 +352,15 @@ export class StudentHistoryService {
         if (lvl4) {
           data.push({ value:averageLvl4, grade:0,teacherGrade:0,link:'', isExercise: false}); 
         }
+        
         const arrExercises = await this.handleExercisesRow(item,lvl4)
         data.push(...arrExercises)
         let resObj = {
-          result: data
+          result: data,
+          user: item.student,
+          courseId: lvl1,
+          gradeShield: await this.shieldRepository.findOne({where:{user:item.student,type:ShieldEnum.ShieldGrade,course:courseLvl1}}),
+          gradeSubmit: await this.shieldRepository.findOne({where:{user:item.student,type:ShieldEnum.SubmitGrade,course:courseLvl1}})
         }
         result.rows.push(resObj);
       }));

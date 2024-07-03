@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 import { Confirmation } from 'src/confirmation/entities/confirmation.entity';
+import { Shield } from 'src/shield/entities/shield.entity';
 
 @Entity({name: 'course'})
 export class CourseEntity {
@@ -58,5 +59,8 @@ export class CourseEntity {
 
   @OneToMany(() => Confirmation, student => student.course, { cascade: ["remove"] })
   confirmations: Confirmation[];
+
+  @OneToMany(() => Shield, Shield => Shield.course, { cascade: ["remove"] })
+  shields: Shield[];
 
 }
