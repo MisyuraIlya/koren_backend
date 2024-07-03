@@ -296,12 +296,11 @@ export class StudentHistoryService {
     await this.handleCourse(lvl3,result)
     await this.handleCourse(lvl4,result)
     await this.handleExerciseColumn(lvl4,result)
-    console.log('here')
     const countLvl1 = await this.getExerciseCountAndIdsByCourseId(lvl1);
     const countLvl2 = await this.getExerciseCountAndIdsByCourseId(lvl2);
     const countLvl3 = await this.getExerciseCountAndIdsByCourseId(lvl3);
     const countLvl4 = await this.getExerciseCountAndIdsByCourseId(lvl4);
-    console.log('here2')
+    
     if(group){
       await Promise.all(group.students.map(async (item) => {
         let averageLvl1 = 0;
@@ -312,6 +311,7 @@ export class StudentHistoryService {
         if(lvl1){
           const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl1.exerciseIds);
           averageLvl1 = await this.calculateGrade(countLvl1, exercises);
+          console.log('averageLvl1',averageLvl1)
         }
   
         if(lvl2){
@@ -357,7 +357,6 @@ export class StudentHistoryService {
     return result;
   }
   
-
   private async handleCourse(id,result){
     const response = await this.courseRepository.findOne({
       where:{id:id}
@@ -445,7 +444,7 @@ export class StudentHistoryService {
     }
     let averageGrade = 0;
     if (totalExercisesCompleted > 0) {
-        averageGrade = totalGradesEarned / totalExercisesCompleted;
+        averageGrade = totalGradesEarned / totalPossibleExercises;
     }
     return parseFloat(averageGrade.toFixed(2))
   }
