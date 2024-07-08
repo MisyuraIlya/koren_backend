@@ -11,5 +11,6 @@ import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
   imports: [TypeOrmModule.forFeature([Mail, AuthEntity,ExerciseEntity]), MailChatModule],
   controllers: [MailController],
   providers: [MailService],
+  exports: [MailService]
 })
 export class MailModule {}

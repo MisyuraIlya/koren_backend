@@ -13,6 +13,10 @@ import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
 import { CreateExerciseGroupAnswerDto } from './dto/create-exercise-group-answer.dto';
 import { ExerciseService } from 'src/exercise/exercise.service';
+import { MailService } from 'src/mail/mail.service';
+import { CreateMailDto } from 'src/mail/dto/create-mail.dto';
+import { MailTypeEnum } from 'src/enums/mail.enum';
+import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 
 @Injectable()
 export class ExerciseGroupConnectionService {
@@ -31,7 +35,12 @@ export class ExerciseGroupConnectionService {
     private readonly exerciseRepository: Repository<ExerciseEntity>,
     @InjectRepository(ExerciseUserConnection)
     private readonly exerciseUserConnectionRepository: Repository<ExerciseUserConnection>,
+    @InjectRepository(StudentHistory)
+    private readonly StudentHistoryRepository: Repository<StudentHistory>,
+
+    private readonly MailService: MailService
   ){}
+
   async create(dto: CreateExerciseGroupConnectionDto) {
     const teacher = await this.authRepository.findOne({
         where: { id: +dto.teacherId }
@@ -91,7 +100,24 @@ export class ExerciseGroupConnectionService {
                 newUserConnection.isOpenAnswer = false;
                 await this.exerciseUserConnectionRepository.save(newUserConnection);
             }
-        }
+            const obj = {
+              sendTo:[student.id],
+              title: `נשלח ${exerciseType.title} ${exercise.title}`,
+              description:`נשלח ${exerciseType.title} ${exercise.title}`,
+              type: MailTypeEnum.Original
+            } as CreateMailDto
+            this.MailService.create(obj,teacher.id)
+
+            const checkIsStart = await this.StudentHistoryRepository.findOne({
+              where:{student:student, exercise: exercise}
+            })
+
+            if(checkIsStart){
+              checkIsStart.isDone = false
+              this.StudentHistoryRepository.save(checkIsStart)
+            }
+
+      }
     }));
 
     return res;

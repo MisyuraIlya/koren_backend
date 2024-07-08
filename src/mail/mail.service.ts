@@ -20,7 +20,6 @@ export class MailService {
     @InjectRepository(ExerciseEntity)
     private readonly exerciseRepository: Repository<ExerciseEntity>,
 
-    
     private readonly MailChatService: MailChatService
 ){}
 

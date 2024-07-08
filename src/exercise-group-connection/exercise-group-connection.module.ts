@@ -10,9 +10,11 @@ import { ExerciseEntity } from 'src/exercise/entities/exercise.entity';
 import { Semester } from 'src/semester/entities/semester.entity';
 import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/exercise-user-connection.entity';
 import { ExerciseService } from 'src/exercise/exercise.service';
+import { MailModule } from 'src/mail/mail.module';
+import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExerciseGroupConnection,AuthEntity,Group,ExerciseType, Semester ,ExerciseEntity,ExerciseUserConnection])],
+  imports: [TypeOrmModule.forFeature([ExerciseGroupConnection,AuthEntity,Group,ExerciseType, Semester ,ExerciseEntity,ExerciseUserConnection,StudentHistory]),MailModule],
   controllers: [ExerciseGroupConnectionController],
   providers: [ExerciseGroupConnectionService],
 })
