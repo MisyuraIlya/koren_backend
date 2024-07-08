@@ -15,6 +15,9 @@ import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
 import { CourseEntity } from 'src/course/entities/course.entity';
 import { Shield } from 'src/shield/entities/shield.entity';
 import { ShieldEnum } from 'src/enums/shield.enum';
+import { MailService } from 'src/mail/mail.service';
+import { CreateMailDto } from 'src/mail/dto/create-mail.dto';
+import { MailTypeEnum } from 'src/enums/mail.enum';
 
 @Injectable()
 export class StudentHistoryService {
@@ -35,6 +38,9 @@ export class StudentHistoryService {
     private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(Shield)
     private readonly shieldRepository: Repository<Shield>,
+
+    private readonly MailService: MailService
+    
   ){}
 
   async create(createStudentHistoryDto: CreateStudentHistoryDto) {
@@ -112,15 +118,28 @@ export class StudentHistoryService {
 
       if(connection){
         const findUserGroup = await this.exerciseUserConnectionRepository.findOne({
-          where:{connection:connection, student:find.student}
+          where:{connection:connection, student:find.student},
+          relations:['student','connection','connection.exerciseType','connection.teacher','connection.exercise']
         })
         findUserGroup.isDone = true
         findUserGroup.isResend = false
         this.exerciseUserConnectionRepository.save(findUserGroup)
+
+        const obj = {
+          sendTo:[findUserGroup.connection.teacher.id],
+          title: `תלמיד סיים ${findUserGroup.connection.exerciseType.title} ${findUserGroup.connection.exercise.title}`,
+          description:`תלמיד סיים ${findUserGroup.connection.exerciseType.title} ${findUserGroup.connection.exercise.title}`,
+          type: MailTypeEnum.Original
+        } as CreateMailDto
+        this.MailService.create(obj,findUserGroup.student.id)
       }
       
       find.isDone = dto.isDone 
+
+
+
       return this.studentHistoryRepository.save(find)
+      
       
     }
 

@@ -90,7 +90,7 @@ export class ExerciseGroupConnectionService {
         });
         if (findStudent) {
             const findUserConnection = await this.exerciseUserConnectionRepository.findOne({
-                where: { student: findStudent, connection: exerciseGroupConnection }
+                where: { student: findStudent, connection: exerciseGroupConnection }, relations:['connection']
             });
             if (!findUserConnection) {
                 const newUserConnection = new ExerciseUserConnection();
@@ -100,10 +100,27 @@ export class ExerciseGroupConnectionService {
                 newUserConnection.isOpenAnswer = false;
                 await this.exerciseUserConnectionRepository.save(newUserConnection);
             }
+            let message = `נשלח ${exerciseType.title} ${exercise.title} `
+            if(exerciseType.isDateable){
+              const fromDate = new Date(findUserConnection.connection.fromDate);
+              const toDate = new Date(findUserConnection.connection.toDate);
+
+              const formattedFromDate = fromDate.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              const formattedToDate = toDate.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+              message += `בתאריך ${formattedFromDate} לתאריך ${formattedToDate} `;
+            }
+            if(exerciseType.isTimeable){
+              const connectionTime = new Date(findUserConnection.connection.time);
+              const formattedTime = connectionTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+              message += `בשעה ${formattedTime} `;
+            }
+
             const obj = {
               sendTo:[student.id],
               title: `נשלח ${exerciseType.title} ${exercise.title}`,
-              description:`נשלח ${exerciseType.title} ${exercise.title}`,
+              description:message,
+              
               type: MailTypeEnum.Original
             } as CreateMailDto
             this.MailService.create(obj,teacher.id)
@@ -114,6 +131,8 @@ export class ExerciseGroupConnectionService {
 
             if(checkIsStart){
               checkIsStart.isDone = false
+              checkIsStart.isFinalGrade = false
+              checkIsStart.teacherGrade = 0
               this.StudentHistoryRepository.save(checkIsStart)
             }
 

@@ -23,8 +23,8 @@ export class AuthController {
 		return this.authService.getUserByTypeAndSchool(type,schoolId);
 	}
 
-	@Get('/mail')
-	async getUsers(){
-		return this.authService.getUsers()
+	@Get('/mail/:userId')
+	async getUsers(@Param('userId') userId: string){
+		return this.authService.getUsers(+userId)
 	}
 }

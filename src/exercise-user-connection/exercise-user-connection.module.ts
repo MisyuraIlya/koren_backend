@@ -3,9 +3,10 @@ import { ExerciseUserConnectionService } from './exercise-user-connection.servic
 import { ExerciseUserConnectionController } from './exercise-user-connection.controller';
 import { ExerciseUserConnection } from './entities/exercise-user-connection.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExerciseUserConnection])],
+  imports: [TypeOrmModule.forFeature([ExerciseUserConnection]), MailModule],
   controllers: [ExerciseUserConnectionController],
   providers: [ExerciseUserConnectionService],
 })

@@ -10,9 +10,10 @@ import { ExerciseUserConnection } from 'src/exercise-user-connection/entities/ex
 import { StudentAnswer } from 'src/student-answer/entities/student-answer.entity';
 import { CourseEntity } from 'src/course/entities/course.entity';
 import { Shield } from 'src/shield/entities/shield.entity';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StudentHistory,AuthEntity,ExerciseEntity,ExerciseGroupConnection,ExerciseUserConnection, StudentAnswer, CourseEntity, Shield])],
+  imports: [TypeOrmModule.forFeature([StudentHistory,AuthEntity,ExerciseEntity,ExerciseGroupConnection,ExerciseUserConnection, StudentAnswer, CourseEntity, Shield]), MailModule],
   controllers: [StudentHistoryController],
   providers: [StudentHistoryService],
 })

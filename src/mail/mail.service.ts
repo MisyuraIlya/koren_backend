@@ -25,7 +25,7 @@ export class MailService {
 
   async create(createMailDto: CreateMailDto, senderId: number) {
     const { sendTo, title, description } = createMailDto;
-
+    sendTo.push(senderId)
     const sender = await this.authRepository.findOne({ where: { id: senderId } });
     if (!sender) {
       throw new Error('Sender not found');

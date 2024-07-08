@@ -41,7 +41,12 @@ export class AuthService {
         return users
     }
 
-    async getUsers(){
-        return this.authRepository.find()
+    async getUsers(userId:number){
+        const findUser = await this.authRepository.findOne({
+            where:{id:userId},
+            relations:['class','class.students']
+        })
+        const filter = findUser.class.students?.filter((item) => item.id !== userId)
+        return filter
     }
 }
