@@ -30,6 +30,8 @@ export class FeedBackItemService {
       where:{title: dto.type === 'positive' ? 'משובים שלי (חיובי)' : 'משובים שלי (שלילי)'}
     })
 
+    if(!findMain) throw new BadRequestException('not user main repository')
+
     if(findMain){
       const newItem = new FeedBackItem()
       newItem.title = dto.title 

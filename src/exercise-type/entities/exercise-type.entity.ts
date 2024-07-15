@@ -21,6 +21,9 @@ export class ExerciseType {
     @Column({ type: 'boolean', default: false })
     isAvailableReset: boolean
 
+    @Column({ type: 'boolean', default: false })
+    isCanSeeResultAfterSend: boolean
+
     @Column()
     orden: number
 

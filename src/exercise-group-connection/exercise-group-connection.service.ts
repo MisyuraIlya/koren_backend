@@ -147,17 +147,20 @@ export class ExerciseGroupConnectionService {
       where:{id:+answerConnectionId},
     })
     if(!findConnection) throw new BadRequestException('group connecion not found');
+    
     findConnection.answerType = dto.answerType
     if(dto?.dueDate && dto?.time){
       findConnection.answerDate = dto?.dueDate
       findConnection.answerTime = dto?.time
     }
+
     await this.exerciseGroupConnectionRepository.save(findConnection)
+    
     dto.students?.map(async (student) => {
       const find = await this.exerciseUserConnectionRepository.findOne({
-        where:{student:student,connection:findConnection}
+        where:{student:student,connection:findConnection},
+        relations:['connection','connection.exerciseType','connection.exercise','connection.teacher']
       })
-      console.log('find',find)
       if(find){
         if(dto?.dueDate && dto?.time){
           find.dueDate = dto.dueDate
@@ -167,8 +170,17 @@ export class ExerciseGroupConnectionService {
           find.isOpenAnswer = true
         }
         await this.exerciseUserConnectionRepository.save(find)
+        const obj = {
+          sendTo:[student.id],
+          title: `נפתחו תשובות ${find.connection.exerciseType.title} ${find.connection.exercise.title}`,
+          description:`נפתחו תשובות ${find.connection.exerciseType.title} ${find.connection.exercise.title}`,
+          
+          type: MailTypeEnum.Original
+        } as CreateMailDto
+        this.MailService.create(obj,find.connection.teacher.id)
       }
     })
+
     return {status:"success",message:"data created"}
   }
 

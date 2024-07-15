@@ -70,23 +70,23 @@ export class AppController {
 
   @Get('initial')
   async initial(){
-    const admin = new AuthEntity;
-    admin.email = 'admin@gmail.com'
-    admin.password = '123456'
-    admin.isActive = true;
-    admin.role = Role.Admin,
-    admin.firstName = 'קורן'
-    admin.lastName = 'שרעבי'
-    this.authRepository.save(admin)
+    // const admin = new AuthEntity;
+    // admin.email = 'admin@gmail.com'
+    // admin.password = '123456'
+    // admin.isActive = true;
+    // admin.role = Role.Admin,
+    // admin.firstName = 'קורן'
+    // admin.lastName = 'שרעבי'
+    // this.authRepository.save(admin)
 
-    const teacher = new AuthEntity;
-    teacher.email = 'teacher@gmail.com'
-    teacher.password = '123456'
-    teacher.firstName = 'קורן'
-    teacher.lastName = 'שרעבי'
-    teacher.role = Role.Teacher
-    teacher.isActive = true
-    this.authRepository.save(teacher)
+    // const teacher = new AuthEntity;
+    // teacher.email = 'teacher@gmail.com'
+    // teacher.password = '123456'
+    // teacher.firstName = 'קורן'
+    // teacher.lastName = 'שרעבי'
+    // teacher.role = Role.Teacher
+    // teacher.isActive = true
+    // this.authRepository.save(teacher)
 
     const exerciseType = [
       {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
@@ -104,28 +104,28 @@ export class AppController {
       await this.exerciseTypeRepository.save(exercise)
     })
 
-    const semeters = [
-      {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
-      {title:'2',yaer:'2024',fromDate:'2024-09-01',toDate:'2025-08-01',active:true},
-      {title:'3',yaer:'2025',fromDate:'2025-09-01',toDate:'2026-08-01',active:false},
-      {title:'4',yaer:'2026',fromDate:'2026-09-01',toDate:'2027-08-01',active:false},
-      {title:'5',yaer:'2027',fromDate:'2027-09-01',toDate:'2028-08-01',active:false},
-    ]
+    // const semeters = [
+    //   {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
+    //   {title:'2',yaer:'2024',fromDate:'2024-09-01',toDate:'2025-08-01',active:true},
+    //   {title:'3',yaer:'2025',fromDate:'2025-09-01',toDate:'2026-08-01',active:false},
+    //   {title:'4',yaer:'2026',fromDate:'2026-09-01',toDate:'2027-08-01',active:false},
+    //   {title:'5',yaer:'2027',fromDate:'2027-09-01',toDate:'2028-08-01',active:false},
+    // ]
 
-    semeters?.map(async (item) => {
-      const sem = new Semester()
-      sem.title = item.title
-      sem.year = +item.yaer
-      sem.fromDate = new Date(item.fromDate)
-      sem.toDate = new Date(item.toDate)
-      sem.active = item.active
-      await this.confirmationRepository.save(sem)
-    })
+    // semeters?.map(async (item) => {
+    //   const sem = new Semester()
+    //   sem.title = item.title
+    //   sem.year = +item.yaer
+    //   sem.fromDate = new Date(item.fromDate)
+    //   sem.toDate = new Date(item.toDate)
+    //   sem.active = item.active
+    //   await this.confirmationRepository.save(sem)
+    // })
 
 
     const bankFeedBack =[
-      {title:'משובים שלי',type:TypeFeedBack.Positive},
-      {title:'משובים שלי',type:TypeFeedBack.Negative}
+      {title:'משובים שלי (חיובי)',type:TypeFeedBack.Positive},
+      {title:'משובים שלי (שלילי)',type:TypeFeedBack.Negative}
     ]
     bankFeedBack?.map(async (item) => {
       const fed = new FeedBackMain()

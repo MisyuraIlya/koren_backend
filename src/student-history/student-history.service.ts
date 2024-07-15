@@ -337,7 +337,6 @@ export class StudentHistoryService {
         if(lvl1){
           const exercises = await this.getStudentCompletedExercisesByCourse(item.student, countLvl1.exerciseIds);
           averageLvl1 = await this.calculateGrade(countLvl1, exercises);
-          console.log('averageLvl1',averageLvl1)
         }
   
         if(lvl2){
