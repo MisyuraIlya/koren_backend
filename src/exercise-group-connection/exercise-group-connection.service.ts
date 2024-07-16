@@ -102,8 +102,8 @@ export class ExerciseGroupConnectionService {
             }
             let message = `נשלח ${exerciseType.title} ${exercise.title} `
             if(exerciseType.isDateable){
-              const fromDate = new Date(findUserConnection.connection.fromDate);
-              const toDate = new Date(findUserConnection.connection.toDate);
+              const fromDate = new Date(res.fromDate);
+              const toDate = new Date(res.toDate);
 
               const formattedFromDate = fromDate.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
               const formattedToDate = toDate.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -111,7 +111,7 @@ export class ExerciseGroupConnectionService {
               message += `בתאריך ${formattedFromDate} לתאריך ${formattedToDate} `;
             }
             if(exerciseType.isTimeable){
-              const connectionTime = new Date(findUserConnection.connection.time);
+              const connectionTime = new Date(res.time);
               const formattedTime = connectionTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
               message += `בשעה ${formattedTime} `;
             }

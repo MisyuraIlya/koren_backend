@@ -401,7 +401,12 @@ export class StudentHistoryService {
   {
     const response = await this.courseRepository.findOne({
       where:{id:courseLvl4Id},
-      relations:['children','children.exercises']
+      relations:['children','children.exercises'],
+      order: {
+        children: {
+          orden: 'ASC'
+        }
+      }
     })
     if(response){
       response?.children?.map((item) => {
