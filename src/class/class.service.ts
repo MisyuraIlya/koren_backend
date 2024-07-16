@@ -48,8 +48,9 @@ export class ClassService {
     .leftJoinAndSelect('students.school', 'studentSchool')
     .leftJoinAndSelect('students.class', 'studentClass')
     .leftJoinAndSelect('class.school', 'school')
-    .where(`school.id = ${school.id}`)
-    .getMany()
+    .where('school.id = :schoolId', { schoolId: school.id })
+    .andWhere('students.role = :role', { role: 'student' })
+    .getMany();
     return classes;
   }
 }
