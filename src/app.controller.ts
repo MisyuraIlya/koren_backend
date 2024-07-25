@@ -70,39 +70,39 @@ export class AppController {
 
   @Get('initial')
   async initial(){
-    // const admin = new AuthEntity;
-    // admin.email = 'admin@gmail.com'
-    // admin.password = '123456'
-    // admin.isActive = true;
-    // admin.role = Role.Admin,
-    // admin.firstName = 'קורן'
-    // admin.lastName = 'שרעבי'
-    // this.authRepository.save(admin)
+    const admin = new AuthEntity;
+    admin.email = 'admin@gmail.com'
+    admin.password = '123456'
+    admin.isActive = true;
+    admin.role = Role.Admin,
+    admin.firstName = 'קורן'
+    admin.lastName = 'שרעבי'
+    this.authRepository.save(admin)
 
-    // const teacher = new AuthEntity;
-    // teacher.email = 'teacher@gmail.com'
-    // teacher.password = '123456'
-    // teacher.firstName = 'קורן'
-    // teacher.lastName = 'שרעבי'
-    // teacher.role = Role.Teacher
-    // teacher.isActive = true
-    // this.authRepository.save(teacher)
+    const teacher = new AuthEntity;
+    teacher.email = 'teacher@gmail.com'
+    teacher.password = '123456'
+    teacher.firstName = 'קורן'
+    teacher.lastName = 'שרעבי'
+    teacher.role = Role.Teacher
+    teacher.isActive = true
+    this.authRepository.save(teacher)
 
-    const exerciseType = [
-      {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
-      {title:'מבדק', isDatable:true,isTimable:false, orden:2},
-      {title:'מבחן', isDatable:true,isTimable:true, orden:3},
-      {title:'תלקיט ארוך טווח', isDatable:true,isTimable:false, orden:4},
-      {title:'תלקיט קצר טווח', isDatable:true,isTimable:false, orden:5},
-    ]
-    exerciseType?.map(async (item) => {
-      const exercise = new ExerciseType();
-      exercise.title = item.title;
-      exercise.isDateable = item.isDatable
-      exercise.isTimeable = item.isTimable
-      exercise.orden = item.orden
-      await this.exerciseTypeRepository.save(exercise)
-    })
+    // const exerciseType = [
+    //   {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
+    //   {title:'מבדק', isDatable:true,isTimable:false, orden:2},
+    //   {title:'מבחן', isDatable:true,isTimable:true, orden:3},
+    //   {title:'תלקיט ארוך טווח', isDatable:true,isTimable:false, orden:4},
+    //   {title:'תלקיט קצר טווח', isDatable:true,isTimable:false, orden:5},
+    // ]
+    // exerciseType?.map(async (item) => {
+    //   const exercise = new ExerciseType();
+    //   exercise.title = item.title;
+    //   exercise.isDateable = item.isDatable
+    //   exercise.isTimeable = item.isTimable
+    //   exercise.orden = item.orden
+    //   await this.exerciseTypeRepository.save(exercise)
+    // })
 
     // const semeters = [
     //   {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
@@ -123,16 +123,16 @@ export class AppController {
     // })
 
 
-    const bankFeedBack =[
-      {title:'משובים שלי (חיובי)',type:TypeFeedBack.Positive},
-      {title:'משובים שלי (שלילי)',type:TypeFeedBack.Negative}
-    ]
-    bankFeedBack?.map(async (item) => {
-      const fed = new FeedBackMain()
-      fed.title = item.title,
-      fed.type = item.type
-      await this.feedBackMainRepository.save(fed)
-    })
+    // const bankFeedBack =[
+    //   {title:'משובים שלי (חיובי)',type:TypeFeedBack.Positive},
+    //   {title:'משובים שלי (שלילי)',type:TypeFeedBack.Negative}
+    // ]
+    // bankFeedBack?.map(async (item) => {
+    //   const fed = new FeedBackMain()
+    //   fed.title = item.title,
+    //   fed.type = item.type
+    //   await this.feedBackMainRepository.save(fed)
+    // })
 
 
   }
