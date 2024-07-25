@@ -56,6 +56,11 @@ import { ShieldModule } from './shield/shield.module';
       imports: [ConfigModule],
       inject:[ConfigService],
       useFactory: async (configService: ConfigService) => {
+        console.log('DB_HOST',configService.get('DB_HOST'))
+        console.log('DB_PORT',configService.get('DB_PORT'))
+        console.log('DB_USERNAME',configService.get('DB_USERNAME'))
+        console.log('DB_PASSWORD',configService.get('DB_PASSWORD'))
+        console.log('DB_DATABASE',configService.get('DB_DATABASE'))
         return {
           type:'postgres',
           host:configService.get('DB_HOST'),
@@ -64,7 +69,11 @@ import { ShieldModule } from './shield/shield.module';
           password:configService.get('DB_PASSWORD'),
           database:configService.get('DB_DATABASE'),
           autoLoadEntities:true,
-          synchronize:true
+          synchronize:true,
+          logging: 'all',
+          ssl: {
+            rejectUnauthorized: false,  // This allows self-signed certificates
+          },
         }
       }
     }),
