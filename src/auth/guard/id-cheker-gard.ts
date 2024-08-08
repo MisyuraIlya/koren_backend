@@ -3,11 +3,9 @@ import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AuthEntity } from "../entities/auth.entity";
-import { Role } from "src/enums/role.enum";
-import { URL } from 'url'; // Import URL module from Node.js
 
 @Injectable()
-export class IdCheckerGard implements CanActivate {
+export class IdCheckerGuard implements CanActivate {
 
     constructor(
         @InjectRepository(AuthEntity)
@@ -28,12 +26,11 @@ export class IdCheckerGard implements CanActivate {
             const decodedToken = jwt.verify(token, '0asdasd') as { id: string };
             const { id: userId } = decodedToken;
 
-            // Use URL module to parse the URL and extract pathname
-            const parsedUrl = new URL(url);
-            const pathname = parsedUrl.pathname;
-            const urlParts = pathname.split('/');
+            // Extract URL path part without query parameters
+            const [path] = url.split('?');
+            const urlParts = path.split('/');
             const urlId = urlParts[urlParts.length - 1];
-            
+
             if (urlId !== userId) {
                 throw new BadRequestException('User ID does not match');
             }
