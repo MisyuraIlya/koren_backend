@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthEntity } from './entities/auth.entity';
 import { School } from 'src/school/entities/school.entity';
 import { Role } from 'src/enums/role.enum';
+import { hash, verify } from 'argon2'
+import { JwtService } from '@nestjs/jwt';
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -12,18 +15,43 @@ export class AuthService {
         private readonly authRepository: Repository<AuthEntity>,
         @InjectRepository(School)
         private readonly schoolRepository: Repository<School>,
+        private jwt: JwtService
     ){}
 
+    async register(dto: AuthDto) {
+		const existUser = await this.authRepository.findOne({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    // if (existUser) throw new BadRequestException('User already Exists');
+    if(existUser){
+        const existUser = new AuthEntity();
+        existUser.email = dto.email
+    }
+    existUser.password = await hash(dto.password)
+    existUser.firstName = dto.firstName
+    existUser.lastName = dto.lastName
+    existUser.isActive = true
+    existUser.isAdmin = dto.isAdmin
+    existUser.role = dto.role === 'teacher' ? Role.Teacher : Role.Student
+    const save = await this.authRepository.save(existUser);
+    const tokens = await this.issueTokens(existUser.id)
+
+    return {
+        user: this.returnUsersFields(existUser),
+        ...tokens
+    }
+  }
+
     async login(dto: AuthDto) {
-        console.log('dto',dto)
-        const user = await this.authRepository.findOne({
-            where:{email:dto.email, password: dto.password},
-            relations: ['school']
-        })
-        if (!user) throw new UnauthorizedException('שם משתמש/סיסמה לא נכונים.')
-
-        return user;
-
+      const user = await this.validateUser(dto)
+      const tokens = await this.issueTokens(user.id)
+      return {
+        user: this.returnUsersFields(user),
+        ...tokens
+      }
     }
 
     async getUserByTypeAndSchool(type: Role, schoolId: string) {
@@ -49,4 +77,66 @@ export class AuthService {
         const filter = findUser.class.students?.filter((item) => item.id !== userId)
         return filter
     }
+
+    async getNewTokens(refreshToken: string) {
+      try {
+        const result = await this.jwt.verifyAsync(refreshToken);
+        const user = await this.authRepository.findOne({
+          where: {
+            id: result.id,
+          },
+        });
+
+        if (!user) throw new UnauthorizedException('User not found');
+
+        const tokens = await this.issueTokens(user.id);
+
+        return {
+          user: this.returnUsersFields(user),
+          ...tokens,
+        };
+      } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+          throw new UnauthorizedException('Invalid refresh token');
+        }
+        if(error.name === 'TokenExpiredError'){
+          throw new UnauthorizedException('Invalid refresh token');
+        }
+        throw error;
+      }
+    }
+
+    private async issueTokens(userId: number) {
+        const data = {id: userId}
+    
+        const accessToken = this.jwt.sign(data, {
+          expiresIn: '1h'
+        })
+    
+        const refreshToken = this.jwt.sign(data, {
+          expiresIn: '1d'
+        })
+    
+        return { accessToken, refreshToken }
+    }
+
+    private returnUsersFields(user: AuthEntity) {
+        delete user.password
+        return user
+    }
+
+    private async validateUser(dto: AuthDto) {
+        const user = await this.authRepository.findOne({
+            where:{email:dto.email},
+            relations: ['school']
+        })
+    
+        if (!user) throw new NotFoundException('שם משתמש/סיסמה לא נכונים.')
+    
+        const isValid = await verify(user.password, dto.password)
+        if (!isValid) throw new UnauthorizedException('שם משתמש/סיסמה לא נכונים.')
+    
+        return user
+    }
+    
 }

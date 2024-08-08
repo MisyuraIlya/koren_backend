@@ -4,12 +4,14 @@ import { Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as express from 'express';
 import {join} from 'path'
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 
 async function bootstrap() {
   const logger = new Logger();
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.setGlobalPrefix('9dee9c0c-d2e5-44c0-891a-1e446bece049');
+  app.useGlobalGuards(new JwtAuthGuard());
   app.use('/files', express.static(join(__dirname,'..','..', 'files')))
   app.use('/uploads', express.static(join(__dirname, '..', '..', 'uploads')));
   app.use('/images', express.static(join(__dirname, '..','..', 'images')))

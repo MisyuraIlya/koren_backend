@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { CreateMailDto } from './dto/create-mail.dto';
+import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
+import { StudentRoleGuard } from 'src/auth/guard/student-gard';
 
 @Controller('mail')
 export class MailController {
@@ -26,6 +28,7 @@ export class MailController {
     return this.mailService.getUnreaded(+id)
   }
 
+  @UseGuards(TeacherRoleGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '',  @Query('type') type: string = '') {
     return this.mailService.findOne(+id, page, search,type);
@@ -35,6 +38,7 @@ export class MailController {
   update(@Param('uuid') uuid: string, @Param('userId') userId: string) {
     return this.mailService.update(uuid, +userId);
   }
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {
