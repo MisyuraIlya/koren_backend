@@ -3,7 +3,7 @@ import { MailService } from './mail.service';
 import { CreateMailDto } from './dto/create-mail.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
 import { StudentRoleGuard } from 'src/auth/guard/student-gard';
-import { IdCheckerGard } from 'src/auth/guard/id-cheker-gard';
+import { IdCheckerGuard } from 'src/auth/guard/id-cheker-gard';
 
 @Controller('mail')
 export class MailController {
@@ -24,13 +24,13 @@ export class MailController {
     return this.mailService.getFeedBack(+userId,+exerciseId)
   }
 
-  @UseGuards(IdCheckerGard)
+  @UseGuards(IdCheckerGuard)
   @Get('undreaded/:id')
   getUnreaded(@Param('id') id: string){
     return this.mailService.getUnreaded(+id)
   }
 
-  @UseGuards(IdCheckerGard)
+  @UseGuards(IdCheckerGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '',  @Query('type') type: string = '') {
     return this.mailService.findOne(+id, page, search,type);
