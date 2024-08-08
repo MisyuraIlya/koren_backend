@@ -42,6 +42,7 @@ export class IdCheckerGard implements CanActivate {
             }
 
         } catch (error) {
+            console.log('error',error)
             throw new HttpException('Unauthorized or token error', HttpStatus.UNAUTHORIZED);
         }
 
