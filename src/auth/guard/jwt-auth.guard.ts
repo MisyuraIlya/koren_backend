@@ -8,7 +8,7 @@ export class JwtAuthGuard implements CanActivate {
     const handler = context.getHandler();
     const excludePaths = ['/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/login','/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/login/access-token']; // List of paths to exclude from JWT validation
     if (excludePaths.includes(request.path)) {
-      return true; // Skip JWT validation for these paths
+      return true; 
     }
 
     const token = request.headers['authorization']?.split(' ')[1];
