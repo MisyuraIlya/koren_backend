@@ -40,12 +40,12 @@ export class ExerciseUserConnectionService {
     this.exerciseUserConnectionRepository.save(find)
 
     const obj = {
-      sendTo:[find.student.id],
+      sendTo:[find.student.uuid],
       title: `הוחזר לתיקון ${find.connection.exercise.title}`,
       description:`הוחזר לתיקון ${find.connection.exercise.title}`,
       type: MailTypeEnum.Original
     } as CreateMailDto
-    this.MailService.create(obj,find.connection.teacher.id)
+    this.MailService.create(obj,find.connection.teacher.uuid)
 
 
 

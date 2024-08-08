@@ -23,16 +23,16 @@ export class MailService {
     private readonly MailChatService: MailChatService
 ){}
 
-  async create(createMailDto: CreateMailDto, senderId: number) {
+  async create(createMailDto: CreateMailDto, senderId: string) {
     const { sendTo, title, description } = createMailDto;
     sendTo.push(senderId)
-    const sender = await this.authRepository.findOne({ where: { id: senderId } });
+    const sender = await this.authRepository.findOne({ where: { uuid: senderId } });
     if (!sender) {
       throw new Error('Sender not found');
     }
 
     const recipients = await this.authRepository.find({
-      where: sendTo.map(id => ({ id })),
+      where: sendTo.map(id => ({ uuid:id })),
     });
     if (recipients.length === 0) {
       throw new Error('No valid recipients found');

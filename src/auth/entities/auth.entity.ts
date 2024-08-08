@@ -30,6 +30,9 @@ export class AuthEntity {
     @Column()
     lastName: string;
 
+    @Column({nullable: true})
+    uuid: string;
+
     @Column({default: true})
     isActive: boolean;
 

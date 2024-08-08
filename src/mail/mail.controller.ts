@@ -11,7 +11,7 @@ export class MailController {
 
   @Post(':id')
   create(@Param('id') id: string,@Body() createMailDto: CreateMailDto) {
-    return this.mailService.create(createMailDto,+id);
+    return this.mailService.create(createMailDto,id);
   }
 
   @Get('/user/:id')

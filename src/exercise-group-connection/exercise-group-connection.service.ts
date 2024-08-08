@@ -117,13 +117,13 @@ export class ExerciseGroupConnectionService {
             }
 
             const obj = {
-              sendTo:[student.id],
+              sendTo:[student.uuid],
               title: `נשלח ${exerciseType.title} ${exercise.title}`,
               description:message,
               
               type: MailTypeEnum.Original
             } as CreateMailDto
-            this.MailService.create(obj,teacher.id)
+            this.MailService.create(obj,teacher.uuid)
 
             const checkIsStart = await this.StudentHistoryRepository.findOne({
               where:{student:student, exercise: exercise}
@@ -171,13 +171,13 @@ export class ExerciseGroupConnectionService {
         }
         await this.exerciseUserConnectionRepository.save(find)
         const obj = {
-          sendTo:[student.id],
+          sendTo:[student.uuid],
           title: `נפתחו תשובות ${find.connection.exerciseType.title} ${find.connection.exercise.title}`,
           description:`נפתחו תשובות ${find.connection.exerciseType.title} ${find.connection.exercise.title}`,
           
           type: MailTypeEnum.Original
         } as CreateMailDto
-        this.MailService.create(obj,find.connection.teacher.id)
+        this.MailService.create(obj,find.connection.teacher.uuid)
       }
     })
 

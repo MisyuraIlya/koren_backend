@@ -11,11 +11,11 @@ export class MailChatController {
 
   @Post(':senderId/:mailUuid')
   create(
-    @Param('senderId') id: string,
+    @Param('senderId') uuid: string,
     @Param('mailUuid') mailUuid: string,
     @Body() createMailChatDto: CreateMailChatDto
   ) {
-    return this.mailChatService.create(createMailChatDto,+id,mailUuid);
+    return this.mailChatService.create(createMailChatDto,uuid,mailUuid);
   }
 
   @Get()

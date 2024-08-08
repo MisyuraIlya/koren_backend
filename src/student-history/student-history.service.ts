@@ -126,12 +126,12 @@ export class StudentHistoryService {
         this.exerciseUserConnectionRepository.save(findUserGroup)
 
         const obj = {
-          sendTo:[findUserGroup.connection.teacher.id],
+          sendTo:[findUserGroup.connection.teacher.uuid],
           title: `תלמיד סיים ${findUserGroup.connection.exerciseType.title} ${findUserGroup.connection.exercise.title}`,
           description:`תלמיד סיים ${findUserGroup.connection.exerciseType.title} ${findUserGroup.connection.exercise.title}`,
           type: MailTypeEnum.Original
         } as CreateMailDto
-        this.MailService.create(obj,findUserGroup.student.id)
+        this.MailService.create(obj,findUserGroup.student.uuid)
       }
       
       find.isDone = dto.isDone 

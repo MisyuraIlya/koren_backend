@@ -21,8 +21,8 @@ export class MailChatService {
   
 ){}
 
-  async create(dto: CreateMailChatDto, senderId: number,uuid:string) {
-      const sender = await this.authRepository.findOne({ where: { id: senderId } });
+  async create(dto: CreateMailChatDto, senderId: string,uuid:string) {
+      const sender = await this.authRepository.findOne({ where: { uuid: senderId } });
       if (!sender) {
         throw new Error('Sender not found');
       }
