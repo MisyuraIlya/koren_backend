@@ -60,7 +60,7 @@ export class MailService {
 
     this.MailChatService.create({ description: createMailDto.description }, senderId, uuid);
 
-    return res;
+    return {status:"success"};
   }
 
   async getUnreaded(userId: number){

@@ -30,7 +30,7 @@ export class MailChatService {
       newMessage.user = sender
       newMessage.uuid = uuid
       newMessage.description = dto.description
-      return this.mailChatRepository.save(newMessage);
+      return {status:'success'};
   }
 
   findAll() {
