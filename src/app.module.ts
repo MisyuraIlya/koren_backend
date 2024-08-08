@@ -70,7 +70,9 @@ import { ShieldModule } from './shield/shield.module';
           database:configService.get('DB_DATABASE'),
           autoLoadEntities:true,
           synchronize:true,
-        
+          ssl: {
+            rejectUnauthorized: false,  // This allows self-signed certificates
+          },
         }
       }
     }),
