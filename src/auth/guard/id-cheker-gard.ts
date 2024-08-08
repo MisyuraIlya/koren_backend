@@ -25,10 +25,12 @@ export class IdCheckerGard implements CanActivate {
         const token = bearerToken.split(" ")[1];
         try {
             const decodedToken = jwt.verify(token, '0asdasd') as { id: string };
+            console.log('decodedToken',decodedToken)
             const { id: userId } = decodedToken;
 
             const urlParts = url.split('/');
             const urlId = urlParts[urlParts.length - 1]; 
+            console.log('urlId',urlId)
             if (urlId != userId) {
                 throw new BadRequestException('not found');
             }
@@ -36,13 +38,13 @@ export class IdCheckerGard implements CanActivate {
             const user = await this.userRepository.findOne({
                 where: { id: Number(userId) },
             });
-
+            console.log('user',user)
             if (!user) {
                 throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
             }
 
         } catch (error) {
-            console.log('error',error)
+            console.log('GUARD ERROR',error)
             throw new HttpException('Unauthorized or token error', HttpStatus.UNAUTHORIZED);
         }
 
