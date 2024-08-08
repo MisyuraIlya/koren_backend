@@ -30,8 +30,8 @@ export class IdCheckerGuard implements CanActivate {
             const [path] = url.split('?');
             const urlParts = path.split('/');
             const urlId = urlParts[urlParts.length - 1];
-            console.log(urlId,urlParts)
-            if (urlId !== userId) {
+            console.log('here',urlId,urlParts,urlId != userId)
+            if (urlId != userId) {
                 throw new BadRequestException('User ID does not match');
             }
 
