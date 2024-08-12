@@ -50,7 +50,7 @@ export class CronService {
 
     async fetchCourses() {
         try {
-            const response: AxiosResponse<any> = await axios.get('http://3.74.228.194:4000/courses/all');
+            const response: AxiosResponse<any> = await axios.get('http://3.71.75.160:4000/courses/all');
             const data = response.data;
             for (const element of data) {
                 // if(data.id == 592){
@@ -173,7 +173,7 @@ export class CronService {
                 categoriesLvl5.map(async (course) => {
                     // if(course.uuid == '916'){
                         try {
-                            const exercise: AxiosResponse<any> = await axios.get(`http://3.74.228.194:4000/exercises/${course.uuid}`);
+                            const exercise: AxiosResponse<any> = await axios.get(`http://3.71.75.160:4000/exercises/${course.uuid}`);
                             const exerciseData = exercise.data;
                             if (Array.isArray(exerciseData)) {
                                 this.syncArrayOfObjects(exerciseData,course.id)
