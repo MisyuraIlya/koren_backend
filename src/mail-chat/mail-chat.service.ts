@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMailChatDto } from './dto/create-mail-chat.dto';
 import { UpdateMailChatDto } from './dto/update-mail-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,12 +24,14 @@ export class MailChatService {
   async create(dto: CreateMailChatDto, senderId: string,uuid:string) {
       const sender = await this.authRepository.findOne({ where: { uuid: senderId } });
       if (!sender) {
-        throw new Error('Sender not found');
+        throw new BadRequestException('Sender not found');
       }
+      console.log('sender',sender)
       const newMessage = new MailChat();
       newMessage.user = sender
       newMessage.uuid = uuid
       newMessage.description = dto.description
+      this.mailChatRepository.save(newMessage)
       return {status:'success'};
   }
 

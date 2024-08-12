@@ -88,51 +88,52 @@ export class AppController {
     teacher.isActive = true
     this.authRepository.save(teacher)
 
-    // const exerciseType = [
-    //   {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
-    //   {title:'מבדק', isDatable:true,isTimable:false, orden:2},
-    //   {title:'מבחן', isDatable:true,isTimable:true, orden:3},
-    //   {title:'תלקיט ארוך טווח', isDatable:true,isTimable:false, orden:4},
-    //   {title:'תלקיט קצר טווח', isDatable:true,isTimable:false, orden:5},
-    // ]
-    // exerciseType?.map(async (item) => {
-    //   const exercise = new ExerciseType();
-    //   exercise.title = item.title;
-    //   exercise.isDateable = item.isDatable
-    //   exercise.isTimeable = item.isTimable
-    //   exercise.orden = item.orden
-    //   await this.exerciseTypeRepository.save(exercise)
-    // })
+    const exerciseType = [
+      {title:'תרגיל', isDatable:false,isTimable:false, orden:1},
+      {title:'מבדק', isDatable:true,isTimable:false, orden:2},
+      {title:'מבחן', isDatable:true,isTimable:true, orden:3},
+      {title:'תלקיט ארוך טווח', isDatable:true,isTimable:false, orden:4},
+      {title:'תלקיט קצר טווח', isDatable:true,isTimable:false, orden:5},
+    ]
+    exerciseType?.map(async (item) => {
+      const exercise = new ExerciseType();
+      exercise.title = item.title;
+      exercise.isDateable = item.isDatable
+      exercise.isTimeable = item.isTimable
+      exercise.orden = item.orden
+      await this.exerciseTypeRepository.save(exercise)
+    })
 
-    // const semeters = [
-    //   {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
-    //   {title:'2',yaer:'2024',fromDate:'2024-09-01',toDate:'2025-08-01',active:true},
-    //   {title:'3',yaer:'2025',fromDate:'2025-09-01',toDate:'2026-08-01',active:false},
-    //   {title:'4',yaer:'2026',fromDate:'2026-09-01',toDate:'2027-08-01',active:false},
-    //   {title:'5',yaer:'2027',fromDate:'2027-09-01',toDate:'2028-08-01',active:false},
-    // ]
+    const semeters = [
+      {title:'1',yaer:'2023',fromDate:'2023-09-01',toDate:'2024-08-01',active:false},
+      {title:'2',yaer:'2024',fromDate:'2024-09-01',toDate:'2025-08-01',active:true},
+      {title:'3',yaer:'2025',fromDate:'2025-09-01',toDate:'2026-08-01',active:false},
+      {title:'4',yaer:'2026',fromDate:'2026-09-01',toDate:'2027-08-01',active:false},
+      {title:'5',yaer:'2027',fromDate:'2027-09-01',toDate:'2028-08-01',active:false},
+    ]
 
-    // semeters?.map(async (item) => {
-    //   const sem = new Semester()
-    //   sem.title = item.title
-    //   sem.year = +item.yaer
-    //   sem.fromDate = new Date(item.fromDate)
-    //   sem.toDate = new Date(item.toDate)
-    //   sem.active = item.active
-    //   await this.confirmationRepository.save(sem)
-    // })
+    semeters?.map(async (item) => {
+      const sem = new Semester()
+      sem.title = item.title
+      sem.year = +item.yaer
+      sem.fromDate = new Date(item.fromDate)
+      sem.toDate = new Date(item.toDate)
+      sem.active = item.active
+      await this.confirmationRepository.save(sem)
+    })
 
 
-    // const bankFeedBack =[
-    //   {title:'משובים שלי (חיובי)',type:TypeFeedBack.Positive},
-    //   {title:'משובים שלי (שלילי)',type:TypeFeedBack.Negative}
-    // ]
-    // bankFeedBack?.map(async (item) => {
-    //   const fed = new FeedBackMain()
-    //   fed.title = item.title,
-    //   fed.type = item.type
-    //   await this.feedBackMainRepository.save(fed)
-    // })
+    const bankFeedBack =[
+      {title:'משובים שלי (חיובי)',type:TypeFeedBack.Positive},
+      {title:'משובים שלי (שלילי)',type:TypeFeedBack.Negative}
+    ]
+    
+    bankFeedBack?.map(async (item) => {
+      const fed = new FeedBackMain()
+      fed.title = item.title,
+      fed.type = item.type
+      await this.feedBackMainRepository.save(fed)
+    })
 
 
   }

@@ -25,6 +25,7 @@ export class MailChatController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log('id',id)
     return this.mailChatService.findOne(id);
   }
 
