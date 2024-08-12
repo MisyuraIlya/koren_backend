@@ -46,6 +46,9 @@ import { ExerciseType } from './exercise-type/entities/exercise-type.entity';
 import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
 import { Semester } from './semester/entities/semester.entity';
 import { ShieldModule } from './shield/shield.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -70,11 +73,24 @@ import { ShieldModule } from './shield/shield.module';
           database:configService.get('DB_DATABASE'),
           autoLoadEntities:true,
           synchronize:true,
-          ssl: {
-            rejectUnauthorized: false,  // This allows self-signed certificates
-          },
+          // ssl: {
+          //   rejectUnauthorized: false,  // This allows self-signed certificates
+          // },
         }
       }
+    }),
+    MailerModule.forRoot({
+      transport: 'smtps://statosbiz@statos.co:2014ismyyear@smtp.gmail.com',
+      defaults: {
+        from: '"nest-modules" <statosbiz@statos.co>',
+      },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new PugAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     }),
     TypeOrmModule.forFeature([Semester, FeedBackMain ,AuthEntity, ExerciseType, FeedBackMain ,CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity,PdfUtilitiesEntity]),
     CourseModule, 

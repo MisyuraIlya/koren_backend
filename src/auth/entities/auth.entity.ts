@@ -36,8 +36,18 @@ export class AuthEntity {
     @Column({default: true})
     isActive: boolean;
 
+    @Column({nullable: true})
+    attempts: number;
+
+    @Column({ type: 'timestamp', nullable: true })
+    blockedTo: Date; 
+
+
     @Column({default: false})
     isAdmin: boolean;
+
+    @Column({nullable: true})
+    recovery: string;
     
     @Column({
         type: 'enum',

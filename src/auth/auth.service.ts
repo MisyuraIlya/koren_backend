@@ -7,6 +7,7 @@ import { School } from 'src/school/entities/school.entity';
 import { Role } from 'src/enums/role.enum';
 import { hash, verify } from 'argon2'
 import { JwtService } from '@nestjs/jwt';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
         private readonly authRepository: Repository<AuthEntity>,
         @InjectRepository(School)
         private readonly schoolRepository: Repository<School>,
+        private readonly mailerService: MailerService,
         private jwt: JwtService
     ){}
 
@@ -138,5 +140,82 @@ export class AuthService {
     
         return user
     }
+
+    public async step1(dto: {mail:string}){
+      const findUser = await this.authRepository.findOne({
+        where:{email:dto.mail}
+      })
+      if(!findUser) throw new BadRequestException('לא נמצא משתמש');
+      const random = Math.floor(10000 + Math.random() * 90000);
+      const message = ` ${random} קוד סודי לשחזור סיסמא  ${(await findUser).firstName} שלום `
+      findUser.recovery = random.toString()
+      this.authRepository.save(findUser)
+      const res = await this.mailerService
+      .sendMail({
+        to: findUser.email, // list of receivers
+        from: 'statosbiz@statos.co', // sender address
+        subject: 'שחזור סיסמא מערכת שרי', // Subject line
+        text: 'welcome', // plaintext body
+        html: `<p>${message}</p>`, // HTML body content
+      })
+      
+      return {status:"success"}
+    }
+
+    public async step2(dto: {mail:string, token:string}){
+      const currentTime = new Date();
+      const findUser = await this.authRepository.findOne({
+        where:{email:dto.mail}
+      })
+      if(!findUser) throw new BadRequestException('לא נמצא משתמש');
+      if(findUser.blockedTo && currentTime < findUser.blockedTo){
+        throw new BadRequestException('בוצעו מספר רב של נסניות, נסה שנית מאוחר יותר');
+      }
+      if(findUser.recovery !== dto.token) {
+        findUser.attempts = findUser.attempts++
+        if(findUser.attempts > 5){
+          currentTime.setMinutes(currentTime.getMinutes() + 30);
+          findUser.blockedTo = currentTime;
+        }
+        this.authRepository.save(findUser)
+
+        throw new BadRequestException('קוד סודי שגוי');
+
+      };
+      return {status:"success"}
+   
+    }
+
+    public async step3(dto: {mail:string, password:string, token:string}){
+      const currentTime = new Date();
+      const findUser = await this.authRepository.findOne({
+        where:{email:dto.mail}
+      })
+      if(!findUser) throw new BadRequestException('לא נמצא משתמש');
+      if(findUser.blockedTo && currentTime < findUser.blockedTo){
+        throw new BadRequestException('בוצעו מספר רב של נסניות, נסה שנית מאוחר יותר');
+      }
+      if(findUser.recovery !== dto.token) {
+        const random = Math.floor(10000 + Math.random() * 90000);
+        const message = ` ${random} קוד סודי לשחזור סיסמא  ${(await findUser).firstName} שלום `
+        findUser.recovery = random.toString()
+        this.authRepository.save(findUser)
+        const res = await this.mailerService
+        .sendMail({
+          to: findUser.email, // list of receivers
+          from: 'statosbiz@statos.co', // sender address
+          subject: 'שחזור סיסמא מערכת שרי', // Subject line
+          text: 'welcome', // plaintext body
+          html: `<p>${message}</p>`, // HTML body content
+        })
+        throw new BadRequestException('קוד סודי שגוי נשלח מייל חוזר');
+      }
+      findUser.password = await hash(dto.password)
+      findUser.recovery = null
+      this.authRepository.save(findUser)
+      return {status:"success"}
+    }
+
+
     
 }

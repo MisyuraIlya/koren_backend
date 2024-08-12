@@ -35,8 +35,19 @@ export class AuthController {
 		return this.authService.getUsers(+userId)
 	}
 
-	@Post('login/access-token')
-	async getNewTokens(@Body() dto: RefreshTokenDto) {
-		return this.authService.getNewTokens(dto.refreshToken)
+	@Post('stepOne')
+	async step1(@Body() dto: {mail:string}) {
+		return this.authService.step1(dto)
 	}
+
+	@Post('stepTwo')
+	async step2(@Body() dto: {mail:string, token:string}) {
+		return this.authService.step2(dto)
+	}
+
+	@Post('stepThree')
+	async step3(@Body() dto: {mail:string, password:string, token:string}) {
+		return this.authService.step3(dto)
+	}
+	
 }
