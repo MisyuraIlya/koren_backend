@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseInterceptors, UploadedFile, Param, ParseFilePipe, MaxFileSizeValidator, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, Param, ParseFilePipe, MaxFileSizeValidator, Body, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
 import { CronService } from './cron/cron.service';
@@ -14,6 +14,7 @@ import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
 import { Role } from './enums/role.enum';
 import { Semester } from './semester/entities/semester.entity';
 import { TypeFeedBack } from './enums/feedback.enum';
+import { AdminRoleGUard } from './auth/guard/admin-role.gard';
 
 @Controller()
 export class AppController {
@@ -59,6 +60,7 @@ export class AppController {
     return new Engine(file).process();
   }
 
+  @UseGuards(AdminRoleGUard)
   @Post('media')
   @UseInterceptors(FileInterceptor('file', {storage: fileStorage}))
   async mediaHandler(
