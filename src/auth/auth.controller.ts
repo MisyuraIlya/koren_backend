@@ -9,6 +9,7 @@ import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Role } from 'src/enums/role.enum';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { AuthEntity } from './entities/auth.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +49,11 @@ export class AuthController {
 	@Post('stepThree')
 	async step3(@Body() dto: {mail:string, password:string, token:string}) {
 		return this.authService.step3(dto)
+	}
+
+	@Post('updateUser')
+	async updateUser(@Body() dto: AuthEntity) {
+		return this.authService.updateUser(dto)
 	}
 	
 }

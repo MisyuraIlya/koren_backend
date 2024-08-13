@@ -12,9 +12,10 @@ import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
+import { AuthEntity } from 'src/auth/entities/auth.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExerciseEntity,CourseEntity, TabEntity, TaskEntity, ColumnTaskEntity, RowTaskEntity, ObjectiveEntity, AnswerEntity, ValueEntity,ExerciseGroupConnection])],
+  imports: [TypeOrmModule.forFeature([ExerciseEntity,CourseEntity, TabEntity, TaskEntity, ColumnTaskEntity, RowTaskEntity, ObjectiveEntity, AnswerEntity, ValueEntity,ExerciseGroupConnection,AuthEntity])],
   controllers: [ExerciseController],
   providers: [ExerciseService],
 })

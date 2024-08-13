@@ -1,3 +1,4 @@
+import { AdminRoleGUard } from 'src/auth/guard/admin-role.gard';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ExerciseEntity } from './entities/exercise.entity';
@@ -8,6 +9,7 @@ import { Controller, Get, Param,Post,Put,Delete,Body,UseInterceptors, UploadedFi
 export class ExerciseController {
   constructor(private readonly exerciseService: ExerciseService) {}
 
+  @UseGuards(AdminRoleGUard)
   @Post()
   create(@Body() createTaskDto: CreateExerciseDto) {
     return this.exerciseService.create(createTaskDto);

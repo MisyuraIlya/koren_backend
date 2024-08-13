@@ -25,13 +25,11 @@ export class TeacherRoleGuard implements CanActivate {
         console.log('token',token)
         try {
             const decodedToken = jwt.verify(token, '0asdasd') as { id: string };
-            console.log('decodedToken',decodedToken)
             const {id}  = decodedToken;
             const user = await this.userRepository.findOne({
                 where: { id: Number(id) },
             });
 
-            console.log('user',user)
             if (!user) {
               throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
             }

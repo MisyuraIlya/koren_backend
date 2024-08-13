@@ -216,6 +216,27 @@ export class AuthService {
       return {status:"success"}
     }
 
-
+    async updateUser(dto: AuthEntity){
+      const findUser = await this.authRepository.findOne({
+        where:{uuid:dto.uuid}
+      })
+      if(findUser){
+        if(dto.firstName){
+          findUser.firstName = dto.firstName
+        }
+        if(dto.lastName){
+          findUser.lastName = dto.lastName
+        }
+        if(dto.email){
+          findUser.email = dto.email
+        }
+        if(dto.password){
+          findUser.password = await hash(dto.password) 
+        }
+        await this.authRepository.save(findUser)
+        return {status:"success", user: findUser}
+      }
+      return {status:"success"}
+    }
     
 }
