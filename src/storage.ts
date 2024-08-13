@@ -24,7 +24,12 @@ const normalizeFileName = (req, file, callback) => {
     callback(null, `${subfolder}/${name}.${fileExtName}`);
 }
 
+let destinationPath = 'media';
+if (process.env.NODE_ENV === 'production') {
+    destinationPath = '../media'; 
+}
+
 export const fileStorage = diskStorage({
-    destination:'media',
+    destination: destinationPath,
     filename: normalizeFileName
-})
+});
