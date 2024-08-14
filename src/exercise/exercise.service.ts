@@ -91,30 +91,33 @@ export class ExerciseService {
 
                                 if(createdRow) {
                                     row.objectives.forEach(async (objective) => {
-                                        const newObjective = new ObjectiveEntity();
-                                        newObjective.orden = objective.orden;
-                                        newObjective.placeholder = objective.placeholder;
-                                        newObjective.moduleType = objective.moduleType;
-                                        newObjective.isFullText = objective.isFullText;
-                                        newObjective.rowTask = createdRow
-                                        const createdObjective = await this.objectiveRepository.save(newObjective);
-
-                                        if(createdObjective){
-                                            objective.answers.forEach(async (answer) => {
-                                                const newAnswer = new AnswerEntity();
-                                                newAnswer.objective = createdObjective
-                                                newAnswer.value = answer.value
-                                                await this.answerRepository.save(newAnswer)
-                                            })
-
-                                            objective.values.forEach(async (value) => {
-                                                const newValue = new ValueEntity();
-                                                newValue.objective = createdObjective
-                                                newValue.value = value.value
-                                                await this.valueRepository.save(newValue)
-                                            })
-
+                                        if(objective){
+                                            const newObjective = new ObjectiveEntity();
+                                            newObjective.orden = objective?.orden;
+                                            newObjective.placeholder = objective.placeholder;
+                                            newObjective.moduleType = objective.moduleType;
+                                            newObjective.isFullText = objective.isFullText;
+                                            newObjective.rowTask = createdRow
+                                            const createdObjective = await this.objectiveRepository.save(newObjective);
+    
+                                            if(createdObjective){
+                                                objective.answers.forEach(async (answer) => {
+                                                    const newAnswer = new AnswerEntity();
+                                                    newAnswer.objective = createdObjective
+                                                    newAnswer.value = answer.value
+                                                    await this.answerRepository.save(newAnswer)
+                                                })
+    
+                                                objective.values.forEach(async (value) => {
+                                                    const newValue = new ValueEntity();
+                                                    newValue.objective = createdObjective
+                                                    newValue.value = value.value
+                                                    await this.valueRepository.save(newValue)
+                                                })
+    
+                                            }
                                         }
+                      
                                     })
                                 }
                             })
