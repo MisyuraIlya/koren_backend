@@ -12,15 +12,18 @@ import { Mail } from "src/mail/entities/mail.entity";
 import { MailChat } from "src/mail-chat/entities/mail-chat.entity";
 import { FeedBackItem } from "src/feed-back-item/entities/feed-back-item.entity";
 import { Shield } from "src/shield/entities/shield.entity";
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
     @PrimaryGeneratedColumn()
     id: number; 
     
+    
     @Column()
     email: string
 
+    @Exclude()
     @Column()
     password: string
 
@@ -42,10 +45,11 @@ export class AuthEntity {
     @Column({ type: 'timestamp', nullable: true })
     blockedTo: Date; 
 
-
+    @Exclude()
     @Column({default: false})
     isAdmin: boolean;
 
+    @Exclude()
     @Column({nullable: true})
     recovery: string;
     

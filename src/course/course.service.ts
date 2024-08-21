@@ -48,13 +48,13 @@ export class CourseService {
     }
 
     async remove(id: number) {
-        // const course = await this.courseRepository.findOneBy({id})
+        const course = await this.courseRepository.findOneBy({id})
 
-        // if (!course) {
-        //     throw new BadRequestException('Exercise not found');
-        //   }
+        if (!course) {
+            throw new BadRequestException('Exercise not found');
+          }
 
-        // await this.courseRepository.remove(course)
+        await this.courseRepository.remove(course)
     }
 
     async sortable(dto: CourseEntity[]): Promise<void> {

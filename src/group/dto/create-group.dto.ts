@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { GroupPrivilageEnum, GroupTypeEnum } from "src/enums/gourpType.enum";
 
 export class CreateGroupDto {
@@ -6,13 +6,15 @@ export class CreateGroupDto {
     @IsArray()
     classes: string[]
 
+    @IsOptional()
     @IsArray()
     teachers: string[]
 
+    @IsOptional()
     @IsArray()
     students: string[]
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     title: string
 

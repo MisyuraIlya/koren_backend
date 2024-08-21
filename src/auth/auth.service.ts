@@ -128,6 +128,7 @@ export class AuthService {
     }
 
     private async validateUser(dto: AuthDto) {
+      console.log('dto',dto.email)
         const user = await this.authRepository.findOne({
             where:{email:dto.email},
             relations: ['school']
