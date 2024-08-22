@@ -6,6 +6,8 @@ import * as express from 'express';
 import {join} from 'path'
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 import { TransformInterceptor } from './config/TransformInterceptor';
+import * as cookieParser from 'cookie-parser';
+import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -13,12 +15,14 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('9dee9c0c-d2e5-44c0-891a-1e446bece049');
   app.useGlobalGuards(new JwtAuthGuard());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new TransformInterceptor(reflector));
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // Automatically strip out any properties not defined in the DTO
     forbidNonWhitelisted: true, // Throw an error if any non-whitelisted properties are provided
     transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
   }));
+  app.use(cookieParser());
   app.use('/files', express.static(join(__dirname,'..','..', 'files')))
   app.use('/uploads', express.static(join(__dirname, '..', '..', 'uploads')));
   app.use('/images', express.static(join(__dirname, '..','..', 'images')))

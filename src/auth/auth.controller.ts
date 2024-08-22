@@ -4,12 +4,17 @@ import {
 	Get,
 	Param,
 	Post,
+	Res,
 } from '@nestjs/common'
 import { AuthDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Role } from 'src/enums/role.enum';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthEntity } from './entities/auth.entity';
+import * as cookieParser from 'cookie-parser';
+import { Response } from 'express';
+import { ExcludeTransformInterceptor } from './decorators/ExcludeTransformInterceptor';
+import { ResetDto } from './dto/reset.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,9 +26,39 @@ export class AuthController {
 	}
 
 	
-  	@Post('login')
-	async login(@Body() dto: AuthDto) {
-		return this.authService.login(dto)
+  	// @Post('login')
+	// async login(@Body() dto: AuthDto) {
+	// 	return this.authService.login(dto)
+	// }
+	@Post('login')
+	@ExcludeTransformInterceptor()
+	async login(@Body() dto: AuthDto, @Res() res: Response) {
+		const loginResult = await this.authService.login(dto);
+		console.log('Login result before transformation:', loginResult);
+	  
+		// Set cookies
+		const isDevelopment = process.env.STAGE === 'dev';
+		res.cookie('accessToken', loginResult.accessToken, {
+		  httpOnly: !isDevelopment,
+		  secure: !isDevelopment,
+		  sameSite: isDevelopment ? 'lax' : 'strict',
+		});
+	  
+		res.cookie('refreshToken', loginResult.refreshToken, {
+		  httpOnly: !isDevelopment,
+		  secure: !isDevelopment,
+		  sameSite: isDevelopment ? 'lax' : 'strict',
+		});
+	  
+		// Remove tokens before transformation
+		delete loginResult.accessToken;
+		delete loginResult.refreshToken;
+	  
+		// Transform and respond
+		console.log('Login result after transformation:', loginResult);
+		return res.send({
+		  ...loginResult,
+		});
 	}
 
 	@Get('/allUsers/:type/:school')
@@ -52,7 +87,7 @@ export class AuthController {
 	}
 
 	@Post('updateUser')
-	async updateUser(@Body() dto: AuthEntity) {
+	async updateUser(@Body() dto: ResetDto) {
 		return this.authService.updateUser(dto)
 	}
 	

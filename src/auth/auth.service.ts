@@ -8,6 +8,7 @@ import { Role } from 'src/enums/role.enum';
 import { hash, verify } from 'argon2'
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResetDto } from './dto/reset.dto';
 
 @Injectable()
 export class AuthService {
@@ -217,7 +218,7 @@ export class AuthService {
       return {status:"success"}
     }
 
-    async updateUser(dto: AuthEntity){
+    async updateUser(dto: ResetDto){
       const findUser = await this.authRepository.findOne({
         where:{uuid:dto.uuid}
       })

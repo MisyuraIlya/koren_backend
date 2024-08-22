@@ -1,4 +1,10 @@
+import { IsNumber, IsOptional } from "class-validator"
+
 export class CreateStudentHistoryDto {
-    studentId: string
-    exerciseId: string
+
+    @IsNumber()
+    studentId: number
+
+    @IsNumber()
+    exerciseId: number
 }

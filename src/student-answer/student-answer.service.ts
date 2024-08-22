@@ -67,7 +67,8 @@ export class StudentAnswerService {
       answer.value = createStudentAnswerDto.value
       answer.updatedAt = new Date();
       answer.isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
-      return this.studentAnswerRepository.save(answer);
+      this.studentAnswerRepository.save(answer);
+      return {status:"success"}
     }
 
     
