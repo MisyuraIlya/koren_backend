@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('class')
 export class ClassController {
@@ -12,15 +13,11 @@ export class ClassController {
     return this.classService.create(createClassDto);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.classService.findAll();
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.classService.findOne(+id);
-  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateClassDto: UpdateClassDto) {
@@ -32,7 +29,7 @@ export class ClassController {
     return this.classService.remove(+id);
   }
 
-
+  @SkipThrottle()
   @Get(':schoolId')
   findBySchoolId(@Param('schoolId') id: string){
     return this.classService.findBySchoolId(+id)

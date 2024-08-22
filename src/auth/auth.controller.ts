@@ -15,6 +15,7 @@ import * as cookieParser from 'cookie-parser';
 import { Response } from 'express';
 import { ExcludeTransformInterceptor } from './decorators/ExcludeTransformInterceptor';
 import { ResetDto } from './dto/reset.dto';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -25,17 +26,11 @@ export class AuthController {
 		return this.authService.register(dto)
 	}
 
-	
-  	// @Post('login')
-	// async login(@Body() dto: AuthDto) {
-	// 	return this.authService.login(dto)
-	// }
 	@Post('login')
+	@Throttle({ default: { limit: 5, ttl: 60000 } })
 	@ExcludeTransformInterceptor()
 	async login(@Body() dto: AuthDto, @Res() res: Response) {
 		const loginResult = await this.authService.login(dto);
-		console.log('Login result before transformation:', loginResult);
-	  
 		// Set cookies
 		const isDevelopment = process.env.STAGE === 'dev';
 		res.cookie('accessToken', loginResult.accessToken, {
@@ -61,16 +56,19 @@ export class AuthController {
 		});
 	}
 
+	@SkipThrottle()
 	@Get('/allUsers/:type/:school')
 	async getUserByTypeAndSchool(@Param('type') type: Role, @Param('school') schoolId: string){
 		return this.authService.getUserByTypeAndSchool(type,schoolId);
 	}
 
+	
 	@Get('/mail/:userId')
 	async getUsers(@Param('userId') userId: string){
 		return this.authService.getUsers(+userId)
 	}
 
+	@Throttle({ default: { limit: 5, ttl: 60000 } })
 	@Post('stepOne')
 	async step1(@Body() dto: {mail:string}) {
 		return this.authService.step1(dto)

@@ -48,6 +48,8 @@ import { Semester } from './semester/entities/semester.entity';
 import { ShieldModule } from './shield/shield.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -92,6 +94,10 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
         },
       },
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 20,
+    }]),
     TypeOrmModule.forFeature([Semester, FeedBackMain ,AuthEntity, ExerciseType, FeedBackMain ,CourseEntity,ExerciseEntity,TabEntity,TaskEntity,ColumnTaskEntity, RowTaskEntity,ObjectiveEntity,AnswerEntity, ValueEntity,PdfUtilitiesEntity]),
     CourseModule, 
     ExerciseModule, 
@@ -117,6 +123,13 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
     ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule,
   ],
   controllers: [AppController],
-  providers: [AppService,CronService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    CronService
+  ],
 })
 export class AppModule {}

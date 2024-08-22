@@ -3,6 +3,7 @@ import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('group')
 export class GroupController {
@@ -14,17 +15,20 @@ export class GroupController {
     return this.groupService.create(+teacherId,createGroupDto,true);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.groupService.findAll();
   }
 
   @UseGuards(TeacherRoleGuard)
+  @SkipThrottle()
   @Get('/groupStatistic/:groupId/:exerciseId')
   getStatistic(@Param('groupId') groupId: string,@Param('exerciseId') exerciseId: string) {
     return this.groupService.getGroupStatistic(groupId,+exerciseId)
   }
 
+  @SkipThrottle()
   @UseGuards(TeacherRoleGuard)
   @Get('/teacher/:teacherId')
   findGroupsByTeacher(@Param('teacherId') id: string) {

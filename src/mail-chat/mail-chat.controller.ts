@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MailChatService } from './mail-chat.service';
 import { CreateMailChatDto } from './dto/create-mail-chat.dto';
 import { UpdateMailChatDto } from './dto/update-mail-chat.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('mail-chat')
 export class MailChatController {
@@ -18,11 +19,13 @@ export class MailChatController {
     return this.mailChatService.create(createMailChatDto,uuid,mailUuid);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.mailChatService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id') id: string) {
     console.log('id',id)

@@ -4,6 +4,7 @@ import { CourseEntity } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AdminRoleGUard } from 'src/auth/guard/admin-role.gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('course')
 export class CourseController {
@@ -15,6 +16,7 @@ export class CourseController {
     return this.courseService.create(createTaskDto);
   }
 
+  @SkipThrottle()
   @Get(':userId')
   findAll(@Param('userId') userId: string): Promise<CourseEntity[]> {
     return this.courseService.findAll(userId);

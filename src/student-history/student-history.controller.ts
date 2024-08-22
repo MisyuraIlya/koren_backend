@@ -5,6 +5,7 @@ import { CreateStudentHistoryDto } from './dto/create-student-history.dto';
 import { UpdateManualGradeDto } from './dto/update-manual-grade';
 import { UpdateStudentHistoryDto } from './dto/update-manual-grade.dto';
 import { UpdateTeacherGrade } from './dto/update-teacher-grade.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('student-history')
 export class StudentHistoryController {
@@ -16,11 +17,13 @@ export class StudentHistoryController {
   }
 
   @Get()
+  @SkipThrottle()
   findAll() {
     return this.studentHistoryService.findAll();
   }
 
   @Get(':id')
+  @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.studentHistoryService.findOne(+id);
   }
@@ -46,6 +49,7 @@ export class StudentHistoryController {
   }
 
   @Get('/statistic/:uuidGroup/:lvl1/:lvl2/:lvl3/:lvl4')
+  @SkipThrottle()
   getStasitic(
     @Param('uuidGroup') uuidGroup: string,
     @Param('lvl1') lvl1: string,

@@ -4,6 +4,7 @@ import { CreateExerciseGroupConnectionDto } from './dto/create-exercise-group-co
 import { UpdateExerciseGroupConnectionDto } from './dto/update-exercise-group-connection.dto';
 import { CreateExerciseGroupAnswerDto } from './dto/create-exercise-group-answer.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('exercise-group-connection')
 export class ExerciseGroupConnectionController {
@@ -21,12 +22,13 @@ export class ExerciseGroupConnectionController {
     return this.exerciseGroupConnectionService.createAnswer(id,dto);
   }
 
-
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.exerciseGroupConnectionService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':groupUuid/:exerciseTypeId/:exerciseId/:teacherId')
   findOne(
     @Param('groupUuid') groupUuid: string,
@@ -42,6 +44,7 @@ export class ExerciseGroupConnectionController {
     );
   }
 
+  @SkipThrottle()
   @Get('/teacher/:teacherId')
   findTeacherGroups(
     @Param('teacherId') teacherId: string,

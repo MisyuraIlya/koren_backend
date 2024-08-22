@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FeedBackItemService } from './feed-back-item.service';
 import { CreateFeedBackItemDto } from './dto/create-feed-back-item.dto';
 import { UpdateFeedBackItemDto } from './dto/update-feed-back-item.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('feed-back-item')
 export class FeedBackItemController {
@@ -12,11 +13,13 @@ export class FeedBackItemController {
     return this.feedBackItemService.create(+id, createFeedBackItemDto);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.feedBackItemService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.feedBackItemService.findOne(+id);

@@ -3,6 +3,7 @@ import { ShieldService } from './shield.service';
 import { CreateShieldDto } from './dto/create-shield.dto';
 import { UpdateShieldDto } from './dto/update-shield.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('shield')
 export class ShieldController {
@@ -15,6 +16,7 @@ export class ShieldController {
   }
 
   @UseGuards(TeacherRoleGuard)
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.shieldService.findAll();
@@ -22,6 +24,7 @@ export class ShieldController {
 
   @UseGuards(TeacherRoleGuard)
   @Get(':id')
+  @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.shieldService.findOne(+id);
   }

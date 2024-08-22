@@ -4,6 +4,7 @@ import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ExerciseEntity } from './entities/exercise.entity';
 import { ExerciseService } from './exercise.service';
 import { Controller, Get, Param,Post,Put,Delete,Body,UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, UseGuards, Patch } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('exercise')
 export class ExerciseController {
@@ -20,11 +21,13 @@ export class ExerciseController {
     return this.exerciseService.update(+id, updateExerciseDto);
   }
 
+  @SkipThrottle()
   @Get(':id')
   async Read(@Param('id') id: number): Promise<ExerciseEntity> {
     return await this.exerciseService.findOne(id)
   }
 
+  @SkipThrottle()
   @Get(':id/:studentId')
   async ReadStudent(@Param('id') id: number, @Param('studentId') studentId: number): Promise<ExerciseEntity> {
     return await this.exerciseService.findOneByStudent(id,studentId)

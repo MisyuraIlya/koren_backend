@@ -4,6 +4,7 @@ import { CreateMailDto } from './dto/create-mail.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
 import { StudentRoleGuard } from 'src/auth/guard/student-gard';
 import { IdCheckerGuard } from 'src/auth/guard/id-cheker-gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('mail')
 export class MailController {
@@ -14,22 +15,26 @@ export class MailController {
     return this.mailService.create(createMailDto,id);
   }
 
+  @SkipThrottle()
   @Get('/user/:id')
   findAll() {
     return this.mailService.findAll();
   }
 
+  @SkipThrottle()
   @Get('/feedBack/:userId/:exerciseId')
   getFeedBack(@Param('userId') userId: string,@Param('exerciseId') exerciseId: string){
     return this.mailService.getFeedBack(+userId,+exerciseId)
   }
 
+  @SkipThrottle()
   @UseGuards(IdCheckerGuard)
   @Get('undreaded/:id')
   getUnreaded(@Param('id') id: string){
     return this.mailService.getUnreaded(+id)
   }
 
+  @SkipThrottle()
   @UseGuards(IdCheckerGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Query('page') page: number = 1, @Query('search') search: string = '',  @Query('type') type: string = '') {

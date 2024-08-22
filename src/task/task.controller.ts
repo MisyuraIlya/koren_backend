@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('task')
 export class TaskController {
@@ -13,11 +14,13 @@ export class TaskController {
   }
 
   @Get()
+  @SkipThrottle()
   findAll() {
     return this.taskService.findAll();
   }
 
   @Get(':id')
+  @SkipThrottle()
   findOne(@Param('id') id: string) {
     return this.taskService.findOne(+id);
   }

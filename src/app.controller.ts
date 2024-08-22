@@ -15,6 +15,7 @@ import { Role } from './enums/role.enum';
 import { Semester } from './semester/entities/semester.entity';
 import { TypeFeedBack } from './enums/feedback.enum';
 import { AdminRoleGUard } from './auth/guard/admin-role.gard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller()
 export class AppController {
@@ -31,18 +32,21 @@ export class AppController {
     private readonly confirmationRepository: Repository<Semester>,
     ) {}
 
+  @SkipThrottle()
   @Get('/fetchCourses')
   manualExecution() {
     this.cronService.fetchCourses();
     return 'Manual execution initiated';
   }
 
+  @SkipThrottle()
   @Get('/fetchExercises')
   fetchExercises() {
     this.cronService.fetchExercises();
     return 'fetch exercises start';
   }
 
+  @SkipThrottle()
   @Post('/engine')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -60,6 +64,7 @@ export class AppController {
     return new Engine(file).process();
   }
 
+  @SkipThrottle()
   @UseGuards(AdminRoleGUard)
   @Post('media')
   @UseInterceptors(FileInterceptor('file', {storage: fileStorage}))
@@ -70,6 +75,7 @@ export class AppController {
     return this.appService.saveMedia(file)
   }
 
+  @SkipThrottle()
   @Get('initial')
   async initial(){
     const admin = new AuthEntity;

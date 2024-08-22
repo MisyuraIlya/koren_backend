@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ExerciseTypeService } from './exercise-type.service';
 import { CreateExerciseTypeDto } from './dto/create-exercise-type.dto';
 import { UpdateExerciseTypeDto } from './dto/update-exercise-type.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('exercise-type')
 export class ExerciseTypeController {
@@ -12,11 +13,13 @@ export class ExerciseTypeController {
     return this.exerciseTypeService.create(createExerciseTypeDto);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.exerciseTypeService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.exerciseTypeService.findOne(+id);

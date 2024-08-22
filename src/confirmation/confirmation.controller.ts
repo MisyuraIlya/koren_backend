@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ConfirmationService } from './confirmation.service';
 import { CreateConfirmationDto } from './dto/create-confirmation.dto';
 import { UpdateConfirmationDto } from './dto/update-confirmation.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('confirmation')
 export class ConfirmationController {
@@ -12,11 +13,13 @@ export class ConfirmationController {
     return this.confirmationService.create(createConfirmationDto);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.confirmationService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':userId')
   findOne(@Param('userId') userId: string) {
     return this.confirmationService.findOne(+userId);

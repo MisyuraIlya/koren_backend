@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SchoolService } from './school.service';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { UpdateSchoolDto } from './dto/update-school.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('school')
 export class SchoolController {
@@ -12,11 +13,13 @@ export class SchoolController {
     return this.schoolService.create(createSchoolDto);
   }
 
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.schoolService.findAll();
   }
 
+  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.schoolService.findOne(+id);
