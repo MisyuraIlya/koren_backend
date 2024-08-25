@@ -55,6 +55,7 @@ import { APP_GUARD } from '@nestjs/core';
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
+      isGlobal:true,
       envFilePath:[`stage.${process.env.STAGE}.env`],
     }), 
     TypeOrmModule.forRootAsync({

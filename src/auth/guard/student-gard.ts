@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AuthEntity } from "../entities/auth.entity";
 import { Role } from "src/enums/role.enum";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class StudentRoleGuard implements CanActivate {
@@ -11,6 +12,7 @@ export class StudentRoleGuard implements CanActivate {
     constructor(
         @InjectRepository(AuthEntity)
         private readonly userRepository: Repository<AuthEntity>,
+        private readonly configService: ConfigService
       ) {}
 
       
@@ -23,7 +25,7 @@ export class StudentRoleGuard implements CanActivate {
 
         const token = bearerToken.split(" ")[1];
         try {
-            const decodedToken = jwt.verify(token, '0asdasd') as { id: string };
+            const decodedToken = jwt.verify(token, this.configService.get<string>('JWT_SECRET')) as { id: string };
             const {id}  = decodedToken;
             const user = await this.userRepository.findOne({
                 where: { id: Number(id) },
