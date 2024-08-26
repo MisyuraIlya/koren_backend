@@ -31,25 +31,21 @@ export class AuthController {
 	@ExcludeTransformInterceptor()
 	async login(@Body() dto: AuthDto, @Res() res: Response) {
 		const loginResult = await this.authService.login(dto);
-		// Set cookies
 		const isDevelopment = process.env.STAGE === 'dev';
 		res.cookie('accessToken', loginResult.accessToken, {
-		  httpOnly: !isDevelopment,
+		  httpOnly: false, // Allow access from JavaScript
 		  secure: !isDevelopment,
 		  sameSite: isDevelopment ? 'lax' : 'strict',
 		});
 	  
 		res.cookie('refreshToken', loginResult.refreshToken, {
-		  httpOnly: !isDevelopment,
+		  httpOnly: false,
 		  secure: !isDevelopment,
 		  sameSite: isDevelopment ? 'lax' : 'strict',
 		});
 	  
-		// Remove tokens before transformation
 		delete loginResult.accessToken;
 		delete loginResult.refreshToken;
-	  
-		// Transform and respond
 		console.log('Login result after transformation:', loginResult);
 		return res.send({
 		  ...loginResult,
@@ -106,12 +102,9 @@ export class AuthController {
 		  secure: !isDevelopment,
 		  sameSite: isDevelopment ? 'lax' : 'strict',
 		});
-	  
-		// Remove tokens before transformation
 		delete loginResult.accessToken;
 		delete loginResult.refreshToken;
 	  
-		// Transform and respond
 		console.log('Login result after transformation:', loginResult);
 		return res.send({
 		  ...loginResult,
