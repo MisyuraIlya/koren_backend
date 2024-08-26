@@ -58,6 +58,7 @@ export class AuthService {
       const isDevelopment = process.env.STAGE === 'dev';
       if(!isDevelopment){
         const isCaptchaValid = await this.verifyCaptcha(dto.captchaToken);
+        console.log('isCaptchaValid',isCaptchaValid)
         if (!isCaptchaValid) {
               throw new BadRequestException('CAPTCHA verification failed');
         }
@@ -254,7 +255,7 @@ export class AuthService {
 
     private async verifyCaptcha(captchaToken: string): Promise<boolean>{
       const secretKey = this.configService.get<string>('CLOUD_FLARE_KEY');
-      console.log('secretKey',secretKey)
+      console.log('secretKey',captchaToken,secretKey)
       try {
           const response = await axios.post(
               'https://challenges.cloudflare.com/turnstile/v0/siteverify',
