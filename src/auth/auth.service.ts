@@ -259,13 +259,10 @@ export class AuthService {
       try {
           const response = await axios.post(
               'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-              {},
-              {
-                  params: {
-                      secret: secretKey,
-                      response: captchaToken,
-                  },
-              }
+              {     
+                secret: secretKey,
+                response: captchaToken,
+              },
           );
           console.log("response.data.success",response.data)
           return response.data.success;
