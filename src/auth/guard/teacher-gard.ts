@@ -24,7 +24,6 @@ export class TeacherRoleGuard implements CanActivate {
         }
 
         const token = bearerToken.split(" ")[1];
-        console.log('token',token)
         try {
             const decodedToken = jwt.verify(token, this.configService.get<string>('JWT_SECRET')) as { id: string };
             const {id}  = decodedToken;

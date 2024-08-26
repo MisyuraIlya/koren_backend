@@ -27,12 +27,9 @@ export class IdCheckerGuard implements CanActivate {
         try {
             const decodedToken = jwt.verify(token, this.configService.get<string>('JWT_SECRET')) as { id: string };
             const { id: userId } = decodedToken;
-
-            // Extract URL path part without query parameters
             const [path] = url.split('?');
             const urlParts = path.split('/');
             const urlId = urlParts[urlParts.length - 1];
-            console.log('here',urlId,userId,urlId != userId)
             if (urlId != userId) {
                 throw new BadRequestException('User ID does not match');
             }
