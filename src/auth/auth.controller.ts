@@ -34,14 +34,14 @@ export class AuthController {
 		const isDevelopment = process.env.STAGE === 'dev';
 		res.cookie('accessToken', loginResult.accessToken, {
 		  httpOnly: false, // Allow access from JavaScript
-		  secure: !isDevelopment,
-		  sameSite: isDevelopment ? 'lax' : 'strict',
+		  secure: false,
+		  sameSite: 'strict',
 		});
 	  
 		res.cookie('refreshToken', loginResult.refreshToken, {
 		  httpOnly: false,
-		  secure: !isDevelopment,
-		  sameSite: isDevelopment ? 'lax' : 'strict',
+		  secure: false,
+		  sameSite:'strict',
 		});
 	  
 		delete loginResult.accessToken;
