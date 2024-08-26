@@ -268,6 +268,7 @@ export class AuthService {
               }
           );
           console.log('response',response)
+          console.log("response.data.success",response.data.success)
           return response.data.success;
       } catch (error) {
           console.error('Error verifying CAPTCHA:', error);
