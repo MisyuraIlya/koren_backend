@@ -88,5 +88,36 @@ export class AuthController {
 	async updateUser(@Body() dto: ResetDto) {
 		return this.authService.updateUser(dto)
 	}
+
+	@Post('login/access-token')
+	@Throttle({ default: { limit: 5, ttl: 60000 } })
+	@ExcludeTransformInterceptor()
+	async accessTOken(@Body() dto: {refreshToken: string}, @Res() res: Response) {
+		const loginResult = await this.authService.getNewTokens(dto.refreshToken);
+		const isDevelopment = process.env.STAGE === 'dev';
+		res.cookie('accessToken', loginResult.accessToken, {
+		  httpOnly: !isDevelopment,
+		  secure: !isDevelopment,
+		  sameSite: isDevelopment ? 'lax' : 'strict',
+		});
+	  
+		res.cookie('refreshToken', loginResult.refreshToken, {
+		  httpOnly: !isDevelopment,
+		  secure: !isDevelopment,
+		  sameSite: isDevelopment ? 'lax' : 'strict',
+		});
+	  
+		// Remove tokens before transformation
+		delete loginResult.accessToken;
+		delete loginResult.refreshToken;
+	  
+		// Transform and respond
+		console.log('Login result after transformation:', loginResult);
+		return res.send({
+		  ...loginResult,
+		});
+	}
+
+
 	
 }

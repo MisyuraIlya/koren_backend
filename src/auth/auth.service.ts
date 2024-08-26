@@ -113,11 +113,11 @@ export class AuthService {
         const data = {id: userId}
     
         const accessToken = this.jwt.sign(data, {
-          expiresIn: '1h'
+          expiresIn: '1d'
         })
     
         const refreshToken = this.jwt.sign(data, {
-          expiresIn: '1d'
+          expiresIn: '2d'
         })
     
         return { accessToken, refreshToken }
