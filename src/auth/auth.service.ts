@@ -9,6 +9,8 @@ import { hash, verify } from 'argon2'
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ResetDto } from './dto/reset.dto';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
         @InjectRepository(School)
         private readonly schoolRepository: Repository<School>,
         private readonly mailerService: MailerService,
+        private readonly configService: ConfigService,
         private jwt: JwtService
     ){}
 
@@ -50,7 +53,15 @@ export class AuthService {
 
     async login(dto: AuthDto) {
       const user = await this.validateUser(dto)
+
       const tokens = await this.issueTokens(user.id)
+      const isDevelopment = process.env.STAGE === 'dev';
+      if(!isDevelopment){
+        const isCaptchaValid = await this.verifyCaptcha(dto.captchaToken);
+        if (!isCaptchaValid) {
+              throw new BadRequestException('CAPTCHA verification failed');
+        }
+      }
       return {
         user: this.returnUsersFields(user),
         ...tokens
@@ -239,6 +250,27 @@ export class AuthService {
         return {status:"success", user: findUser}
       }
       return {status:"success"}
+    }
+
+    private async verifyCaptcha(captchaToken: string): Promise<boolean>{
+      const secretKey = this.configService.get<string>('CLOUD_FLARE_KEY');
+      try {
+          const response = await axios.post(
+              'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+              {},
+              {
+                  params: {
+                      secret: secretKey,
+                      response: captchaToken,
+                  },
+              }
+          );
+          console.log('response',response)
+          return response.data.success;
+      } catch (error) {
+          console.error('Error verifying CAPTCHA:', error);
+          return false;
+      }
     }
     
 }

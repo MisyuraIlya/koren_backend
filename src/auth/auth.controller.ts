@@ -19,7 +19,9 @@ import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+	private readonly authService: AuthService
+) {}
 
 	@Post('register')
 	async register(@Body() dto: AuthDto) {

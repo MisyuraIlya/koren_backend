@@ -11,7 +11,7 @@ export class AdminRoleGUard implements CanActivate {
     constructor(
         @InjectRepository(AuthEntity)
         private readonly userRepository: Repository<AuthEntity>,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
       ) {}
 
       
