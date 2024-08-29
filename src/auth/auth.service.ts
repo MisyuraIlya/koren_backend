@@ -125,11 +125,11 @@ export class AuthService {
         const data = {id: userId}
     
         const accessToken = this.jwt.sign(data, {
-          expiresIn: '1d'
+          expiresIn: '15m'
         })
     
         const refreshToken = this.jwt.sign(data, {
-          expiresIn: '2d'
+          expiresIn: '6h'
         })
     
         return { accessToken, refreshToken }
@@ -141,7 +141,6 @@ export class AuthService {
     }
 
     private async validateUser(dto: AuthDto) {
-      console.log('dto',dto.email)
         const user = await this.authRepository.findOne({
             where:{email:dto.email},
             relations: ['school']

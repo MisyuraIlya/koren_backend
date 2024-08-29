@@ -1,4 +1,4 @@
-import { AdminRoleGUard } from 'src/auth/guard/admin-role.gard';
+import { AdminRoleGuard } from 'src/auth/guard/admin-role.gard';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ExerciseEntity } from './entities/exercise.entity';
@@ -10,7 +10,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 export class ExerciseController {
   constructor(private readonly exerciseService: ExerciseService) {}
 
-  @UseGuards(AdminRoleGUard)
+  @UseGuards(AdminRoleGuard)
   @Post()
   create(@Body() createTaskDto: CreateExerciseDto) {
     return this.exerciseService.create(createTaskDto);

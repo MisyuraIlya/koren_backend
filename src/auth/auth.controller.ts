@@ -4,6 +4,7 @@ import {
 	Get,
 	Param,
 	Post,
+	Req,
 	Res,
 } from '@nestjs/common'
 import { AuthDto } from './dto/auth.dto';
@@ -33,26 +34,46 @@ export class AuthController {
 	@ExcludeTransformInterceptor()
 	async login(@Body() dto: AuthDto, @Res() res: Response) {
 		const loginResult = await this.authService.login(dto);
-		const isDevelopment = process.env.STAGE === 'dev';
 		res.cookie('accessToken', loginResult.accessToken, {
-		  httpOnly: false, // Allow access from JavaScript
-		  secure: false,
+		  httpOnly: true, 
+		  secure: true,
 		  sameSite: 'strict',
 		});
 	  
 		res.cookie('refreshToken', loginResult.refreshToken, {
-		  httpOnly: false,
-		  secure: false,
+		  httpOnly: true,
+		  secure: true,
 		  sameSite:'strict',
 		});
 	  
 		delete loginResult.accessToken;
 		delete loginResult.refreshToken;
-		console.log('Login result after transformation:', loginResult);
 		return res.send({
 		  ...loginResult,
 		});
 	}
+
+	@Throttle({ default: { limit: 5, ttl: 60000 } })
+	@ExcludeTransformInterceptor()
+	@Post('logout')
+	async logout(@Res() res: Response) {
+		res.cookie('accessToken', '', {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			expires: new Date(0),
+		});
+
+		res.cookie('refreshToken', '', {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			expires: new Date(0), 
+		});
+
+		return res.send({ message: 'Logged out successfully' });
+	}
+
 
 	@SkipThrottle()
 	@Get('/allUsers/:type/:school')
@@ -87,31 +108,39 @@ export class AuthController {
 		return this.authService.updateUser(dto)
 	}
 
-	@Post('login/access-token')
-	@Throttle({ default: { limit: 5, ttl: 60000 } })
-	@ExcludeTransformInterceptor()
-	async accessTOken(@Body() dto: {refreshToken: string}, @Res() res: Response) {
-		const loginResult = await this.authService.getNewTokens(dto.refreshToken);
-		const isDevelopment = process.env.STAGE === 'dev';
-		res.cookie('accessToken', loginResult.accessToken, {
-		  httpOnly: !isDevelopment,
-		  secure: !isDevelopment,
-		  sameSite: isDevelopment ? 'lax' : 'strict',
-		});
-	  
-		res.cookie('refreshToken', loginResult.refreshToken, {
-		  httpOnly: !isDevelopment,
-		  secure: !isDevelopment,
-		  sameSite: isDevelopment ? 'lax' : 'strict',
-		});
-		delete loginResult.accessToken;
-		delete loginResult.refreshToken;
-	  
-		console.log('Login result after transformation:', loginResult);
-		return res.send({
-		  ...loginResult,
-		});
-	}
+ @Post('login/access-token')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ExcludeTransformInterceptor()
+  async accessToken(@Req() req: Request, @Res() res: Response) {
+
+	const cookies = req.headers['cookie'];
+    let accessToken = '';
+    let refreshToken = '';
+    if (typeof cookies === 'string') {
+      const parsedCookies = cookies.split(';').reduce((acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+      }, {} as Record<string, string>);
+
+      accessToken = parsedCookies['accessToken'];
+      refreshToken = parsedCookies['refreshToken'];
+    }
+
+    const loginResult = await this.authService.getNewTokens(refreshToken);
+	res.cookie('accessToken', loginResult.accessToken, {
+		httpOnly: true, 
+		secure: true,
+		sameSite: 'strict',
+	  });
+
+    delete loginResult.accessToken;
+    delete loginResult.refreshToken;
+
+    return res.send({
+      ...loginResult,
+    });
+  }
 
 
 	

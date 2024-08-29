@@ -24,11 +24,11 @@ export class JwtAuthGuard implements CanActivate {
     ]; // List of paths to exclude from JWT validation
 
     if (excludePaths.includes(request.path)) {
-      return true; 
+      return true;
     }
 
-    const token = request.headers['authorization']?.split(' ')[1];
-
+    const token = request.cookies?.accessToken; // Get the JWT from the cookie named 'accessToken'
+    console.log('token22',token)
     if (!token) {
       throw new UnauthorizedException('No token provided');
     }
@@ -36,7 +36,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const jwtSecret = this.configService.get<string>('JWT_SECRET');
       const decoded = jwt.verify(token, jwtSecret); 
-      request.user = decoded; 
+      request.user = decoded;
       return true;
     } catch (err) {
       throw new UnauthorizedException('Invalid token');

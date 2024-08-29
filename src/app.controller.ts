@@ -14,7 +14,7 @@ import { FeedBackMain } from './feed-back-main/entities/feed-back-main.entity';
 import { Role } from './enums/role.enum';
 import { Semester } from './semester/entities/semester.entity';
 import { TypeFeedBack } from './enums/feedback.enum';
-import { AdminRoleGUard } from './auth/guard/admin-role.gard';
+import { AdminRoleGuard } from './auth/guard/admin-role.gard';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller()
@@ -65,7 +65,7 @@ export class AppController {
   }
 
   @SkipThrottle()
-  @UseGuards(AdminRoleGUard)
+  @UseGuards(AdminRoleGuard)
   @Post('media')
   @UseInterceptors(FileInterceptor('file', {storage: fileStorage}))
   async mediaHandler(
