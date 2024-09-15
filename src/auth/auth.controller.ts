@@ -132,7 +132,7 @@ export class AuthController {
 		httpOnly: true, 
 		secure: true,
 		sameSite: 'strict',
-	  });
+	});
 
     delete loginResult.accessToken;
     delete loginResult.refreshToken;

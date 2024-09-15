@@ -17,7 +17,11 @@ export class ExerciseTypeService {
   }
 
   findAll() {
-     return this.exerciseTypeRepository.find();
+    return this.exerciseTypeRepository.find({
+      order: {
+        orden: 'ASC', // Use 'DESC' for descending order
+      },
+    });
   }
 
   findOne(id: number) {

@@ -195,30 +195,43 @@ export class GroupService {
       where: { uuid: groupId },
       relations: ['student']
     });
-  
     let totalStudent = 0;
+    let totalStudents = []
     let totalStartWorking = 0;
+    let totalStartWorkingStudents = []
+    let replied = 0;
+    let repliedStudents = []
     let totalCompleted = 0;
+    let totalCompletedStudents = []
     let totalGrade = 0;
     let totalWaitingCheck = 0
+    let totalWaitingCheckStudents = []
     let averageGrade = 0;
+    let totalLate = 0;
+    let totalLateStudents = []
   
     if (findGroup) {
       const promises = findGroup.map(async (item) => {
         totalStudent++;
+        totalStudents.push(item?.student)
         const exercise = await this.studentHistoryRepository.findOne({
           where: { student: item.student, exercise: findExercise }
         });
   
         if (exercise) {
           totalStartWorking++;
+          totalStartWorkingStudents.push(item)
+
           if (exercise.grade > 0) {
             totalCompleted++;
+            totalCompletedStudents.push(item?.student)
             totalGrade += exercise.grade;
           }
 
+
           if(exercise.isDone && !exercise?.teacherGrade){
             totalWaitingCheck++
+            totalWaitingCheckStudents.push(item?.student)
           }
 
         }
@@ -227,16 +240,61 @@ export class GroupService {
       // Wait for all promises to resolve using Promise.all
       await Promise.all(promises);
     }
-  
+
+    const findConnectionGroup = await this.exerciseGroupConnectionRepository.findOne({
+      where:{group: groupId},
+      relations:['students','students.student']
+    }) 
+    
+
+
+    findConnectionGroup?.students?.map((item) => {
+      if(item.isResend){
+        replied++
+        repliedStudents.push(item?.student)
+        
+      }
+    })
+
+    const dueDate = findConnectionGroup?.toDate;
+    const timeDue = findConnectionGroup?.time;
+    
+    if (dueDate && timeDue) {
+        const now = new Date();
+        const dueDateTime = new Date(dueDate);
+        const [hours, minutes, seconds] = timeDue.split(':').map(Number);
+        dueDateTime.setHours(hours, minutes, seconds);
+        if (now > dueDateTime) {
+            totalLate = totalStudent - totalCompleted
+            totalLateStudents = totalStudents.filter(student =>
+              !totalCompletedStudents.some(completed => completed.id === student.id)
+            );
+            console.log('Current date and time is later than dueDateTime.');
+        } else {
+            console.log('Current date and time is earlier or equal to dueDateTime.');
+        }
+    } else {
+        console.log('dueDate or timeDue is not defined.');
+    }
+
+
     if (totalStudent > 0) {
       averageGrade = totalGrade / totalStudent;
     }
   
     return {
       totalStudent,
+      totalStudents,
       totalStartWorking,
+      totalStartWorkingStudents,
       totalWaitingCheck,
+      totalWaitingCheckStudents,
       totalCompleted,
+      totalCompletedStudents,
+      replied,
+      repliedStudents,
+      totalLate,
+      totalLateStudents,
       totalGrade,
       averageGrade: averageGrade.toFixed(2)
     };
