@@ -168,6 +168,7 @@ export class ExerciseService {
         .addOrderBy('columns.orden', 'ASC')
         .addOrderBy('rows.orden', 'ASC')
         .addOrderBy('objectives.orden', 'ASC')
+        .addOrderBy('values.orden','ASC')
         .getOne();
         return exercise;
     }
@@ -189,7 +190,8 @@ export class ExerciseService {
         .addOrderBy('tasks.orden', 'ASC')
         .addOrderBy('columns.orden', 'ASC')
         .addOrderBy('rows.orden', 'ASC')
-        .addOrderBy('objectives.orden', 'ASC');
+        .addOrderBy('objectives.orden', 'ASC')
+        .addOrderBy('values.orden','ASC');
 
     
     if (studentId) {

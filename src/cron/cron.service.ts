@@ -188,8 +188,79 @@ export class CronService {
             }
         } catch (error) {
             console.error('Error fetching data:', error.message);
-            throw error;
+            // throw error;
         } 
+    }
+
+    async handleSelectBox() {
+        try {
+            const categoriesLvl5 = await this.courseRepository.find({
+                where: { level: 5 },
+                relations: [
+                    'exercises', 'exercises.tabs', 'exercises.tabs.tasks', 
+                    'exercises.tabs.tasks.rows', 'exercises.tabs.tasks.rows.objectives', 
+                    'exercises.tabs.tasks.rows.objectives.values'
+                ]
+            });
+    
+            for (const course of categoriesLvl5) {
+                if (course.uuid == '894') {
+                    try {
+                        const exerciseResponse: AxiosResponse<any> = await axios.get(`http://3.71.75.160:4000/exercises/${course.uuid}`);
+                        const exerciseData = exerciseResponse.data;
+                        if (Array.isArray(exerciseData)) {
+                            // Process exerciseData if needed
+                            exerciseData?.map(async (elem) => {
+                                await this.MainLogicHandleSelectBox(elem,course)
+                            })
+                        } else if (course.exercises[0]?.title === exerciseData?.title) {
+                            this.MainLogicHandleSelectBox(exerciseData,course)
+                        } else {
+                            console.log("NO");
+                        }
+                    } catch (e) {
+                        console.log('[ERROR EXERCISE]', course.id, e);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data::', error.message);
+            // throw error;
+        }
+    }
+
+    private async MainLogicHandleSelectBox(exerciseData,course){
+        for (const item of exerciseData.exercises) {
+            const propertyName = `exercise${item.exercise}`;
+            for (const subItem of item[propertyName].data) {
+                for (const row of subItem.collectionsRows) {
+                    for (const objc of row.collectionRow) {
+                        if (objc.module_type === 'selectbox' || objc.module_type === 'checkBox') {
+                            for (const val of objc.collectionValues) {
+                                for (const ele1 of course.exercises[0]?.tabs || []) {
+                                    for (const ele2 of ele1?.tasks || []) {
+                                        for (const ele3 of ele2?.rows || []) {
+                                            for (const ele4 of ele3?.objectives || []) {
+                                                if (ele4.moduleType === 'selectbox' || ele4.moduleType === 'checkBox') {
+                                                    for (const ele5 of ele4?.values || []) {
+                                                        if (ele5?.value === val.value) {
+                                                            if(ele5.orden == null){
+                                                                ele5.orden = val.id;
+                                                                await this.valueRepository.save(ele5);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private async syncObjectExercise(exerciseData, courseId) {

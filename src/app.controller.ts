@@ -47,6 +47,13 @@ export class AppController {
   }
 
   @SkipThrottle()
+  @Get('/handleSelectBoxOrden')
+  selectBoxOrden() {
+    this.cronService.handleSelectBox();
+    return 'fetch exercises start';
+  }
+
+  @SkipThrottle()
   @Post('/engine')
   @UseInterceptors(
     FileInterceptor('file', {

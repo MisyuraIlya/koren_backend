@@ -9,6 +9,9 @@ export class ValueEntity {
     @Column({nullable: true})
     value: string;
 
+    @Column({nullable: true})
+    orden: number;
+
     @ManyToOne(() => ObjectiveEntity, row => row.values, {onDelete: "CASCADE"})
     objective: ObjectiveEntity;
 
