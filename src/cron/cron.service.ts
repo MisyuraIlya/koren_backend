@@ -204,7 +204,7 @@ export class CronService {
             });
     
             for (const course of categoriesLvl5) {
-                if (course.uuid == '894') {
+                // if (course.uuid == '894') {
                     try {
                         const exerciseResponse: AxiosResponse<any> = await axios.get(`http://3.71.75.160:4000/exercises/${course.uuid}`);
                         const exerciseData = exerciseResponse.data;
@@ -221,7 +221,7 @@ export class CronService {
                     } catch (e) {
                         console.log('[ERROR EXERCISE]', course.id, e);
                     }
-                }
+                // }
             }
         } catch (error) {
             console.error('Error fetching data::', error.message);
