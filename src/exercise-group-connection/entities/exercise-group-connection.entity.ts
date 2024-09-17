@@ -41,6 +41,9 @@ export class ExerciseGroupConnection {
     @Column({nullable: true})
     time: string;
 
+    @Column({nullable: true})
+    toTime: string;
+
     @OneToMany(() => ExerciseUserConnection, students => students.connection, { cascade: ["remove"] })
     students: ExerciseUserConnection[];
 
@@ -53,4 +56,6 @@ export class ExerciseGroupConnection {
     @Column({nullable: true})
     answerTime: string;
     
+    @Column({nullable: true})
+    toAnswerTime: string;
 }

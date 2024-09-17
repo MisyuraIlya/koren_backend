@@ -16,5 +16,9 @@ export class CreateExerciseGroupAnswerDto {
     @IsString()
     @IsOptional()
     time?: string
+    
+    @IsString()
+    @IsOptional()
+    toAnswerTime?: string
 
 }

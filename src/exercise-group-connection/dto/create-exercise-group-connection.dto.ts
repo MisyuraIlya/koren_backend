@@ -24,6 +24,9 @@ export class CreateExerciseGroupConnectionDto {
     @IsString()
     time: string
 
+    @IsString()
+    toTime: string
+
     @IsArray()
     students: AuthEntity[]
 }

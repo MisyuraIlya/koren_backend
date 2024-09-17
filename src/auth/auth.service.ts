@@ -146,10 +146,10 @@ export class AuthService {
             relations: ['school']
         })
     
-        if (!user) throw new NotFoundException('שם משתמש/סיסמה לא נכונים.')
+        if (!user) throw new NotFoundException('שם המשתמש או הסיסמה אינם נכונים.')
     
         const isValid = await verify(user.password, dto.password)
-        if (!isValid) throw new UnauthorizedException('שם משתמש/סיסמה לא נכונים.')
+        if (!isValid) throw new UnauthorizedException('שם המשתמש או הסיסמה אינם נכונים.')
     
         return user
     }

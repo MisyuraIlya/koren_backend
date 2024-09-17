@@ -80,6 +80,7 @@ export class ExerciseGroupConnectionService {
     exerciseGroupConnection.fromDate = new Date(dto.fromDate);
     exerciseGroupConnection.toDate = new Date(dto.toDate);
     exerciseGroupConnection.time = dto.time;
+    exerciseGroupConnection.toTime = dto.toTime;
     exerciseGroupConnection.answerType = null;
 
     const res = await this.exerciseGroupConnectionRepository.save(exerciseGroupConnection);
@@ -166,6 +167,7 @@ export class ExerciseGroupConnectionService {
           find.dueDate = dto.dueDate
           find.answerTime = dto?.time
           find.isOpenAnswer = false
+          find.answerTimeTo = dto?.toAnswerTime
         } else {
           find.isOpenAnswer = true
         }

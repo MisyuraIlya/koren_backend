@@ -20,6 +20,10 @@ export class ExerciseUserConnection {
     @Column({nullable: true})
     answerTime: string;
 
+    @Column({nullable: true})
+    answerTimeTo: string;
+
+
     @Column({name:'is_open_answer'})
     isOpenAnswer: boolean
 
