@@ -4,6 +4,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { TeacherRoleGuard } from 'src/auth/guard/teacher-gard';
 import { SkipThrottle } from '@nestjs/throttler';
+import { StudentRoleGuard } from 'src/auth/guard/student-gard';
 
 @Controller('group')
 export class GroupController {
@@ -33,6 +34,13 @@ export class GroupController {
   @Get('/teacher/:teacherId')
   findGroupsByTeacher(@Param('teacherId') id: string) {
     return this.groupService.findGroupsByTeacher(+id);
+  }
+
+  @SkipThrottle()
+  @UseGuards(StudentRoleGuard)
+  @Get('/student/:studentId')
+  findGroupsByStudent(@Param('studentId') id: string) {
+    return this.groupService.findGroupsByStudent(+id);
   }
 
   @UseGuards(TeacherRoleGuard)

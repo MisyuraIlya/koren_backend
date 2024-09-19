@@ -138,6 +138,38 @@ export class GroupService {
     return result;
   }
 
+  async findGroupsByStudent(teacherId: number) {
+    const res = await this.getByTeacherIdGroups(teacherId);
+  
+    const result = await Promise.all(res.map(async (item) => {
+      const dataGroup = await this.groupRepository.findOne({
+        where: { uuid: item.uuid },
+        relations:['class']
+      });
+      const students = await this.groupRepository.find({
+        where: { uuid: item.uuid },
+        relations: ['student','teacher'],
+      });
+      const findConnectionGroup = await this.exerciseGroupConnectionRepository.findOne({
+        where:{group: item.uuid},
+        relations:['exerciseType']
+      })
+  
+      const uniqueStudents = Array.from(new Set(students.map(student => student.student.id))).map(id => students.find(s => s.student.id === id));
+      const uniqueTeachers = Array.from(new Set(students.map(teacher => teacher.teacher.id))).map(id => students.find(t => t.teacher.id === id));
+  
+      return {
+        uuid: item.uuid,
+        title: dataGroup.title ?? '',
+        students: uniqueStudents.map((student) => student.student),
+        teachers: uniqueTeachers.map((teacher) => teacher.teacher),
+        connection:findConnectionGroup ?? {}
+      };
+    }));
+  
+    return result;
+  }
+
   update(id: number, updateGroupDto: UpdateGroupDto) {
     return `This action updates a #${id} group`;
   }

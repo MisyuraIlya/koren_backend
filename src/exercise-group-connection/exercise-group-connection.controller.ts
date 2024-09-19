@@ -52,6 +52,14 @@ export class ExerciseGroupConnectionController {
     return this.exerciseGroupConnectionService.findAllTeacherGroups(teacherId);
   }
 
+  @SkipThrottle()
+  @Get('/student/:studentId')
+  findStudentGroups(
+    @Param('studentId') studentId: string,
+  ) {
+    return this.exerciseGroupConnectionService.findAllStudentGroups(studentId);
+  }
+
   @UseGuards(TeacherRoleGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateExerciseGroupConnectionDto: UpdateExerciseGroupConnectionDto) {

@@ -235,7 +235,7 @@ export class ExerciseGroupConnectionService {
     })
     
     const promises = results.map(async (item) => {
-      const data = await this.findFullPathExercise(item?.exercise?.id)
+      const data = await this.findFullPathExercise(item?.exercise?.id,'teacher')
       item.exercise.fullPath = data.name;
       item.exercise.fullLink = data.link;
       return item;
@@ -243,6 +243,32 @@ export class ExerciseGroupConnectionService {
 
     const updatedResults = await Promise.all(promises);
 
+    return updatedResults;
+  }
+
+  async findAllStudentGroups(studentId: string){
+    const studnet = await this.authRepository.findOne({
+      where:{id: +studentId}
+    })
+
+    if(!studnet)  throw new BadRequestException('student not found');
+
+    const results = await this.exerciseGroupConnectionRepository
+      .createQueryBuilder('exerciseGroupConnection')
+      .leftJoinAndSelect('exerciseGroupConnection.exercise','exercise')
+      .leftJoinAndSelect('exerciseGroupConnection.exerciseType','exerciseType')
+      .leftJoinAndSelect('exerciseGroupConnection.students', 'students')
+      .where('students.student = :studentId', { studentId: studentId })
+      .getMany();
+
+      const promises = results.map(async (item) => {
+        const data = await this.findFullPathExercise(item?.exercise?.id,'student')
+        item.exercise.fullPath = data.name;
+        item.exercise.fullLink = data.link;
+        return item;
+      });
+  
+      const updatedResults = await Promise.all(promises);
     return updatedResults;
   }
 
@@ -276,7 +302,7 @@ export class ExerciseGroupConnectionService {
   }
 
 
-  private async findFullPathExercise(id: number) {
+  private async findFullPathExercise(id: number,role: string) {
     const exercise = await this.exerciseRepository
     .createQueryBuilder('exercise')
     .leftJoinAndSelect('exercise.course', 'course')
@@ -288,7 +314,7 @@ export class ExerciseGroupConnectionService {
     .getOne(); 
     return {
       name:`${exercise?.course?.parent?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.parent?.name} / ${exercise?.course?.parent?.parent?.name} / ${exercise?.course?.parent?.name} / ${exercise?.course?.name} / ${exercise?.title}`,
-      link:`/teacher/exercise/${exercise?.course?.parent?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.id}/${exercise?.course?.parent?.id}/${exercise?.course?.id}`
+      link:`/${role}/exercise/${exercise?.course?.parent?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.parent?.id}/${exercise?.course?.parent?.parent?.id}/${exercise?.course?.parent?.id}/${exercise?.course?.id}`
     }
     
   }

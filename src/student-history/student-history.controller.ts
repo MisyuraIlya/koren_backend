@@ -66,5 +66,23 @@ export class StudentHistoryController {
     );
   }
 
+  @Get('/statisticStudent/:studentId/:lvl1/:lvl2/:lvl3/:lvl4')
+  @SkipThrottle()
+  getStasiticByStudent(
+    @Param('studentId') studentId: string,
+    @Param('lvl1') lvl1: string,
+    @Param('lvl2') lvl2: string,
+    @Param('lvl3') lvl3: string,
+    @Param('lvl4') lvl4: string,
+  ){
+    return this.studentHistoryService.getStatisticByStudent(
+      studentId,
+      +lvl1,
+      +lvl2,
+      +lvl3,
+      +lvl4,
+    );
+  }
+
 
 }

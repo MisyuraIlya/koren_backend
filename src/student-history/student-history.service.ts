@@ -386,6 +386,99 @@ export class StudentHistoryService {
     
     return result;
   }
+
+  async getStatisticByStudent(
+    studentId: string,
+    lvl1: number,
+    lvl2: number,
+    lvl3: number,
+    lvl4: number,
+  ){
+    const courseLvl1 = await this.courseRepository.findOne({
+      where:{id:lvl1}
+    })
+
+    const user = await this.authRepository.findOne({
+      where:{id:+studentId}
+    })
+
+    const result = {
+      column:['שם התלמיד','ממוצע של הקורס'],
+      rows: []
+    };
+
+    await this.handleCourse(lvl2,result)
+    await this.handleCourse(lvl3,result)
+    await this.handleCourse(lvl4,result)
+    await this.handleExerciseColumn(lvl4,result)
+    const countLvl1 = await this.getExerciseCountAndIdsByCourseId(lvl1);
+    const countLvl2 = await this.getExerciseCountAndIdsByCourseId(lvl2);
+    const countLvl3 = await this.getExerciseCountAndIdsByCourseId(lvl3);
+    const countLvl4 = await this.getExerciseCountAndIdsByCourseId(lvl4);
+
+    if(user){
+      // await Promise.all(group.students.map(async (item) => {
+        let averageLvl1 = 0;
+        let averageLvl2 = 0;
+        let averageLvl3 = 0;
+        let averageLvl4 = 0;
+  
+        if(lvl1){
+          const exercises = await this.getStudentCompletedExercisesByCourse(user, countLvl1.exerciseIds);
+          averageLvl1 = await this.calculateGrade(countLvl1, exercises);
+        }
+  
+        if(lvl2){
+          const exercises = await this.getStudentCompletedExercisesByCourse(user, countLvl2.exerciseIds);
+          averageLvl2 = await this.calculateGrade(countLvl2, exercises);
+        }
+  
+        if(lvl3){
+          const exercises = await this.getStudentCompletedExercisesByCourse(user, countLvl3.exerciseIds);
+          averageLvl3 = await this.calculateGrade(countLvl3, exercises);
+        }
+  
+        if(lvl4){
+          const exercises = await this.getStudentCompletedExercisesByCourse(user, countLvl4.exerciseIds);
+          averageLvl4 = await this.calculateGrade(countLvl4, exercises);
+        }
+  
+        let data = []
+        
+        data.push({value:`${user?.firstName} ${user?.lastName}`,grade:0,teacherGrade:0,link:'', isExercise: false})
+  
+        if (lvl1) {
+          data.push({ value:averageLvl1, grade:0,teacherGrade:0,link:'', isExercise: false})
+        }
+        if (lvl2) {
+          data.push({ value:averageLvl2, grade:0,teacherGrade:0,link:'', isExercise: false});
+        }
+        if (lvl3) {
+          data.push({ value:averageLvl3, grade:0,teacherGrade:0,link:'', isExercise: false}); 
+        }
+        if (lvl4) {
+          data.push({ value:averageLvl4, grade:0,teacherGrade:0,link:'', isExercise: false}); 
+        }
+        const connection = await this.exerciseUserConnectionRepository.findOne({
+          where:{student: user}
+        })
+        const arrExercises = await this.handleExercisesRow(connection,lvl4)
+        console.log('arrExercises',arrExercises)
+        data.push(...arrExercises)
+        let resObj = {
+          result: data,
+          user: user,
+          courseId: lvl1,
+          gradeShield: await this.shieldRepository.findOne({where:{user:user,type:ShieldEnum.ShieldGrade,course:courseLvl1}}),
+          gradeSubmit: await this.shieldRepository.findOne({where:{user:user,type:ShieldEnum.SubmitGrade,course:courseLvl1}})
+        }
+        result.rows.push(resObj);
+      // }));
+    }
+    
+    return result;
+    
+  }
   
   private async handleCourse(id,result){
     const response = await this.courseRepository.findOne({
