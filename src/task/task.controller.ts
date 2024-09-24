@@ -3,6 +3,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { SkipThrottle } from '@nestjs/throttler';
+import { HandleTaskDto } from './dto/handle-task.dto';
 
 @Controller('task')
 export class TaskController {
@@ -11,6 +12,12 @@ export class TaskController {
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.taskService.create(createTaskDto);
+  }
+
+  @SkipThrottle()
+  @Post("/handleOrder")
+  handleOrder(@Body() createTaskDto: any) {
+    return this.taskService.handleOrder(createTaskDto);
   }
 
   @Get()
