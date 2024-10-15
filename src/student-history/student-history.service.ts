@@ -195,10 +195,12 @@ export class StudentHistoryService {
       let totalForOpenQuestion = 0
 
       history.answers?.map((item) => {
-        errorIds.push(`${item.answer.objective.id}`)
+        if(!item.isCorrect){
+          errorIds.push(`${item.answer.objective.id}`)
+        }
         totalForOpenQuestion += item.grade
       })
-      
+      console.log('errorIds',errorIds)
       const gradeTotal = exerciseByOne * numberCorrects + totalForOpenQuestion
       history.totalCorrect = numberCorrects;
       history.totalUncorrect = countExercises - numberCorrects;

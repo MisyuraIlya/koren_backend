@@ -58,4 +58,7 @@ export class ExerciseGroupConnection {
     
     @Column({nullable: true})
     toAnswerTime: string;
+
+    @Column({default: true})
+    isShowOpenQuestion: boolean;
 }
