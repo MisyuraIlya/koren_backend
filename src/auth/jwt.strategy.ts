@@ -17,6 +17,7 @@ export class JwtAuthGuard implements CanActivate {
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/fetchCourses',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/fetchExercises',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/api/engine',
+      '/9dee9c0c-d2e5-44c0-891a-1e446bece049/api/exercise',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/api/objective',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/stepOne',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/stepTwo',

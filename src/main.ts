@@ -17,14 +17,13 @@ async function bootstrap() {
   // app.useGlobalGuards(new JwtAuthGuard());
   const reflector = app.get(Reflector);
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true, // Automatically strip out any properties not defined in the DTO
-    forbidNonWhitelisted: true, // Throw an error if any non-whitelisted properties are provided
-    transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
-  }));
+  // app.useGlobalPipes(new ValidationPipe({
+  //   whitelist: true,
+  //   forbidNonWhitelisted: true, 
+  //   transform: true, 
+  // }));
   app.use(cookieParser());
   const isDev = process.env.STAGE === 'dev'
-  console.log('isDevv',isDev)
   app.use('/files', express.static(join(__dirname,isDev ? '' : '..','..', 'files')))
   app.use('/uploads', express.static(join(__dirname, isDev ? '' : '..', '..', 'uploads')));
   app.use('/images', express.static(join(__dirname, isDev ? '' : '..','..', 'images')))
@@ -35,7 +34,6 @@ async function bootstrap() {
     res.removeHeader('X-Powered-By');
     next();
   });
-  
   const config = new DocumentBuilder()
   .setTitle('Cherry API')
   .setDescription('Cherry API')

@@ -8,9 +8,11 @@ import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('exercise')
 export class ExerciseController {
+
   constructor(private readonly exerciseService: ExerciseService) {}
 
   @UseGuards(AdminRoleGuard)
+  @SkipThrottle()
   @Post()
   create(@Body() createTaskDto: CreateExerciseDto) {
     return this.exerciseService.create(createTaskDto);
@@ -33,8 +35,6 @@ export class ExerciseController {
     return await this.exerciseService.findOneByStudent(id,studentId)
   }
   
-
-
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return this.exerciseService.remove(+id);

@@ -41,6 +41,7 @@ export class ExerciseService {
     ){}
 
     async create(dto: CreateExerciseDto): Promise<ExerciseEntity>  {
+        console.log('here')
         const findCourse = await this.courseRepository.findOne({
             where:{id:dto.courseId}
         })
