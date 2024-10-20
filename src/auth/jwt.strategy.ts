@@ -22,13 +22,13 @@ export class JwtAuthGuard implements CanActivate {
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/stepOne',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/stepTwo',
       '/9dee9c0c-d2e5-44c0-891a-1e446bece049/auth/stepThree'
-    ]; // List of paths to exclude from JWT validation
+    ]; 
 
     if (excludePaths.includes(request.path)) {
       return true;
     }
 
-    const token = request.cookies?.accessToken; // Get the JWT from the cookie named 'accessToken'
+    const token = request.cookies?.accessToken;
     console.log('token22',token)
     if (!token) {
       throw new UnauthorizedException('No token provided');
