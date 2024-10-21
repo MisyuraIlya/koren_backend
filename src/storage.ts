@@ -31,7 +31,7 @@ const normalizeFileName = (req, file, callback) => {
     callback(null, `${subfolder}/${name}.${fileExtName}`);
 };
 
-let destinationPath = './media';
+let destinationPath = '../media';
 
 export const fileStorage = diskStorage({
     destination: destinationPath,
