@@ -21,7 +21,7 @@ export const fetchSpecialTypes = (item):string => {
 
     let result = ''
     let isFirst = true;
-
+    console.log('ass')
     const exercise = item.exercise
     const propertyName = `exercise${exercise}`;
     item[propertyName].data.map(async (subItem) => {

@@ -2,6 +2,7 @@ import EngineTypes from "./enums";
 
 export const convertTypeToEnum = (typeInHebrew: string):string => {
     try {
+      console.log('s')
         typeInHebrew = typeInHebrew?.trim()
         switch (typeInHebrew) {
             case '*':

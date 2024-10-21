@@ -1,4 +1,6 @@
 import { diskStorage } from "multer";
+import * as fs from "fs";
+import * as path from "path";
 
 const generateId = () => 
     Array(18)
@@ -12,20 +14,24 @@ const determineSubfolder = (fileExtName) => {
     } else if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtName)) {
         return 'image';
     } else {
-        // Default 
+        // Default
         return 'other';
     }
 };
 
 const normalizeFileName = (req, file, callback) => {
     const fileExtName = file.originalname.split('.').pop();
-    const name = generateId()
+    const name = generateId();
     const subfolder = determineSubfolder(fileExtName);
+    
+    // Ensure directory exists
+    const uploadPath = path.join(destinationPath, subfolder);
+    fs.mkdirSync(uploadPath, { recursive: true }); // Creates the directory if it doesn't exist
+
     callback(null, `${subfolder}/${name}.${fileExtName}`);
-}
+};
 
 let destinationPath = './media';
-
 
 export const fileStorage = diskStorage({
     destination: destinationPath,

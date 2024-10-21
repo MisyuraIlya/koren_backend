@@ -141,11 +141,9 @@ class Engine {
                     if(index1 > 1) {
                         for (let i = 0; i < objective.length; i++){
                             const data = objective[i] ?? null
-   
                             let objectiveObj = this.PrePareObjective(convertTypeToEnum(types[i]),data,i)
                             row.push(objectiveObj)
                         }
-
                     }
                     if(row.length > 0){
                         let rowObjects = {

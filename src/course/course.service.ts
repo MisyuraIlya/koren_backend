@@ -49,7 +49,7 @@ export class CourseService {
 
     async remove(id: number) {
         const course = await this.courseRepository.findOneBy({id})
-
+        console.log('course',id)
         if (!course) {
             throw new BadRequestException('Exercise not found');
           }

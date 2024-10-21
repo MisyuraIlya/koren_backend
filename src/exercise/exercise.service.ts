@@ -41,7 +41,6 @@ export class ExerciseService {
     ){}
 
     async create(dto: CreateExerciseDto): Promise<ExerciseEntity>  {
-        console.log('here')
         const findCourse = await this.courseRepository.findOne({
             where:{id:dto.courseId}
         })
@@ -82,9 +81,9 @@ export class ExerciseService {
                                 await this.columnsTaskRepository.save(newColumn);
                             })
 
-                            task.rows.forEach(async (row) => {
+                            task?.rows?.forEach(async (row,indexRow) => {
                                 const newRow = new RowTaskEntity();
-                                newRow.orden = row.orden;
+                                newRow.orden = indexRow;
                                 newRow.youtubeLink = row.youtubeLink;
                                 newRow.pdf = row.pdf;
                                 newRow.task = createdTask;

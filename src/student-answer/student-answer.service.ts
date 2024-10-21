@@ -98,7 +98,9 @@ export class StudentAnswerService {
         const allIncluded = valuesAnswer.every(value => valuesDto.includes(value));
         return allIncluded
     } else {
-      return answerExercise.value === createStudentAnswerDto.value
+      console.log(answerExercise.value.includes(createStudentAnswerDto.value))
+      // return answerExercise.value === createStudentAnswerDto.value // old
+      return answerExercise.value.includes(createStudentAnswerDto.value)
     }
 
   }
