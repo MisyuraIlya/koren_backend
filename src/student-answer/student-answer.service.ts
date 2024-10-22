@@ -95,8 +95,8 @@ export class StudentAnswerService {
     if(answerExercise.objective.moduleType === 'checkBox'){
         const valuesDto = createStudentAnswerDto.value?.split(';')
         const valuesAnswer = answerExercise.value?.split(';')
-        const allIncluded = valuesAnswer.every(value => valuesDto.includes(value));
-        return allIncluded
+        const allIncluded = valuesAnswer.every(value => valuesDto.includes(value.trim()));
+        return allIncluded && valuesAnswer.length == valuesDto.length
     } else {
       console.log(answerExercise.value.includes(createStudentAnswerDto.value))
       // return answerExercise.value === createStudentAnswerDto.value // old
