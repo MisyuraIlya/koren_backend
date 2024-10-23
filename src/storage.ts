@@ -26,7 +26,7 @@ const normalizeFileName = (req, file, callback) => {
     
     // Ensure directory exists
     const uploadPath = path.join(destinationPath, subfolder);
-    fs.mkdirSync(uploadPath, { recursive: true }); // Creates the directory if it doesn't exist
+    fs.mkdirSync(uploadPath, { recursive: true }); 
 
     callback(null, `${subfolder}/${name}.${fileExtName}`);
 };

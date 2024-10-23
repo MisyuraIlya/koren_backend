@@ -64,7 +64,7 @@ export class StudentAnswerService {
         answer.answer = answerExercise
         answer.history = history
       }
-      answer.value = createStudentAnswerDto.value
+      answer.value = createStudentAnswerDto.value.trim()
       answer.updatedAt = new Date();
       answer.isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
       this.studentAnswerRepository.save(answer);
@@ -98,9 +98,9 @@ export class StudentAnswerService {
         const allIncluded = valuesAnswer.every(value => valuesDto.includes(value.trim()));
         return allIncluded && valuesAnswer.length == valuesDto.length
     } else {
-      console.log(answerExercise.value.includes(createStudentAnswerDto.value))
+      console.log(answerExercise.value.includes(createStudentAnswerDto.value.trim()))
       // return answerExercise.value === createStudentAnswerDto.value // old
-      return answerExercise.value.includes(createStudentAnswerDto.value)
+      return answerExercise.value.includes(createStudentAnswerDto.value.trim())
     }
 
   }

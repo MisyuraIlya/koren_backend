@@ -72,7 +72,7 @@ export class ExerciseService {
                         newTask.tab = createdTab
                         const createdTask = await this.taskRepository.save(newTask);
                         if(createdTask){
-                            task.columns.forEach(async (column) => {
+                            task?.columns?.forEach(async (column) => {
                                 const newColumn = new ColumnTaskEntity();
                                 newColumn.orden = column.orden;
                                 newColumn.title = column.title;
