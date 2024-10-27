@@ -74,12 +74,17 @@ export class AppController {
   @SkipThrottle()
   @UseGuards(AdminRoleGuard)
   @Post('media')
-  @UseInterceptors(FileInterceptor('file', {storage: fileStorage}))
+  @UseInterceptors(FileInterceptor('file', { storage: fileStorage }))
   async mediaHandler(
-    @UploadedFile(new ParseFilePipe({validators: [new MaxFileSizeValidator({maxSize: 1024 * 1024 * 5})],})
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 2 }), 
+        ],
+      }),
     ) file: Express.Multer.File,
-  ){
-    return this.appService.saveMedia(file)
+  ) {
+    return this.appService.saveMedia(file);
   }
 
   @SkipThrottle()
