@@ -178,7 +178,6 @@ class Engine {
         data.forEach((item) => {
             item?.rows?.forEach((item2) => {
                 item2?.objectives?.forEach((item3, index, array) => {
-                    // HERE
                     if (item3?.moduleType === EngineTypes.ANSWER) {
                         const previousItem = array[index - 1];
                         if (previousItem) {
@@ -187,7 +186,7 @@ class Engine {
                         array.splice(index, 1);
                     }
                     if (item3?.moduleType === EngineTypes.PLACEHOLDER_TYPE) {
-                        const previousItem = array[index - 1];
+                        const previousItem = array[index + 1];
                         if (previousItem) {
                             previousItem.placeholder = item3?.values[0]?.value
                         }
