@@ -49,7 +49,8 @@ class Engine {
         const parseTaskWithObjectives = await this.parseTaskWithObjectives(GruopedOne);
         const replaceAnswersType = await this.replaceAnswersTypes(parseTaskWithObjectives)
         const deleteUneededObjective = await this.deleteLessObjective(replaceAnswersType)
-        return deleteUneededObjective
+        const handleledExplanations = await this.handleExplanationTableIssue(deleteUneededObjective)
+        return handleledExplanations
     }
 
     /**
@@ -241,6 +242,63 @@ class Engine {
         });
     
         return data;
+    }
+
+  /**
+     * 
+     *
+     * it handles when explanation need to be in new row koren set in one table same columns
+     */
+    private handleExplanationTableIssue(data){
+
+        data?.forEach((item) => {
+    
+            for (let index = 0; index < item.rows.length; index++) {
+                const item2 = item.rows[index];
+                // console.log('item2', item2);
+    
+                const newObjectives = [];
+                let removedElement = null;
+    
+                // Filter objectives in item2 and capture the removed element
+                item2.objectives?.forEach((element) => {
+                    if (element?.moduleType === EngineTypes.EXPLANATION && !removedElement) {
+                        // console.log('Removing element:', element);
+                        removedElement = element; // Store the removed element
+                    } else {
+                        newObjectives.push(element); // Keep other elements
+                    }
+                });
+    
+                // Update objectives to exclude the removed element
+                item2.objectives = newObjectives;
+    
+                // If an element was removed, insert a new item2 right after the current one
+                if (removedElement) {
+                    const newItem2 = {
+                        orden: item2.orden + 1,
+                        youtubeLink: null,
+                        pdf: null,
+                        objectives: [removedElement]
+                    };
+    
+                    // Insert newItem2 immediately after the current item2
+                    item.rows.splice(index + 1, 0, newItem2);
+                    // console.log('Inserted new item2 with removed element:', newItem2);
+    
+                    // Increment orden for all subsequent rows
+                    for (let i = index + 2; i < item.rows.length; i++) {
+                        item.rows[i].orden += 1;
+                    }
+    
+                    // Move to the next item2 after the newly inserted one
+                    index++;
+                }
+            }
+        });
+    
+        console.log('Updated data with new item2 objectss:', data);
+        return data
     }
     
     private findSpecialModuleTypes(columns) {

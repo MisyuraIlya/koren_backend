@@ -90,7 +90,7 @@ export class ExerciseService {
                                 const createdRow = await this.rowsTaskRepository.save(newRow);
 
                                 if(createdRow) {
-                                    row.objectives.forEach(async (objective) => {
+                                    row.objectives?.forEach(async (objective) => {
                                         if(objective){
                                             const newObjective = new ObjectiveEntity();
                                             newObjective.orden = objective?.orden;
