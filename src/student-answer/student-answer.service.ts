@@ -35,10 +35,11 @@ export class StudentAnswerService {
       this.handleDragAndDrop(user,id,studentId,historyId,createStudentAnswerDto)
       
   
-    } else if(createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestion') {
+    } else if(createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestion' || createStudentAnswerDto.moduleType == 'openQuestionHamarot') {
       this.handleOpenQuestion(user,id,studentId,historyId,createStudentAnswerDto)
       
     } else {
+      console.log('id',id)
       const answerExercise = await this.answerRepository.findOne({
         where:{id:id},
         relations:['objective']

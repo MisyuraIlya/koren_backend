@@ -108,10 +108,11 @@ export class ExerciseService {
                                                     await this.answerRepository.save(newAnswer)
                                                 })
     
-                                                objective.values.forEach(async (value) => {
+                                                objective.values.forEach(async (value,key) => {
                                                     const newValue = new ValueEntity();
                                                     newValue.objective = createdObjective
                                                     newValue.value = value.value
+                                                    newValue.orden = key
                                                     await this.valueRepository.save(newValue)
                                                 })
     

@@ -117,8 +117,8 @@ class Engine {
         let result = [];
         data.map((item,key1) => {
             const columns = []
+            let columnsLength = 0 // CHECK IF THIS HELPS (-1 for the last row)
             const rows = []
-
             item.map((task) => {
                 const types = []
 
@@ -128,6 +128,7 @@ class Engine {
                 })
 
                 types?.map((column,index) => {
+                    columnsLength++
                     let obj = {
                         type: convertTypeToEnum(column),
                         title: task[1][index] ?? null,
@@ -139,11 +140,15 @@ class Engine {
                 task?.map((objective,index1) => {
                     const row = [];
                     if(index1 > 1) {
-                        for (let i = 0; i < objective.length; i++){
-                            const data = objective[i] ?? null
-                            let objectiveObj = this.PrePareObjective(convertTypeToEnum(types[i]),data,i)
-                            row.push(objectiveObj)
+                        if(objective?.length > 0){ // columnsLength instead objective.length
+                            for (let i = 0; i < columnsLength; i++){ // columnsLength instead objective.length
+                                const data = objective[i] ?? null
+                                // console.log(types[i])
+                                let objectiveObj = this.PrePareObjective(convertTypeToEnum(types[i]),data,i)
+                                row.push(objectiveObj)
+                            }
                         }
+                 
                     }
                     if(row.length > 0){
                         let rowObjects = {
@@ -525,18 +530,22 @@ class Engine {
         
     } 
 
-    private findByTitleAndConvertToStyleSheet(value) {
-
+    private findByTitleAndConvertToStyleSheet(value: any) {
+        if (typeof value !== 'string') {
+            console.error("Expected a string but received:", value);
+            return value;
+        }
+    
         for (const key in this.currentWorksheet) {
             if (this.currentWorksheet.hasOwnProperty(key) && value) {
-              const vValue = this.currentWorksheet[key]?.w;
-              if (typeof vValue === 'string' && vValue.trim() == value.trim()) {
-                return this.currentWorksheet[key].h
-              } 
+                const vValue = this.currentWorksheet[key]?.w;
+                if (typeof vValue === 'string' && vValue.trim() === value.trim()) {
+                    return this.currentWorksheet[key].h;
+                } 
             }
         }
-
-        return value
+    
+        return value;
     }
 
     public async process(): Promise<any> {
