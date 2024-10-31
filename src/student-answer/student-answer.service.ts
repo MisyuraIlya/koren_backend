@@ -164,6 +164,7 @@ export class StudentAnswerService {
         answer.answer = newAnswer
         answer.history = history
       }
+      
       answer.value = createStudentAnswerDto.value
       answer.updatedAt = new Date();
       answer.isCorrect = createStudentAnswerDto.isCorrect

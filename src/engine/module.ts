@@ -137,14 +137,15 @@ class Engine {
                     }
                     columns.push(obj)
                 })
-
+                console.log('task',task)
                 task?.map((objective,index1) => {
                     const row = [];
                     if(index1 > 1) {
-                        if(objective?.length > 0){ // columnsLength instead objective.length
+                        console.log(objective.length)
+                        if(objective?.length > 0){ 
                             for (let i = 0; i < columnsLength; i++){ // columnsLength instead objective.length
                                 const data = objective[i] ?? null
-                                // console.log(types[i])
+                                console.log(types[i])
                                 let objectiveObj = this.PrePareObjective(convertTypeToEnum(types[i]),data,i)
                                 row.push(objectiveObj)
                             }
@@ -192,6 +193,14 @@ class Engine {
                         array.splice(index, 1);
                     }
                     if (item3?.moduleType === EngineTypes.PLACEHOLDER_TYPE) {
+                        console.log('here',item3?.values[0]?.value)
+                        const previousItem = array[index + 1];
+                        if (previousItem) {
+                            previousItem.placeholder = item3?.values[0]?.value
+                        }
+                        array.splice(index, 1);
+                    }
+                    if (item3?.moduleType === EngineTypes.TYPED_WORD) {
                         const previousItem = array[index + 1];
                         if (previousItem) {
                             previousItem.placeholder = item3?.values[0]?.value
@@ -297,7 +306,6 @@ class Engine {
             }
         });
     
-        console.log('Updated data with new item2 objectss:', data);
         return data
     }
     
