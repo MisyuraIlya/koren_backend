@@ -132,20 +132,17 @@ class Engine {
                     columnsLength++
                     let obj = {
                         type: convertTypeToEnum(column),
-                        title: task[1][index] ?? null,
+                        title: task?.[1]?.[index] ?? null,
                         orden: index
                     }
                     columns.push(obj)
                 })
-                console.log('task',task)
                 task?.map((objective,index1) => {
                     const row = [];
                     if(index1 > 1) {
-                        console.log(objective.length)
                         if(objective?.length > 0){ 
                             for (let i = 0; i < columnsLength; i++){ // columnsLength instead objective.length
                                 const data = objective[i] ?? null
-                                console.log(types[i])
                                 let objectiveObj = this.PrePareObjective(convertTypeToEnum(types[i]),data,i)
                                 row.push(objectiveObj)
                             }
@@ -193,7 +190,6 @@ class Engine {
                         array.splice(index, 1);
                     }
                     if (item3?.moduleType === EngineTypes.PLACEHOLDER_TYPE) {
-                        console.log('here',item3?.values[0]?.value)
                         const previousItem = array[index + 1];
                         if (previousItem) {
                             previousItem.placeholder = item3?.values[0]?.value
