@@ -41,4 +41,8 @@ export class ExerciseController {
   }
 
 
+  @Patch('boldChanger/:id')
+  updateBoldChanger(@Param('id') id: number, @Body('value') value: string) {
+    return this.exerciseService.boldChanger(+id, value);
+  }
 }

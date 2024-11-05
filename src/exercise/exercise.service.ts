@@ -231,5 +231,18 @@ export class ExerciseService {
         await this.exerciseRepository.remove(exercise)
     }
 
+    async boldChanger(valueId: number, value:string)
+    {
+        const findValue = await this.valueRepository.findOne({
+            where:{id: valueId}
+        })
+        if(!findValue){
+            throw new BadRequestException('value not found')
+        }
+
+        findValue.value = value
+        this.valueRepository.save(findValue)
+        return 'ok'
+    }
 
 }
