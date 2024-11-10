@@ -67,7 +67,9 @@ export class StudentAnswerService {
       }
       answer.value = createStudentAnswerDto.value.trim()
       answer.updatedAt = new Date();
-      answer.isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
+      let isCorrect = this.CheckIsCorrect(answerExercise,createStudentAnswerDto)
+      console.log('isCorrect',isCorrect)
+      answer.isCorrect = isCorrect
       this.studentAnswerRepository.save(answer);
       return {status:"success"}
     }
@@ -99,9 +101,14 @@ export class StudentAnswerService {
         const allIncluded = valuesAnswer.every(value => valuesDto.includes(value.trim()));
         return allIncluded && valuesAnswer.length == valuesDto.length
     } else {
-      console.log(answerExercise.value.includes(createStudentAnswerDto.value.trim()))
-      // return answerExercise.value === createStudentAnswerDto.value // old
-      return answerExercise.value.includes(createStudentAnswerDto.value.trim())
+      if (createStudentAnswerDto.value.trim()) {
+          return answerExercise.value.includes(createStudentAnswerDto.value.trim());
+      } else if(answerExercise.value === 'E'){
+        console.log('here')
+        return true;
+      } else {
+          return false;  // or handle the case where the value is empty
+      }
     }
 
   }
