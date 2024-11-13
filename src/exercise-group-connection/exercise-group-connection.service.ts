@@ -301,7 +301,6 @@ export class ExerciseGroupConnectionService {
     return {status:"success",message:"data deleted"}
   }
 
-
   private async findFullPathExercise(id: number,role: string) {
     const exercise = await this.exerciseRepository
     .createQueryBuilder('exercise')
@@ -318,5 +317,39 @@ export class ExerciseGroupConnectionService {
     }
     
   }
+
+  async ignoreAnswers(groupId: string, historyId: string, objectiveId: string) {
+    if(groupId && groupId !=='undefined'){
+      const group = await this.exerciseGroupConnectionRepository.findOne({
+        where:{id:+groupId}
+      })
+      const ignoreAnswers = group.ignoreAnswers || [];
+      const index = ignoreAnswers.indexOf(objectiveId);
+      if (index > -1) {
+          ignoreAnswers.splice(index, 1);
+      } else {
+          ignoreAnswers.push(objectiveId);
+      }
+      group.ignoreAnswers = ignoreAnswers;
+      await this.exerciseGroupConnectionRepository.save(group);
+
+    }
+    if(historyId && historyId !=='undefined'){
+      const history = await this.StudentHistoryRepository.findOne({
+        where:{id:+historyId}
+      })
+      const ignoreAnswers = history.ignoreAnswers || [];
+      const index = ignoreAnswers.indexOf(objectiveId);
+      if (index > -1) {
+          ignoreAnswers.splice(index, 1);
+      } else {
+          ignoreAnswers.push(objectiveId);
+      }
+      history.ignoreAnswers = ignoreAnswers;
+      await this.StudentHistoryRepository.save(history);
+    }
+
+    return {status:"success"}
+  } 
   
 }

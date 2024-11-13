@@ -57,5 +57,8 @@ export class StudentHistory {
 
     @OneToMany(() => StudentAnswer, answers => answers.history, { cascade: ["remove"] })
     answers: StudentAnswer[];
+
+    @Column('varchar', { array: true, name:'ignore_answers', default: '{}' })
+    ignoreAnswers: string[];
   
 }

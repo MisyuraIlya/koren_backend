@@ -77,4 +77,14 @@ export class ExerciseGroupConnectionController {
   removeAnswerGroup(@Param('id') id: string) {
     return this.exerciseGroupConnectionService.removeAnswerGroup(+id);
   }
+
+  @UseGuards(TeacherRoleGuard)
+  @Patch('/ignoreAnswer/:groupId/:historyId/:objectiveId')
+  ignoreAnswers(
+    @Param('groupId') groupId: string, 
+    @Param('historyId') historyId: string,
+    @Param('objectiveId') objectiveId: string
+  ) {
+    return this.exerciseGroupConnectionService.ignoreAnswers(groupId,historyId,objectiveId);
+  }
 }

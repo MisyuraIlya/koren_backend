@@ -61,4 +61,7 @@ export class ExerciseGroupConnection {
 
     @Column({default: true})
     isShowOpenQuestion: boolean;
+
+    @Column('varchar', { array: true, name:'ignore_answers', default: '{}' })
+    ignoreAnswers: string[];
 }
