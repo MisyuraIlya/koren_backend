@@ -83,8 +83,10 @@ export class ExerciseGroupConnectionController {
   ignoreAnswers(
     @Param('groupId') groupId: string, 
     @Param('historyId') historyId: string,
-    @Param('objectiveId') objectiveId: string
+    @Param('objectiveId') objectiveId: string,
+    @Body('type') type: 'group' | 'personal'
   ) {
-    return this.exerciseGroupConnectionService.ignoreAnswers(groupId,historyId,objectiveId);
+    console.log('type',type)
+    return this.exerciseGroupConnectionService.ignoreAnswers(groupId, historyId, objectiveId, type);
   }
 }

@@ -523,7 +523,6 @@ class Engine {
                     values: [{value: data}],
                     answers: [],
                 };
-
             case EngineTypes.TEXT_MODULED:
             case EngineTypes.SONG:
             case EngineTypes.SECOND_HEAD_WHITE:

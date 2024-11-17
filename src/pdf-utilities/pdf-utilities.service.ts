@@ -19,6 +19,7 @@ export class PdfUtilitiesService {
 
   async create(id: number, dto: CreatePdfUtilityDto) {
       try {
+          console.log('id',id)
           const exercise = await this.exerciseEntity.findOne({
               where: {id:id}
           })
