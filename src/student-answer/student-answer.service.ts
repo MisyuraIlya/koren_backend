@@ -95,16 +95,24 @@ export class StudentAnswerService {
 
   private CheckIsCorrect(answerExercise: AnswerEntity,createStudentAnswerDto:CreateStudentAnswerDto):boolean {
   
+    console.log('nswerExercise.objective.moduleType',answerExercise.objective.moduleType)
     if(answerExercise.objective.moduleType === 'checkBox'){
         const valuesDto = createStudentAnswerDto.value?.split(';')
         const valuesAnswer = answerExercise.value?.split(';')
         const allIncluded = valuesAnswer.every(value => valuesDto.includes(value.trim()));
         return allIncluded && valuesAnswer.length == valuesDto.length
+    } else if(answerExercise.objective.moduleType === 'inputCentered'){
+      if(answerExercise.value === 'E' && !createStudentAnswerDto.value){
+        return true
+      } else if(createStudentAnswerDto.value) {
+        return createStudentAnswerDto.value === answerExercise.value
+      } else {
+        return false
+      }
     } else {
       if (createStudentAnswerDto.value.trim()) {
           return answerExercise.value.includes(createStudentAnswerDto.value.trim());
       } else if(answerExercise.value === 'E'){
-        console.log('here')
         return true;
       } else {
           return false;  // or handle the case where the value is empty

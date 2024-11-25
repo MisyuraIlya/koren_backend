@@ -424,6 +424,7 @@ class Engine {
             case EngineTypes.INPUT:
             case EngineTypes.ROOT_INPUT:
             case EngineTypes.INPUT_CLEAR:
+            case EngineTypes.INPUT_CENTERED_CLEAR:
             case EngineTypes.INPUT_CENTERED:
                 const checkIfThereAnotherAnswer = data?.trim().includes(';')
                 let answer = data?.trim()

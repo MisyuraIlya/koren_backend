@@ -8,6 +8,7 @@ enum EngineTypes {
     INPUT = 'input',
     INPUT_CENTERED = 'inputCentered',
     INPUT_CLEAR = 'inputClear',
+    INPUT_CENTERED_CLEAR = 'inputCenteredClear',
     SELECT_BOX = 'selectbox',
     EXPLANATION = 'explanation',
     EXPLANATION_SPLITED = 'explanationSplited',
