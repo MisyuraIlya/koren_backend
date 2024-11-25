@@ -154,6 +154,7 @@ export class StudentHistoryService {
       const specialTypes = [
         EngineTypes.INPUT,
         EngineTypes.INPUT_CENTERED,
+        EngineTypes.INPUT_CLEAR,
         EngineTypes.SELECT_BOX,
         EngineTypes.ROOT_INPUT,
         EngineTypes.MIX_DRAG,
@@ -177,7 +178,7 @@ export class StudentHistoryService {
                 openQuestion++
                 openQuestionIds.push(`${item4.id}`)
               }
-              if(item4.moduleType == EngineTypes.INPUT_CENTERED || item4?.moduleType == EngineTypes.INPUT){
+              if(item4.moduleType == EngineTypes.INPUT_CENTERED || item4?.moduleType == EngineTypes.INPUT || item4?.moduleType == EngineTypes.INPUT_CLEAR){
                 if(item4.answers?.[0]?.value === 'E'){
                   numberCorrects++
                 }
@@ -230,6 +231,7 @@ export class StudentHistoryService {
       const specialTypes = [
         EngineTypes.INPUT,
         EngineTypes.INPUT_CENTERED,
+        EngineTypes.INPUT_CLEAR,
         EngineTypes.SELECT_BOX,
         EngineTypes.ROOT_INPUT,
         EngineTypes.MIX_DRAG,

@@ -144,6 +144,8 @@ export const convertTypeToEnum = (typeInHebrew: string):string => {
               return EngineTypes.TEXT_AREA;
             case 'העתק':
               return EngineTypes.COPY;
+            case 'הקלדה נקי':
+              return EngineTypes.INPUT_CLEAR;
             default:
               return EngineTypes.UNKNOWN;
         }
