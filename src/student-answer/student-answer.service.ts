@@ -95,7 +95,6 @@ export class StudentAnswerService {
 
   private CheckIsCorrect(answerExercise: AnswerEntity,createStudentAnswerDto:CreateStudentAnswerDto):boolean {
   
-    console.log('nswerExercise.objective.moduleType',answerExercise.objective.moduleType)
     if(answerExercise.objective.moduleType === 'checkBox'){
         const valuesDto = createStudentAnswerDto.value?.split(';')
         const valuesAnswer = answerExercise.value?.split(';')
@@ -105,8 +104,9 @@ export class StudentAnswerService {
       if(answerExercise.value === 'E' && !createStudentAnswerDto.value){
         return true
       } else if(createStudentAnswerDto.value) {
-        return createStudentAnswerDto.value === answerExercise.value
-      } else {
+        const answers = answerExercise.value.split(',').map(item => item.trim());
+        return answers.some(answer => answer === createStudentAnswerDto.value.trim());
+    } else {
         return false
       }
     } else {

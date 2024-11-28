@@ -158,6 +158,7 @@ export class StudentHistoryService {
         EngineTypes.INPUT_CENTERED_CLEAR,
         EngineTypes.SELECT_BOX,
         EngineTypes.ROOT_INPUT,
+        EngineTypes.ROOT_INPUT_CLEAR,
         EngineTypes.MIX_DRAG,
         EngineTypes.CHECK_BOX,
         EngineTypes.TYPED_WORD    
@@ -236,6 +237,7 @@ export class StudentHistoryService {
         EngineTypes.INPUT_CLEAR,
         EngineTypes.SELECT_BOX,
         EngineTypes.ROOT_INPUT,
+        EngineTypes.ROOT_INPUT_CLEAR,
         EngineTypes.MIX_DRAG,
         EngineTypes.CHECK_BOX,
         EngineTypes.TYPED_WORD,

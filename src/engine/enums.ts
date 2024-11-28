@@ -13,6 +13,7 @@ enum EngineTypes {
     EXPLANATION = 'explanation',
     EXPLANATION_SPLITED = 'explanationSplited',
     ROOT_INPUT = 'rootInput',
+    ROOT_INPUT_CLEAR = 'rootInputClear',
     ANSWER = 'answer',
     BANK = 'bank',
     MIX = 'mix',

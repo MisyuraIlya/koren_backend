@@ -148,6 +148,8 @@ export const convertTypeToEnum = (typeInHebrew: string):string => {
               return EngineTypes.INPUT_CLEAR;
             case 'הקלדה אמצע נקי':
               return EngineTypes.INPUT_CENTERED_CLEAR;
+            case 'הקדלת שורש נקי':
+              return EngineTypes.ROOT_INPUT_CLEAR;
             default:
               return EngineTypes.UNKNOWN;
         }

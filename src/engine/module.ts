@@ -423,6 +423,7 @@ class Engine {
             case EngineTypes.TYPED_INPUT:
             case EngineTypes.INPUT:
             case EngineTypes.ROOT_INPUT:
+            case EngineTypes.ROOT_INPUT_CLEAR:
             case EngineTypes.INPUT_CLEAR:
             case EngineTypes.INPUT_CENTERED_CLEAR:
             case EngineTypes.INPUT_CENTERED:
