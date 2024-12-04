@@ -54,6 +54,14 @@ export class AppController {
   }
 
   @SkipThrottle()
+  @Get('/handlePdfUtils')
+  ordernPdfUtils() {
+    this.cronService.ordernPdfUtils();
+    return 'fetch pdf start';
+  }
+
+
+  @SkipThrottle()
   @Post('/engine')
   @UseInterceptors(
     FileInterceptor('file', {
