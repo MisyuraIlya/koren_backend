@@ -6,4 +6,7 @@ export class CreatePdfUtilityDto {
 
     @IsString()
     pdf: string;
+
+    @IsString()
+    orden: string
 }

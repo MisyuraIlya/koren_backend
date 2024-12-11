@@ -18,23 +18,34 @@ export class PdfUtilitiesService {
   ){}
 
   async create(id: number, dto: CreatePdfUtilityDto) {
-      try {
-          console.log('id',id)
-          const exercise = await this.exerciseEntity.findOne({
-              where: {id:id}
-          })
-          if (!exercise) {
-              throw new BadRequestException(`exercise with id ${id} not found.`);
-          }
-          const pdfUtility = new PdfUtilitiesEntity();
-          pdfUtility.name = dto.title; 
-          pdfUtility.exercise = exercise;
-          pdfUtility.pdf = dto.pdf
-          const savedPdfUtility = await this.pdfUtilitiesRepository.save(pdfUtility);
-          return savedPdfUtility;
-      } catch (error) {
-          throw new BadRequestException(`Unable to create PDF utility. ${error.message}`);
+    try {
+      // Find the associated exercise
+      const exercise = await this.exerciseEntity.findOne({ where: { id } });
+      if (!exercise) {
+        throw new BadRequestException(`Exercise with id ${id} not found.`);
       }
+
+      // Determine the next `orden` value
+      const maxOrden = await this.pdfUtilitiesRepository
+        .createQueryBuilder('pdfUtility')
+        .select('MAX(pdfUtility.orden)', 'max')
+        .where('pdfUtility.exerciseId = :exerciseId', { exerciseId: id })
+        .getRawOne();
+
+      const nextOrden = (maxOrden?.max ?? 0) + 1;
+      console.log('nextOrden',nextOrden)
+      // Create the new PDF utility
+      const pdfUtility = new PdfUtilitiesEntity();
+      pdfUtility.name = dto.title;
+      pdfUtility.exercise = exercise;
+      pdfUtility.pdf = dto.pdf;
+      pdfUtility.orden = dto.orden ? dto.orden : nextOrden;
+
+      const savedPdfUtility = await this.pdfUtilitiesRepository.save(pdfUtility);
+      return savedPdfUtility;
+    } catch (error) {
+      throw new BadRequestException(`Unable to create PDF utility. ${error.message}`);
+    }
   }
   
   async remove(id: number) {
