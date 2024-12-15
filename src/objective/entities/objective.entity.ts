@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
+import { CustomAnswer } from 'src/custom-answers/entities/custom-answer.entity';
 
 @Entity({ name: 'objective' })
 export class ObjectiveEntity {
@@ -28,5 +29,8 @@ export class ObjectiveEntity {
 
   @OneToMany(() => ValueEntity, value => value.objective, { cascade: ["remove"] })
   values: ValueEntity[];
+
+  @OneToMany(() => CustomAnswer, value => value.objective, { cascade: ["remove"] })
+  customAnswers: CustomAnswer[];
 
 }

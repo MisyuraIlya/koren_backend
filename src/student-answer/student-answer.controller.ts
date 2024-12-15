@@ -3,12 +3,13 @@ import { StudentAnswerService } from './student-answer.service';
 import { CreateStudentAnswerDto } from './dto/create-student-answer.dto';
 import { UpdateStudentAnswerDto } from './dto/update-student-answer.dto';
 import { SkipThrottle } from '@nestjs/throttler';
+import { CreateStudentAnswerSpeicalDto } from './dto/create-student-answer-special.dto';
 
 @Controller('student-answer')
 export class StudentAnswerController {
   constructor(private readonly studentAnswerService: StudentAnswerService) {}
 
-  @Post(':id/:studentId/:historyId')
+  @Post('answerHandler/:id/:studentId/:historyId')
   handleAnswer(
       @Param('id') id: string, 
       @Param('studentId') studentId: string , 
@@ -16,6 +17,15 @@ export class StudentAnswerController {
       @Body() createStudentAnswerDto: CreateStudentAnswerDto
     ) {
     return this.studentAnswerService.handleAnswer(+id, +studentId, +historyId, createStudentAnswerDto);
+  }
+
+  @Post('special/:studentId/:historyId')
+  handleAnswerSpecialInput(
+      @Param('studentId') studentId: string , 
+      @Param('historyId') historyId: string ,  
+      @Body() createStudentAnswerDto: CreateStudentAnswerSpeicalDto
+  ) {
+    return this.studentAnswerService.handleSpecialInput( +studentId, +historyId, createStudentAnswerDto);
   }
 
   @Get()

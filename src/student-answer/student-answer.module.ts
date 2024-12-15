@@ -7,9 +7,10 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
+import { CustomAnswer } from 'src/custom-answers/entities/custom-answer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StudentAnswer,AuthEntity, AnswerEntity, StudentHistory,ObjectiveEntity])],
+  imports: [TypeOrmModule.forFeature([StudentAnswer,AuthEntity, AnswerEntity, StudentHistory,ObjectiveEntity, CustomAnswer])],
   controllers: [StudentAnswerController],
   providers: [StudentAnswerService],
 })

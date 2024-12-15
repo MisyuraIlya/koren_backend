@@ -186,6 +186,7 @@ export class ExerciseService {
         .leftJoinAndSelect('rows.objectives', 'objectives')
         .leftJoinAndSelect('objectives.answers', 'answers')
         .leftJoinAndSelect('objectives.values', 'values')
+        .leftJoinAndSelect('objectives.customAnswers', 'customAnswers')
         .orderBy('tabs.orden', 'ASC')
         .addOrderBy('pdfs.orden', 'ASC')
         .addOrderBy('tasks.orden', 'ASC')

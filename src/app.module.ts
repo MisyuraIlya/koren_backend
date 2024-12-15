@@ -50,6 +50,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { CustomAnswersModule } from './custom-answers/custom-answers.module';
 
 @Module({
   imports: [
@@ -76,9 +77,9 @@ import { APP_GUARD } from '@nestjs/core';
           database:configService.get('DB_DATABASE'),
           autoLoadEntities:true,
           synchronize:true,
-          ssl: {
-            rejectUnauthorized: false,  // This allows self-signed certificates
-          },
+          // ssl: {
+          //   rejectUnauthorized: false,  // This allows self-signed certificates
+          // },
         }
       }
     }),
@@ -121,7 +122,7 @@ import { APP_GUARD } from '@nestjs/core';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule,
   ],
   controllers: [AppController],
   providers: [

@@ -8,6 +8,8 @@ import { AuthEntity } from 'src/auth/entities/auth.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { StudentHistory } from 'src/student-history/entities/student-history.entity';
 import { ObjectiveEntity } from 'src/objective/entities/objective.entity';
+import { CreateStudentAnswerSpeicalDto } from './dto/create-student-answer-special.dto';
+import { CustomAnswer } from 'src/custom-answers/entities/custom-answer.entity';
 
 @Injectable()
 export class StudentAnswerService {
@@ -22,6 +24,8 @@ export class StudentAnswerService {
     private readonly studentHistoryRepository: Repository<StudentHistory>,
     @InjectRepository(ObjectiveEntity)
     private readonly ObjectiveRepository: Repository<ObjectiveEntity>,
+    @InjectRepository(CustomAnswer)
+    private readonly customRepository: Repository<CustomAnswer>,
   ){}
 
   async handleAnswer(id:number, studentId: number, historyId: number, createStudentAnswerDto: CreateStudentAnswerDto) {
@@ -39,7 +43,6 @@ export class StudentAnswerService {
       this.handleOpenQuestion(user,id,studentId,historyId,createStudentAnswerDto)
       
     } else {
-      console.log('id',id)
       const answerExercise = await this.answerRepository.findOne({
         where:{id:id},
         relations:['objective']
@@ -75,6 +78,54 @@ export class StudentAnswerService {
     }
 
     
+  }
+
+  async handleSpecialInput(studentId: number, historyId: number, createStudentAnswerDto: CreateStudentAnswerSpeicalDto) {
+    const user = await this.authRepository.findOne({
+      where: {id: studentId}
+    });
+    if (!user) throw new BadRequestException('user not found');
+    
+    const history = await this.studentHistoryRepository.findOne({
+      where: {id: historyId},
+      relations:['exercise']
+    });
+  
+    if (!history) throw new BadRequestException('history not found');
+  
+    let shouldUpdate = false; 
+    let startIndex = 0; 
+    
+    createStudentAnswerDto.objectives?.forEach(async (element, index) => {
+      const objective = await this.ObjectiveRepository.findOne({
+        where:{id: element.id}
+      });
+  
+      let obj: CustomAnswer;
+  
+      if (createStudentAnswerDto.objectiveId === element.id) {
+        shouldUpdate = true;
+        startIndex = index; 
+      }
+  
+      if (shouldUpdate && index >= startIndex) {
+        if (element.customAnswers.length > 0) {
+          console.log('here');
+          obj = await this.customRepository.findOne({
+            where: {id: element.customAnswers[0].id},
+          });
+        } else {
+          console.log('here2');
+          obj = new CustomAnswer();
+          obj.objective = objective;
+        }
+        
+        obj.value = createStudentAnswerDto.value; 
+        await this.customRepository.save(obj); 
+      }
+    });
+  
+    return { status: "success" };
   }
 
   findAll() {
