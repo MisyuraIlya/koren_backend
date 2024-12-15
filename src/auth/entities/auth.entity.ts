@@ -13,6 +13,8 @@ import { MailChat } from "src/mail-chat/entities/mail-chat.entity";
 import { FeedBackItem } from "src/feed-back-item/entities/feed-back-item.entity";
 import { Shield } from "src/shield/entities/shield.entity";
 import { Exclude } from 'class-transformer';
+import { HighlightEntity } from "src/highlight/entities/highlight.entity";
+import { CustomAnswer } from "src/custom-answers/entities/custom-answer.entity";
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
@@ -102,4 +104,9 @@ export class AuthEntity {
     @OneToMany(() => Shield, Shield => Shield.user, {onDelete: "CASCADE"})
     shields: Shield[];
 
+    @OneToMany(() => HighlightEntity, Highlight => Highlight.student , { cascade: ["remove"] })
+    highlights: HighlightEntity[];
+
+    @OneToMany(() => CustomAnswer, custom => custom.student , { cascade: ["remove"] })
+    customAnswers: CustomAnswer[];
 }

@@ -3,6 +3,7 @@ import { RowTaskEntity } from 'src/row_task/entities/rowTask.entity';
 import { AnswerEntity } from 'src/answer/entities/answer.entity';
 import { ValueEntity } from 'src/value/entities/value.entity';
 import { CustomAnswer } from 'src/custom-answers/entities/custom-answer.entity';
+import { HighlightEntity } from 'src/highlight/entities/highlight.entity';
 
 @Entity({ name: 'objective' })
 export class ObjectiveEntity {
@@ -32,5 +33,8 @@ export class ObjectiveEntity {
 
   @OneToMany(() => CustomAnswer, value => value.objective, { cascade: ["remove"] })
   customAnswers: CustomAnswer[];
+
+  @OneToMany(() => HighlightEntity, Highlight => Highlight.objective, { cascade: ["remove"] })
+  highlights: HighlightEntity[];
 
 }

@@ -51,6 +51,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CustomAnswersModule } from './custom-answers/custom-answers.module';
+import { HighlightModule } from './highlight/highlight.module';
 
 @Module({
   imports: [
@@ -122,7 +123,7 @@ import { CustomAnswersModule } from './custom-answers/custom-answers.module';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule, HighlightModule,
   ],
   controllers: [AppController],
   providers: [
