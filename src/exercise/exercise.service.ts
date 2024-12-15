@@ -196,7 +196,6 @@ export class ExerciseService {
 
     
     if (studentId) {
-        console.log('studentId',studentId)
         query.leftJoinAndSelect('answers.answers', 'studentAnswers', 'studentAnswers.student.id = :studentId', { studentId });
         query.leftJoinAndSelect('exercise.histories', 'history', 'history.student.id = :studentId', { studentId });
     }

@@ -319,9 +319,8 @@ export class ExerciseGroupConnectionService {
   }
 
   async ignoreAnswers(groupId: string, historyId: string, objectiveId: string, type: 'group' | 'personal') {
-    console.log('type',type)
+    console.log('groupId',groupId)
     if(groupId && groupId !=='undefined' && type === 'group'){
-      console.log('here1')
       const group = await this.exerciseGroupConnectionRepository.findOne({
         where:{id:+groupId}
       })
@@ -337,7 +336,6 @@ export class ExerciseGroupConnectionService {
 
     }
     if(historyId && historyId !=='undefined' && type === 'personal'){
-      console.log('here2')
       const history = await this.StudentHistoryRepository.findOne({
         where:{id:+historyId}
       })
