@@ -52,6 +52,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CustomAnswersModule } from './custom-answers/custom-answers.module';
 import { HighlightModule } from './highlight/highlight.module';
+import { UnkownWordsModule } from './unkown-words/unkown-words.module';
 
 @Module({
   imports: [
@@ -123,7 +124,7 @@ import { HighlightModule } from './highlight/highlight.module';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule, HighlightModule,
+    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule, HighlightModule, UnkownWordsModule,
   ],
   controllers: [AppController],
   providers: [
