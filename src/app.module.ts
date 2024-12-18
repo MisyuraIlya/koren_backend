@@ -77,6 +77,7 @@ import { ColorHighlightModule } from './color-highlight/color-highlight.module';
           port:configService.get('DB_PORT'),
           username:configService.get('DB_USERNAME'),
           password:configService.get('DB_PASSWORD'),
+          autoLoadEntities:true,
           synchronize:true,
           // ssl: {
           //   rejectUnauthorized: false,  // This allows self-signed certificates
