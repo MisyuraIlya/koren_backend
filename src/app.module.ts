@@ -53,6 +53,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { CustomAnswersModule } from './custom-answers/custom-answers.module';
 import { HighlightModule } from './highlight/highlight.module';
 import { UnkownWordsModule } from './unkown-words/unkown-words.module';
+import { ColorHighlightModule } from './color-highlight/color-highlight.module';
 
 @Module({
   imports: [
@@ -76,8 +77,6 @@ import { UnkownWordsModule } from './unkown-words/unkown-words.module';
           port:configService.get('DB_PORT'),
           username:configService.get('DB_USERNAME'),
           password:configService.get('DB_PASSWORD'),
-          database:configService.get('DB_DATABASE'),
-          autoLoadEntities:true,
           synchronize:true,
           // ssl: {
           //   rejectUnauthorized: false,  // This allows self-signed certificates
@@ -124,7 +123,17 @@ import { UnkownWordsModule } from './unkown-words/unkown-words.module';
     SemesterModule, 
     ExerciseTypeModule, 
     ExerciseGroupConnectionModule, 
-    ExerciseUserConnectionModule, FeedBackMainModule, FeedBackItemModule, MailModule, MailChatModule, ShieldModule, CustomAnswersModule, HighlightModule, UnkownWordsModule,
+    ExerciseUserConnectionModule, 
+    FeedBackMainModule, 
+    FeedBackItemModule, 
+    MailModule, 
+    MailChatModule, 
+    ShieldModule, 
+    CustomAnswersModule, 
+    HighlightModule,
+    UnkownWordsModule,
+    ColorHighlightModule
+  
   ],
   controllers: [AppController],
   providers: [

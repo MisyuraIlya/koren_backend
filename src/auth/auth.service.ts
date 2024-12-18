@@ -52,9 +52,11 @@ export class AuthService {
   }
 
     async login(dto: AuthDto) {
+      console.log('here')
       const user = await this.validateUser(dto)
-
+      console.log('user',user)
       const tokens = await this.issueTokens(user.id)
+      console.log('tokens',tokens)
       const isDevelopment = process.env.STAGE === 'dev';
       if(!isDevelopment){
         const isCaptchaValid = await this.verifyCaptcha(dto.captchaToken);
@@ -141,11 +143,12 @@ export class AuthService {
     }
 
     private async validateUser(dto: AuthDto) {
+      console.log('here1')
         const user = await this.authRepository.findOne({
             where:{email:dto.email},
             relations: ['school']
         })
-    
+        console.log('here2',user)
         if (!user) throw new NotFoundException('שם המשתמש או הסיסמה אינם נכונים.')
     
         const isValid = await verify(user.password, dto.password)

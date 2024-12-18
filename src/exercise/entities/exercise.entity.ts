@@ -5,6 +5,7 @@ import { StudentHistory } from 'src/student-history/entities/student-history.ent
 import { ExerciseGroupConnection } from 'src/exercise-group-connection/entities/exercise-group-connection.entity';
 import { PdfUtilitiesEntity } from 'src/pdf-utilities/entities/pdf-utility.entity';
 import { Mail } from 'src/mail/entities/mail.entity';
+import { ColorHighlight } from 'src/color-highlight/entities/color-highlight.entity';
 
 @Entity({ name: 'exercise' })
 export class ExerciseEntity {
@@ -49,6 +50,9 @@ export class ExerciseEntity {
 
   @OneToMany(() => Mail, mail => mail.exercise, { cascade: ["remove"] })
   mail: Mail[];
+
+  @OneToMany(() => ColorHighlight, hi => hi.exercise, { cascade: ["remove"] })
+  colorHighlights: ColorHighlight[];
 
   fullPath: string
   fullLink: string

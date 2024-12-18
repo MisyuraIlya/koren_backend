@@ -15,6 +15,7 @@ import { Shield } from "src/shield/entities/shield.entity";
 import { Exclude } from 'class-transformer';
 import { HighlightEntity } from "src/highlight/entities/highlight.entity";
 import { CustomAnswer } from "src/custom-answers/entities/custom-answer.entity";
+import { ColorHighlight } from "src/color-highlight/entities/color-highlight.entity";
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
@@ -109,4 +110,7 @@ export class AuthEntity {
 
     @OneToMany(() => CustomAnswer, custom => custom.student , { cascade: ["remove"] })
     customAnswers: CustomAnswer[];
+
+    @OneToMany(() => ColorHighlight, hi => hi.student , { cascade: ["remove"] })
+    colorHighlights: ColorHighlight[];
 }

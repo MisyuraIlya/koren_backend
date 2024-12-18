@@ -180,6 +180,7 @@ export class ExerciseService {
         .leftJoinAndSelect('exercise.course', 'course')
         .leftJoinAndSelect('exercise.pdfs', 'pdfs')
         .leftJoinAndSelect('exercise.tabs', 'tabs')
+        .leftJoinAndSelect('exercise.colorHighlights', 'colorHighlights', 'colorHighlights.student.id = :studentId', { studentId })
         .leftJoinAndSelect('tabs.tasks', 'tasks')
         .leftJoinAndSelect('tasks.columns', 'columns')
         .leftJoinAndSelect('tasks.rows', 'rows')
