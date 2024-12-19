@@ -3,16 +3,17 @@ import { ColorHighlightService } from './color-highlight.service';
 import { CreateColorHighlightDto } from './dto/create-color-highlight.dto';
 import { UpdateColorHighlightDto } from './dto/update-color-highlight.dto';
 
-@Controller('color-highlight')
+@Controller('colorHighlight')
 export class ColorHighlightController {
   constructor(private readonly colorHighlightService: ColorHighlightService) {}
 
-  @Post()
+  @Post(':userId/:exerciseId')
   create(
     @Param('userId') userId: number,
     @Param('exerciseId') exerciseId: number,
     @Body() createColorHighlightDto: CreateColorHighlightDto
   ) {
+    console.log('heree')
     return this.colorHighlightService.create(userId, exerciseId,createColorHighlightDto);
   }
 
